@@ -1,0 +1,6 @@
+[20994,1566021376:20:51:51.263246] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[20994,1566021376:20:51:51.263314] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[20994,1566021376:20:51:51.266459] NaClHostDescOpen: open returned -1, errno 2
+[21015,816523008:20:52:56.306236] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21015,816523008:20:52:56.306290] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21015,816523008:20:52:56.442282] NaClHostDescOpen: open returned -1, errno 2
