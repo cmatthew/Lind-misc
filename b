@@ -4,18 +4,20 @@
 #set -o xtrace
 #set -o errexit
 
-
+#call this instead of echo, then we can do things like log and print to notifier
 function print {
     echo $1
     #notify-send --icon=/usr/share/icons/gnome/256x256/apps/utilities-terminal.png "Build Script" "$1" >& /dev/null
 }
 
+#wipe the entire modular build toolchain build tree
 function clean_toolchain {
      cd ~/lind/native_client/
      rm -rf out
      python tools/modular-build/build.py -b
 }
 
+# install many of the packages this project needs
 function install_deps {
     set -o errexit
     sudo aptitude install build-essential git-core subversion python2.6 python-dev python2.6-dev texinfo texlive gcc-multilib g++-multilib libsdl1.2-dev texinfo libcrypto++-dev libssl-dev lib32ncurses5-dev m4
@@ -27,36 +29,41 @@ function install_deps {
 }
 
 
-
+# copy the toolchain files into the repy subdir
 function inject_libs_into_repy {
     set -o errexit
     nacl_base=./native_client
     print "Sendning NaCl stuff to $REPY_PATH"
-    base="$REPY_PATH/lind"
-    echo $base
-    mkdir $base
+    base="${REPY_PATH}lind"
+    echo "Base is $base"
+    mkdir -p $base
     bin=$base/bin
-    mkdir $bin
-    mkdir $base/glibc
-    mkdir $base/libs
-    cp -rf $nacl_base/scons-out/dbg-linux-x86-64/staging/* $bin/
+    mkdir -p $bin
+    mkdir -p $base/glibc
+    mkdir -p $base/libs
+    mkdir -p $base/include
+    pwd
+    cp -rf ${nacl_base}/scons-out/dbg-linux-x86-64/staging/* $bin/
     cp -f lind.sh $bin/lind
     chmod +x $bin/lind
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/* $base/glibc/
+    cp -rf $nacl_base/out/install/glibc_64/nacl64/include/ $base/include
     cp -rf $nacl_base/out/install/full-gcc-glibc/nacl64/lib64/*  $base/libs/
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/*  $base/libs/
     cp -rf $nacl_base/out/install/nacl_libs_glibc_64/nacl64/lib/*  $base/libs/
     build_sdk
 }
 
+# copy the SDK specific parts of the toolchain
 function build_sdk {
     nacl_base=./native_client
-    mkdir $base/sdk
+    mkdir -p $base/sdk
     cp -rf $nacl_base/out/install/full-gcc-glibc/* $base/sdk/
     cp -rf ./sdk_examples $base/sdk/examples
 }
 
 
+# install repy into $REPY_PATH with the prepare_tests script
 function build_repy {
     if [ -z "$REPY_PATH" ]; then
        echo "Need to set REPY_PATH"
@@ -64,7 +71,7 @@ function build_repy {
     fi 
     here=`pwd`
     rm -rf $REPY_PATH
-    mkdir $REPY_PATH
+    mkdir -p $REPY_PATH
     repy_src=~/repyv2nacl/nacl_repy/
     print "Building Repy in $repy_src to $REPY_PATH" 
     cd $repy_src
@@ -98,6 +105,7 @@ function build_repy {
 # tests/lind/glibc_test.c
 
 
+# Run the NaCl build
 function build_nacl {
      print "Building NaCl"
      cd ~/lind/native_client/
@@ -113,7 +121,7 @@ function build_nacl {
 
 }
 
-
+# Run clean on nacl build
 function clean_nacl {
      cd ~/lind/native_client/
      ./scons --mode=dbg-linux,nacl platform=x86-64 --nacl_glibc -c
@@ -121,15 +129,19 @@ function clean_nacl {
 }
 
 
+#
 function build_glibc {
      fortune
      print "Building glibc"
-     mv nacl-glibc/sysdeps/nacl/.#* .
+     # if extra files (like editor temp files) are in the subdir glibc tries to compile them too.
+     # move them here so they dont cause a problem
+     mv -f nacl-glibc/sysdeps/nacl/.#* .
      #turns out this works better if you do it from the nacl base dir
      cd ~/lind/native_client
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      python tools/modular-build/build.py glibc_64 -b -s > build.stdout.log 2> build.stderr.log
+     sync
      rc=$?
      if [ "$rc" -ne "0" ]; then
 	 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
@@ -141,6 +153,7 @@ function build_glibc {
      fi
      print "Done partial build."
      python tools/modular-build/build.py nacl_libs_glibc_64 -b > build.good.stdout.log 2> build.good.stderr.log
+     sync
      rc=$?
      if [ "$rc" -ne "0" ]; then
 	 print "Build failed"
@@ -195,7 +208,7 @@ function watch {
 }
 
 PS3="build what: " 
-list="repy nacl glibc run watch cleantoolchain cleannacl glibcfast inplace install install_deps"
+list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps"
 word=""
 if  test -z "$1" 
 then
@@ -228,13 +241,8 @@ do
 	build_nacl
 	build_repy
 	run_lind
-
     elif [ "$word" = "run" ]; then
 	run_lind
-	
-    elif [ "$word" = "watch" ]; then
-      #watch
-	print "Foo"
     elif [ "$word" = "cleantoolchain" ]; then
 	print "Cleaning Toolchain"
 	clean_toolchain
