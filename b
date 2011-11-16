@@ -58,7 +58,7 @@ function inject_libs_into_repy {
 function build_sdk {
     nacl_base=./native_client
     mkdir -p $base/sdk
-    cp -rf $nacl_base/out/install/full-gcc-glibc/* $base/sdk/
+    cp -rfv $nacl_base/toolchain/linux_x86 $base/sdk/
     cp -rf ./sdk_examples $base/sdk/examples
 }
 
@@ -223,6 +223,8 @@ fi
 
 START_TIME=$(date +%s)
 
+# all scripts assume we start here
+cd /home/lind/lind/ 
 echo ${args[0]} ${args[1]}
 ELEMENTS=${#args[@]}
 for  (( i=0;i<$ELEMENTS;i++));

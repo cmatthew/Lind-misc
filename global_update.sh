@@ -15,5 +15,6 @@ git pull
 echo "updating lind components"
 cd ~/lind/misc
 git pull
-cp b ../b
+cd ..
+ln -s ./misc/b
 
