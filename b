@@ -140,7 +140,7 @@ function build_glibc {
      cd ~/lind/native_client
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
-     python tools/modular-build/build.py glibc_64 -b -s > build.stdout.log 2> build.stderr.log
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
      sync
      rc=$?
      if [ "$rc" -ne "0" ]; then
