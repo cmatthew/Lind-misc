@@ -141,8 +141,8 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
+     rc=${PIPESTATUS[0]}
      sync
-     rc=$?
      if [ "$rc" -ne "0" ]; then
 	 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
 	 print "Glibc Build failed"
