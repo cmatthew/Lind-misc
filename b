@@ -58,7 +58,7 @@ function inject_libs_into_repy {
 function build_sdk {
     nacl_base=./native_client
     mkdir -p $base/sdk
-    cp -rfv $nacl_base/toolchain/linux_x86 $base/sdk/
+    cp -rf $nacl_base/toolchain/linux_x86 $base/sdk/
     cp -rf ./sdk_examples $base/sdk/examples
 }
 
