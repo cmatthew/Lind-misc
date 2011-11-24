@@ -28,21 +28,20 @@ timeval_subtract (result, x, y)
   return x->tv_sec < y->tv_sec;
 }
 
-#define ITTER 100
+#define ITTER 500
 
 int main() {
   extern int __lind_noop(void);
-  struct timeval start,stop, result[ITTER];
+  struct timeval start[ITTER],stop[ITTER];
   int i;
   for (i = 0; i < ITTER; i++) {
-    gettimeofday(&start,NULL);
+    gettimeofday(&start[i],NULL);
     getpid();
-    gettimeofday(&stop,NULL);
-    timeval_subtract(&result[i], &stop, &start);
+    gettimeofday(&stop[i],NULL);
   }
-
+  printf("\n");
   for (i = 0; i < ITTER; i++) {
-    printf(">> %ld.%06ld\n",(long int)result[i].tv_sec, (long int)result[i].tv_usec);
+    printf(">> %ld.%06ld, %ld.%06ld\n",(long int)start[i].tv_sec, (long int)start[i].tv_usec, (long int)stop[i].tv_sec, (long int)stop[i].tv_usec);
   }
 
 
