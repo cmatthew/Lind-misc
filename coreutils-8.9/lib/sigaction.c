@@ -50,10 +50,6 @@
    sigprocmask() substitute, but all other application code linked
    with this module should stick with only sigaction().  */
 
-/* Check some of our assumptions.  */
-#if defined SIGCHLD || defined HAVE_SIGALTSTACK || defined HAVE_SIGINTERRUPT
-# error "Revisit the assumptions made in the sigaction module"
-#endif
 
 /* Out-of-range substitutes make a good fallback for uncatchable
    signals.  */

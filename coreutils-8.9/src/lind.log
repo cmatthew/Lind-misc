@@ -4,3 +4,25 @@
 [21015,816523008:20:52:56.306236] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
 [21015,816523008:20:52:56.306290] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
 [21015,816523008:20:52:56.442282] NaClHostDescOpen: open returned -1, errno 2
+[25332,573556480:13:29:22.538983] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[25332,573556480:13:29:22.555432] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[25332,573556480:13:29:22.588520] munmap: rounded length to 0x10000
+[25332,573556480:13:29:22.588541] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:22.588586] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:22.591962] NaClHostDescOpen: open returned -1, errno 2
+[25332,573556480:13:29:22.592565] NaClHostDescOpen: open returned -1, errno 2
+[25332,573556480:13:29:22.623691] munmap: rounded length to 0x10000
+[25332,573556480:13:29:22.623745] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:22.623771] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.429040] munmap: rounded length to 0x1b0000
+[25332,573556480:13:29:23.429180] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.429211] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.433924] munmap: rounded length to 0x10000
+[25332,573556480:13:29:23.433950] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.433972] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.892880] munmap: rounded length to 0xf0000
+[25332,573556480:13:29:23.892978] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:23.893014] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:24.028997] munmap: rounded length to 0x50000
+[25332,573556480:13:29:24.029047] invalid mmap flags 04022, ignoring extraneous bits
+[25332,573556480:13:29:24.029075] invalid mmap flags 04022, ignoring extraneous bits
