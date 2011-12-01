@@ -1,0 +1,149 @@
+lind@hypervisor-ilo:~/lind/misc/temp$ strace grep -R Hello .
+) = 22
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+arch_prctl(ARCH_SET_FS, 0x7f80ff874700) = 0
+brk(0)                                  = 0x24be000
+brk(0)                                  = 0x24be000
+brk(0x24df000)                          = 0x24df000
+close(1)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+close(3)                                = 0
+execve("/bin/grep", ["grep", "-R", "Hello", "."], [/* 23 vars */]) = 0
+exit_group(0)                           = ?
+fcntl(3, F_GETFD)                       = 0x1 (flags FD_CLOEXEC)
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 0), ...}) = 0
+fstat(3, {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=1170770, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=14696, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=155, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=23, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=2454, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=256324, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=2570, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=26048, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=286, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=34, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=373, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=54, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=57, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=59, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=73018, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0644, st_size=77, ...}) = 0
+fstat(3, {st_mode=S_IFREG|0755, st_size=1572232, ...}) = 0
+getdents(3, /* 0 entries */, 32768)     = 0
+getdents(3, /* 0 entries */, 32768)     = 0
+getdents(3, /* 3 entries */, 32768)     = 80
+getdents(3, /* 5 entries */, 32768)     = 144
+mmap(0x7f80ff45d000, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x179000) = 0x7f80ff45d000
+mmap(0x7f80ff462000, 18472, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f80ff462000
+mmap(0x7f80ff669000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7f80ff669000
+mmap(NULL, 1170770, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff755000
+mmap(NULL, 155, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87d000
+mmap(NULL, 2109696, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f80ff467000
+mmap(NULL, 23, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87f000
+mmap(NULL, 2454, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff878000
+mmap(NULL, 256324, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff716000
+mmap(NULL, 26048, PROT_READ, MAP_SHARED, 3, 0) = 0x7f80ff880000
+mmap(NULL, 286, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff879000
+mmap(NULL, 34, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87b000
+mmap(NULL, 3680296, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f80ff0e4000
+mmap(NULL, 373, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff887000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff715000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff873000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff874000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff875000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff887000
+mmap(NULL, 54, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff877000
+mmap(NULL, 57, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87a000
+mmap(NULL, 59, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87e000
+mmap(NULL, 73018, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff876000
+mmap(NULL, 77, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f80ff87c000
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f80ff888000
+mprotect(0x61a000, 4096, PROT_READ)     = 0
+mprotect(0x7f80ff25e000, 2093056, PROT_NONE) = 0
+mprotect(0x7f80ff45d000, 16384, PROT_READ) = 0
+mprotect(0x7f80ff469000, 2097152, PROT_NONE) = 0
+mprotect(0x7f80ff669000, 4096, PROT_READ) = 0
+mprotect(0x7f80ff88a000, 4096, PROT_READ) = 0
+munmap(0x7f80ff715000, 4096)            = 0
+munmap(0x7f80ff876000, 73018)           = 0
+munmap(0x7f80ff887000, 4096)            = 0
+open(".", O_RDONLY)                     = 3
+open(".", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 3
+open("./foo.txt", O_RDONLY)             = 3
+open("./lind.log", O_RDONLY)            = 3
+open("./subdir", O_RDONLY)              = 3
+open("./subdir", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 3
+open("./subdir/foo4.txt", O_RDONLY)     = 3
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+open("/lib/libc.so.6", O_RDONLY)        = 3
+open("/lib/libdl.so.2", O_RDONLY)       = 3
+open("/usr/lib/gconv/gconv-modules.cache", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.UTF-8/LC_ADDRESS", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_COLLATE", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_CTYPE", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_IDENTIFICATION", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_MEASUREMENT", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_MESSAGES", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_MONETARY", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_NAME", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_NUMERIC", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_PAPER", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_TELEPHONE", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.UTF-8/LC_TIME", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_US.utf8/LC_ADDRESS", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_COLLATE", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_CTYPE", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_IDENTIFICATION", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_MEASUREMENT", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_MESSAGES", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_MESSAGES/SYS_LC_MESSAGES", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_MONETARY", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_NAME", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_NUMERIC", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_PAPER", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_TELEPHONE", O_RDONLY) = 3
+open("/usr/lib/locale/en_US.utf8/LC_TIME", O_RDONLY) = 3
+open("/usr/lib/locale/locale-archive", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/locale.alias", O_RDONLY)
+read(3, "", 24576)                      = 0
+read(3, "", 32768)                      = 0
+read(3, "", 32768)                      = 0
+read(3, "", 4096)                       = 0
+read(3, "# Locale name alias data base.\n#"..., 4096) = 2570
+read(3, "Hello World\n", 32768)         = 12
+read(3, "[25201,1492027136:13:23:53.56134"..., 32768) = 5648
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\340\r\0\0\0\0\0\0"..., 832) = 832
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0`\355\1\0\0\0\0\0"..., 832) = 832
+stat(".", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("./foo.txt", {st_mode=S_IFREG|0644, st_size=12, ...}) = 0
+stat("./lind.log", {st_mode=S_IFREG|0755, st_size=5648, ...}) = 0
+stat("./subdir", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("./subdir/foo4.txt", {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+write(1, "./foo.txt:Hello World\n", 22./foo.txt:Hello World
