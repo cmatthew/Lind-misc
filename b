@@ -43,7 +43,7 @@ function inject_libs_into_repy {
     mkdir -p $base/libs
     mkdir -p $base/include
     pwd
-    cp -rf ${nacl_base}/scons-out/dbg-linux-x86-64/staging/* $bin/
+    cp -rf ./scons-out/dbg-linux-x86-64/staging/* $bin/
     cp -f lind.sh $bin/lind
     chmod +x $bin/lind
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/* $base/glibc/
