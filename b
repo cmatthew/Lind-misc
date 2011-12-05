@@ -32,6 +32,8 @@ function install_deps {
 # copy the toolchain files into the repy subdir
 function inject_libs_into_repy {
     set -o errexit
+    echo "Injecting Libs into RePy install"
+    cd ~/lind/
     nacl_base=./native_client
     print "Sendning NaCl stuff to $REPY_PATH"
     base="${REPY_PATH}lind"
@@ -42,8 +44,7 @@ function inject_libs_into_repy {
     mkdir -p $base/glibc
     mkdir -p $base/libs
     mkdir -p $base/include
-    pwd
-    cp -rf ./scons-out/dbg-linux-x86-64/staging/* $bin/
+    cp -rf ${nacl_base}/scons-out/dbg-linux-x86-64/staging/* $bin/
     cp -f lind.sh $bin/lind
     chmod +x $bin/lind
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/* $base/glibc/
@@ -52,10 +53,13 @@ function inject_libs_into_repy {
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/*  $base/libs/
     cp -rf $nacl_base/out/install/nacl_libs_glibc_64/nacl64/lib/*  $base/libs/
     build_sdk
+
 }
 
 # copy the SDK specific parts of the toolchain
 function build_sdk {
+    echo "Copying SDK"
+    base="${REPY_PATH}lind"
     nacl_base=./native_client
     mkdir -p $base/sdk
     cp -rf $nacl_base/toolchain/linux_x86 $base/sdk/
