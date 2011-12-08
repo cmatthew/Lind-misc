@@ -138,7 +138,7 @@ function clean_nacl {
 function build_glibc {
      fortune
 
-     echo -ne "copy compent headers to glibc: "
+     echo -ne "Copy component.h header to glibvc: "
      cd ~/lind/misc/liblind
      cp -f component.h ~/lind/nacl-glibc/sysdeps/nacl/
      print "done."
@@ -154,6 +154,7 @@ function build_glibc {
 	 print "moving editor backupfile ${f} so it does not get caught in build."
 	 mv -f ${f} .
      done
+
      #turns out this works better if you do it from the nacl base dir
      cd ~/lind/native_client
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
