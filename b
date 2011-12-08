@@ -113,6 +113,7 @@ function build_repy {
 function build_nacl {
      print "Building NaCl"
      cd ~/lind/native_client/
+     
      ./scons --verbose --mode=dbg-linux,nacl platform=x86-64 --nacl_glibc -j16 
      rc=$?
      if [ "$rc" -ne "0" ]; then
@@ -136,10 +137,23 @@ function clean_nacl {
 #
 function build_glibc {
      fortune
+
+     echo -ne "copy compent headers to glibc: "
+     cd ~/lind/misc/liblind
+     cp -f component.h ~/lind/nacl-glibc/sysdeps/nacl/
+     print "done."
+
      print "Building glibc"
+
      # if extra files (like editor temp files) are in the subdir glibc tries to compile them too.
      # move them here so they dont cause a problem
-     mv -f nacl-glibc/sysdeps/nacl/.#* .
+     cd ~/lind/nacl-glibc/sysdeps/nacl/
+     shopt -s nullglob
+     for f in .#*;
+     do
+	 print "moving editor backupfile ${f} so it does not get caught in build."
+	 mv -f ${f} .
+     done
      #turns out this works better if you do it from the nacl base dir
      cd ~/lind/native_client
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
