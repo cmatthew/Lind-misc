@@ -28,6 +28,15 @@ function install_deps {
  
 }
 
+# compile liblind and the compoent programs
+function build_liblind {
+    echo -ne "Building liblind... "
+    cd ~/lind/misc/liblind
+    make clean all > /dev/null
+    echo "done."
+
+}
+
 
 # copy the toolchain files into the repy subdir
 function inject_libs_into_repy {
@@ -83,6 +92,7 @@ function build_repy {
     print "Done building Repy in $REPY_PATH"
     cd $here
     inject_libs_into_repy
+    build_liblind
 }
 
 # How NaCl compiles a program for 
@@ -136,9 +146,10 @@ function clean_nacl {
 
 #
 function build_glibc {
-     fortune
+     # the build is long and borning, so execute this first if it exists
+     type -P fortune &>/dev/null && fortune || echo "Fortune Not Found. Skipping." 
 
-     echo -ne "Copy component.h header to glibvc: "
+     echo -ne "Copy component.h header to glibc: "
      cd ~/lind/misc/liblind
      cp -f component.h ~/lind/nacl-glibc/sysdeps/nacl/
      print "done."
@@ -227,8 +238,9 @@ function watch {
     grep $what ~/lind/native_client/tools/modular-build/build.log    
 }
 
+
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps"
+list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps liblind"
 word=""
 if  test -z "$1" 
 then
@@ -277,6 +289,9 @@ do
     elif [ "$word" = "cleannacl" ]; then
 	print "Cleaning NaCl"
 	clean_nacl
+    elif [ "$word" = "liblind" ]; then
+	print "Building LibLind"
+	build_liblind
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
