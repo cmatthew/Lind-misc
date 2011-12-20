@@ -3,28 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include "component.h"
+#include "logger.h"
+
 
 int main() {
 
   printf("Starting component 1\n");
 
-  printf("Interface attach:\n");
+  char * message = "Hello logging World!";
 
-  cid logger = comp_interface_attach(100, 0);
-  printf("done.\n");
-
-  if (logger < 0) {
-    fprintf(stderr, "[multi-component-1] Bind has failed.\n");
-    exit(EXIT_FAILURE);
-  }
-
-  const char * message = "Hello logging World!";
-  int call_status = comp_call(logger, strlen(message)+1, (void*)message);
-
-  if (call_status < 0) {
-    fprintf(stderr, "[multi-component-1] Send has failed.\n");
-    exit(EXIT_FAILURE);
-  }
+  log_message(1, message);
+  log_message(1, "Some message");
+  log_message(1, "xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaax");
+  log_message(1, "xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaax");
   
   return 0;
 }

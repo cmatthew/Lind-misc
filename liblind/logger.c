@@ -3,33 +3,23 @@
 #include <string.h>
 #include "component.h"
 #include <unistd.h>
+#include "logger.h"
 
 
-#define ID "[multi-component-2] "
-#define MAX_BUF 1024
-int main() {
-
-  printf("Starting compoent 2\n");
+/*Write this message to the log. */
+int log_message(int priority, char * message) {
+  printf("Logger Says: %s\n", message);
   fflush(stdout);
-  void * message = NULL;
-  message = malloc(sizeof(MAX_BUF));
-  if (message == NULL) {
-    perror("malloc failure");
-     exit(EXIT_FAILURE);
-
-  }
-  memset(message, 0, MAX_BUF);
-
-  cid caller =  comp_accept(0, message, MAX_BUF);
-  
-   if (caller < 0) {
-     fprintf(stderr, ID "accept has failed.\n");
-     exit(EXIT_FAILURE);
-   }
-
-  printf("Logger got message.\n");
-  printf("Message is: %s\n", (char*) message); 
-  fflush(stdout);
-
   return 0;
+}
+
+
+void test(void) {
+  log_message(1, "Test1");
+  log_message(2, "Test2");
+  log_message(3, "Test3");
+  log_message(1, "Test21");
+  log_message(2, "Test22");
+  log_message(3, "Test23");
+
 }

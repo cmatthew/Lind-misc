@@ -80,7 +80,6 @@ int comp_call(mailbox dest, size_t message_size, void * message) {
 /** Wait for communication from CID in mailbox MB.
  */
 cid comp_accept(mailbox mb, void* buff, size_t max) {
-  printf("Called comp accept\n");
   lind_connect(); 
   int rc = -1;
   struct comp_accept_s args = {0, NULL, 0};
@@ -88,9 +87,7 @@ cid comp_accept(mailbox mb, void* buff, size_t max) {
   args.buff = buff; 
   args.max = max; 
   int fd = lind_fd();
-  printf("doing ioctl in accept\n");
   rc = ioctl(fd, LIND_ACCEPT_IOCTL, sizeof(args),  &args);
-  printf("done ioctl in accept\n");
 
   if(rc == -1) {
     perror("Problem with ioctl channel in component accept.");
