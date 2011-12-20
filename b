@@ -218,9 +218,20 @@ function build_glibc_fast {
 
 
 function inplace {
+    cd ~/lind/
     rsync -rlEtv  ./nacl-glibc ~/lind/native_client/out/build/glibc_64
     cd ~/lind/native_client/out/build/glibc_64
-    make
+    make 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
+     rc=${PIPESTATUS[0]}
+     sync
+     if [ "$rc" -ne "0" ]; then
+	 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
+	 print "Glibc Build failed"
+	 echo -e "\a"
+	 exit $rc
+     else
+	 print "Building glibc_64 Succeeded."
+     fi
     cd ../../..
 }
 
