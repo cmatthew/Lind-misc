@@ -85,6 +85,15 @@ function build_sdk {
     cp -rf ./sdk_examples $base/sdk/examples
 }
 
+function test_repy {
+    set -o errexit
+    cd $REPY_PATH
+    cat fs_test_wrapper.py lind_fs_calls.py > wrapped_lind_fs_calls.py
+    for file in ut_lind_fs_*; do 
+	echo $file 
+	python $file
+    done
+}
 
 # install repy into $REPY_PATH with the prepare_tests script
 function build_repy {
@@ -104,7 +113,7 @@ function build_repy {
     print "Building Repy in $repy_src to $REPY_PATH" 
     cd $repy_src
     python preparetest.py -t $REPY_PATH
-    mv ${REPY_PATH}serialize.repy ${REPY_PATH}serialize.py
+    cp ${REPY_PATH}serialize.repy ${REPY_PATH}serialize.py
     print "Done building Repy in $REPY_PATH"
     cd $here
     inject_libs_into_repy
@@ -267,7 +276,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps liblind"
+list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps liblind test_repy"
 word=""
 if  test -z "$1" 
 then
@@ -319,6 +328,9 @@ do
     elif [ "$word" = "liblind" ]; then
 	print "Building LibLind"
 	build_liblind
+    elif [ "$word" = "test_repy" ]; then
+	print "Testing Repy"
+	test_repy
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
