@@ -1,8 +1,18 @@
 #!/bin/bash
 # Chris Matthews <cmatthew@cs.uvic.ca>
 # Try to ease the burden of building lind (repy, nacl, and toolchain)
-#set -o xtrace
-#set -o errexit
+
+
+# Uncomment this to print each command as they are executed
+# set -o xtrace
+
+# Uncomment this for debugging. Will stop B on any failed commands 
+# set -o errexit
+
+# Uncomment this to dump time profiling information out to a file to see where the script is slow
+# PS4='+ $(date "+%s.%N")\011 '
+# exec 3>&2 2> bashstart.$$.log
+# set -x
 
 #call this instead of echo, then we can do things like log and print to notifier
 function print {
@@ -78,17 +88,23 @@ function build_sdk {
 
 # install repy into $REPY_PATH with the prepare_tests script
 function build_repy {
+    #make sure repy path is set
     if [ -z "$REPY_PATH" ]; then
        echo "Need to set REPY_PATH"
        exit 1
     fi 
+
+    set -o errexit
     here=`pwd`
+    
+    # remove any old copies
     rm -rf $REPY_PATH
     mkdir -p $REPY_PATH
     repy_src=~/repyv2nacl/nacl_repy/
     print "Building Repy in $repy_src to $REPY_PATH" 
     cd $repy_src
     python preparetest.py -t $REPY_PATH
+    mv ${REPY_PATH}serialize.repy ${REPY_PATH}serialize.py
     print "Done building Repy in $REPY_PATH"
     cd $here
     inject_libs_into_repy
