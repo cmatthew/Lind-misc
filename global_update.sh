@@ -16,5 +16,11 @@ echo "updating lind components"
 cd ~/lind/misc
 git pull
 cd ..
+
+#link the build script to it's old location
+rm -f ./b
 ln -s ./misc/b
 
+#link the loader sctipt to it's old location
+rm -f ./lind.sh
+ln -s ./misc/lind.sh
