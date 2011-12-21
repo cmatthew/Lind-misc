@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/statfs.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 
@@ -61,21 +62,34 @@ void check_getpid(void) {
   const int MAX_ITTER_CHECK = 10; /* Run a bunch of times, make sure the code is robust for many runs. */
   const int EXPECT_PID = 1000; 		/* 1000 is a hardcoded PID right now. */
   for (i = 0; i < MAX_ITTER_CHECK; i++) {
-    assert(getpid()==EXPECT_PID);
+    int tmp = getpid();
+    assert(tmp==EXPECT_PID);
   }
 }
 
 void check_file_ops(void) {
-  printf("[output][glibc_test] About to read\n");
+  printf("[output][glibc_test] About to open\n");
   fflush(stdout);
  
-  FILE* f = fopen("foo.txt", "r");
+  
+  FILE* f = fopen("foo.txt", "w");
   assert(f != NULL);
-  char a[512];
+  
+  /* check double opens work */
+  f = fopen("foo.txt", "w");
+  assert(f != NULL);
+
+  char a[512] = "this is a test string.";
   memset(a, 0, sizeof(a));
 
+  /* check we can do a write. */
+  int size = fwrite(a, 1, 512, f);
+  printf("[output][glibc_test]Fread read %d and got: %s\n", size, a);
+  fflush(stdout);
+  printf("[output][glibc_test] ferror = %d\n",ferror(f));
+
   /* check we can do a read. */
-  int size = fread(a, 1, 512, f);
+  size = fread(a, 1, 512, f);
   printf("[output][glibc_test]Fread read %d and got: %s\n", size, a);
   fflush(stdout);
   printf("[output][glibc_test] ferror = %d\n",ferror(f));
@@ -106,6 +120,7 @@ void check_file_write(void) {
 
   FILE* f = fopen("foo2.txt", "w");
   assert(f != NULL);
+  
   char * a = "This is a test string.";
   int size = fwrite(a, 1, strlen(a)+1, f);
   printf("[output][glibc_test] ferror = %d\n",ferror(f));
@@ -172,17 +187,18 @@ void check_rmdir(void) {
 
 
 void hello_world(void) {
-  printf("unsigned long int %u", sizeof(unsigned long int));
+  printf("unsigned long int %lu", sizeof(unsigned long int));
   printf("Hello Files\n");
   fflush(stdout);
-  fopen("foo.txt", "r");
-}
 
+  printf("Sizeof(struct statfs)=%lu\n", sizeof(struct statfs));
+  
+}
 
 int main() {
   hello_world();
   check_access();
-  check_getpid();
+  /* check_getpid(); */
   check_file_ops();
   check_fstat();
   check_file_write();
