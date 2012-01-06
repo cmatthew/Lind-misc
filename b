@@ -20,7 +20,8 @@ function print {
     #notify-send --icon=/usr/share/icons/gnome/256x256/apps/utilities-terminal.png "Build Script" "$1" >& /dev/null
 }
 
-#wipe the entire modular build toolchain build tree
+# wipe the entire modular build toolchain build tree, then rebuild it
+# Warning: this can take a while!
 function clean_toolchain {
      cd ~/lind/native_client/
      rm -rf out
@@ -51,34 +52,45 @@ function build_liblind {
 # copy the toolchain files into the repy subdir
 function inject_libs_into_repy {
     set -o errexit
+
+        #make sure repy path is set
+    if [ -z "$REPY_PATH" ]; then
+       echo "Need to set REPY_PATH"
+       exit 1
+    fi 
+
+
     echo "Injecting Libs into RePy install"
     cd ~/lind/
     nacl_base=./native_client
     print "Sendning NaCl stuff to $REPY_PATH"
-    base="${REPY_PATH}lind"
+    base="${REPY_PATH}/lib"
     echo "Base is $base"
     mkdir -p $base
-    bin=$base/bin
+    bin=$REPY_PATH/bin
     mkdir -p $bin
     mkdir -p $base/glibc
     mkdir -p $base/libs
     mkdir -p $base/include
     cp -rf ${nacl_base}/scons-out/dbg-linux-x86-64/staging/* $bin/
+
+    #install script
     cp -f lind.sh $bin/lind
     chmod +x $bin/lind
+
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/* $base/glibc/
     cp -rf $nacl_base/out/install/glibc_64/nacl64/include/ $base/include
     cp -rf $nacl_base/out/install/full-gcc-glibc/nacl64/lib64/*  $base/libs/
     cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/*  $base/libs/
     cp -rf $nacl_base/out/install/nacl_libs_glibc_64/nacl64/lib/*  $base/libs/
-    build_sdk
 
 }
 
-# copy the SDK specific parts of the toolchain
+# buidl then copy the SDK specific parts of the toolchain
 function build_sdk {
+    build_glibc_gcc
     echo "Copying SDK"
-    base="${REPY_PATH}lind"
+    base="${REPY_PATH}"
     nacl_base=./native_client
     mkdir -p $base/sdk
     cp -rf $nacl_base/toolchain/linux_x86 $base/sdk/
@@ -87,16 +99,30 @@ function build_sdk {
 
 function test_repy {
     set -o errexit
-    cd $REPY_PATH
-    cat fs_test_wrapper.py lind_fs_calls.py > wrapped_lind_fs_calls.py
+    cd $REPY_PATH/repy/
     for file in ut_lind_fs_*; do 
 	echo $file 
 	python $file
     done
 }
 
+function check_install_dir {
+    #make sure repy path is set
+    if [ -z "$REPY_PATH" ]; then
+       echo "Need to set REPY_PATH"
+       exit 1
+    fi 
+
+    if [ ! -d "$REPY_PATH" ]; then
+	mkdir -p $REPY_PATH
+    fi
+
+}
+
 # install repy into $REPY_PATH with the prepare_tests script
 function build_repy {
+    check_install_dir
+
     #make sure repy path is set
     if [ -z "$REPY_PATH" ]; then
        echo "Need to set REPY_PATH"
@@ -106,18 +132,18 @@ function build_repy {
     set -o errexit
     here=`pwd`
     
+    repy_loc=${REPY_PATH}/repy/
+
     # remove any old copies
-    rm -rf $REPY_PATH
-    mkdir -p $REPY_PATH
+    rm -rf $repy_loc
+    mkdir -p $repy_loc
     repy_src=~/repyv2nacl/nacl_repy/
     print "Building Repy in $repy_src to $REPY_PATH" 
     cd $repy_src
-    python preparetest.py -t $REPY_PATH
-    cp ${REPY_PATH}serialize.repy ${REPY_PATH}serialize.py
-    print "Done building Repy in $REPY_PATH"
+    python preparetest.py -t $repy_loc
+    cp ${repy_loc}serialize.repy ${repy_loc}serialize.py
+    print "Done building Repy in $repy_loc"
     cd $here
-    inject_libs_into_repy
-    build_liblind
 }
 
 # How NaCl compiles a program for 
@@ -158,7 +184,6 @@ function build_nacl {
      fi
      print "Done building NaCl $rc"
      inject_libs_into_repy
-
 }
 
 # Run clean on nacl build
@@ -208,37 +233,27 @@ function build_glibc {
 	 print "Building glibc_64 Succeeded."
      fi
      print "Done partial build."
-     python tools/modular-build/build.py nacl_libs_glibc_64 -b > build.good.stdout.log 2> build.good.stderr.log
-     sync
-     rc=$?
-     if [ "$rc" -ne "0" ]; then
-	 print "Build failed"
-	 echo -e "\a"
-	 exit $rc
-     else
-	 print "Full build Succeeded."
-     fi
-     python tools/modular-build/build.py
-     print "Done building GLibC"
-     inject_libs_into_repy
-     print "Done Build"
-}
+} 
 
-function build_glibc_fast {
-     print "Building glibc FAST"
-     #turns out this works better if you do it from the nacl base dir
-     cd ~/lind/native_client
-     python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
-     python tools/modular-build/build.py
-     python tools/modular-build/build.py hello_glibc -b > build.log
-     rc=$?
-     if [ "$rc" -ne "0" ]; then
-     	 print "Build failed"
-	 echo -e "\a"
-     	 exit $rc
-     fi
-     python tools/modular-build/build.py
-     print "Done building GLibC fast."
+function build_glibc_gcc {
+    cd ~/lind/native_client
+
+    best_target="full-gcc-glibc"
+    python tools/modular-build/build.py $best_target -b > build.good.stdout.log 2> build.good.stderr.log
+    sync
+    rc=$?
+    if [ "$rc" -ne "0" ]; then
+	print "Build failed"
+	echo -e "\a"
+	exit $rc
+    else
+	print "Full build Succeeded."
+    fi
+    python tools/modular-build/build.py
+    print "Done building GLibC"
+    inject_libs_into_repy
+
+    print "Done Build"
 }
 
 
@@ -276,7 +291,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl glibcfast inplace install install_deps liblind test_repy"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy sdk"
 word=""
 if  test -z "$1" 
 then
@@ -304,8 +319,8 @@ do
 	build_nacl
     elif [ "$word" = "glibc" ]; then
 	build_glibc
-    elif [ "$word" = "glibcfast" ]; then
-	build_glibc_fast
+    elif [ "$word" = "sdk" ]; then
+	build_sdk
     elif [ "$word" = "all" ]; then
 	build_glibc
 	build_nacl
@@ -320,8 +335,9 @@ do
 	print "Inplace Build"
 	inplace
     elif [ "$word" = "install" ]; then
-	print "Installing into Repy"
-	prepare_nacl_repy
+	print "Installing libs into install dir"
+	inject_libs_into_repy
+
     elif [ "$word" = "cleannacl" ]; then
 	print "Cleaning NaCl"
 	clean_nacl
