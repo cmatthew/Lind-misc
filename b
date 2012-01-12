@@ -282,6 +282,15 @@ function run_lind {
     print "Done Running."
 }
 
+function glibc_tester {
+    set -o errexit
+
+    cd ~/lind/misc/glibc_test/
+    make clean all
+    cd ..
+    lind ~/lind/misc/glibc_test/glibc_tester.nexe
+}
+
 
 function watch {
     print "Watch for what?"
@@ -291,7 +300,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy sdk"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc sdk"
 word=""
 if  test -z "$1" 
 then
@@ -347,6 +356,9 @@ do
     elif [ "$word" = "test_repy" ]; then
 	print "Testing Repy"
 	test_repy
+    elif [ "$word" = "test_glibc" ]; then
+	print "Testing GLibC"
+	glibc_tester
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
