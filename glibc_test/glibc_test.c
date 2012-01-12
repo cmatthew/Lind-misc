@@ -20,6 +20,7 @@
 #include <dirent.h> 
 
 #define FILE_NAME "3f23f9a0c6771d4e79fe0ea7"
+#define FILE_NAME2 "SbdcO1HjzjFxn7qhtr"
 
 
 void exit_message(void) {
@@ -384,11 +385,38 @@ void check_statfs(void) {
     struct statfs buf;
     int rc = fstatfs(fileno(f), &buf);
 
-    printf("statfs: type: %x, bsize %d, blocks %ld, bfree %ld\n", buf.f_type, buf.f_bsize,
-	   (long int)buf.f_blocks, (long int)buf.f_bfree);
+    printf("fstatfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize,
+	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc);
     assert(rc==0);
 
+    rc = statfs(".", &buf);
+
+    printf("statfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize,
+	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc);
+    assert(rc==0);
+    
 }
+
+
+void check_dups(void) {
+  dup(12);
+  dup2(15, 16);
+  
+
+}
+
+
+
+void check_creat(void) {
+  int rc = creat(FILE_NAME2, O_WRONLY);
+  assert(rc != 0);
+  close(rc);
+  
+
+}
+
+
+
 
 int main() {
 
@@ -397,6 +425,8 @@ int main() {
 
   /* check_file_ops(); */
   check_statfs();
+  check_dups();
+  check_creat();
   /* check_readdir(); */
 
   /* exit(0); */
