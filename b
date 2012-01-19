@@ -291,6 +291,14 @@ function glibc_tester {
     lind ~/lind/misc/glibc_test/glibc_tester.nexe
 }
 
+function genrpc {
+    set -o errexit
+    cd ~/lind/misc/rpcgen/
+    python syscall_gen.py | indent 
+    type -P indent &>/dev/null && indent lind_rpc_gen.c -o lind_rpc_gen.c || echo "Indent Not Found. Skipping reformatting rpc code." 
+    mv -v lind_rpc_gen.* ~/lind/nacl-glibc/sysdeps/nacl/
+
+}
 
 function watch {
     print "Watch for what?"
@@ -300,7 +308,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc sdk"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc sdk rpc"
 word=""
 if  test -z "$1" 
 then
@@ -359,6 +367,9 @@ do
     elif [ "$word" = "test_glibc" ]; then
 	print "Testing GLibC"
 	glibc_tester
+    elif [ "$word" = "rpc" ]; then
+	print "Building new RPC stubs"
+	genrpc
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
