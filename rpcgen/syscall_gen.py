@@ -1,5 +1,3 @@
-import copy
-
 # this is for things which go in the header file (lind_rpc_gen.h)
 header_file = []
 
