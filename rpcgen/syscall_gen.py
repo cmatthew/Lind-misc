@@ -1,3 +1,5 @@
+import sys
+
 # this is for things which go in the header file (lind_rpc_gen.h)
 header_file = []
 
@@ -177,7 +179,11 @@ def build_format_string(in_args, ref_args):
             else:
                 # since we are not a string, take the third parameter which is a
                 # size and use that.
-                name = args[2]
+                try:
+                    name = args[2]
+                except IndexError:
+                    print "Could not find size of argument while building parameter ", args[1]
+                    sys.exit(1)
                 pre.append("const char * "+name+"_len_str = nacl_itoa("+name+");")
                 post.append("free((void*)"+name+"_len_str);")
 
@@ -322,6 +328,7 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
 
 
 # we need to know which number each syscall takes in the dispatch table
+# ideally we could generate repy side too, so record that info as well
 syscall_table = {
     "noop":(1, "lind_debug_noop","lind_debug_noop"),
     "access":(2, "lind_fs_access","lind_fs_safe_access"),
@@ -351,7 +358,19 @@ syscall_table = {
     "getpid":(31,),
     "socket":(32,),
     "bind":(33,),
- 
+    "send":(34,),
+    "sendto":(35,),
+    "recv":(36,),
+    "recvfrom":(37,),
+    "connect":(38,),
+    "listen":(39,),
+    "accept":(40,),
+    "getpeername":(41,),
+    "getsockname":(42,),
+    "getsockopt":(43,),
+    "setsockopt":(44,),
+    "shutdown":(45,),
+
  
     }
 
@@ -386,7 +405,21 @@ syscall("fcntl_get",[("int","fd"),("int","cmd")])
 syscall("fcntl_set",[("int","fd"),("int","cmd"),("long","set_op")])
 syscall("socket",[("int","domain"),("int","type"),("int","protocol")])
 syscall("bind",[("int","sockfd"),("socklen_t","addrlen")],[("__CONST_SOCKADDR_ARG","addr","addrlen")])
-
+syscall("send",[("int","sockfd"),("size_t","len"),("int", "flags")],[("const void *","buf","len")])
+syscall("sendto",[("int","sockfd"),("size_t","len"),("int", "flags"),("socklen_t","addrlen")],[("__CONST_SOCKADDR_ARG","dest_addr","addrlen"),("const void *","buf","len")])
+syscall("recv", [("int","sockfd"), ("size_t","len"),("int","flags")],[], [("void *", "buf", "len")])
+syscall("recvfrom", [("int","sockfd"), ("size_t","len"),("int","flags"),("socklen_t","addrlen")],[], [("void *", "buf", "len"),("__CONST_SOCKADDR_ARG","src_addr","addrlen")])
+syscall("connect", [("int","sockfd"),("socklen_t","addrlen")],[("__CONST_SOCKADDR_ARG","src_addr","addrlen")])
+syscall("listen",[("int","sockfd"),("int","backlog")])
+# # "accept":(40,),
+# #syscall("accept",[("int","sockfd"),("socklen_t","addrlen")],[],[("__CONST_SOCKADDR_ARG","addr","addrlen")])
+# # need to modify argument to be in and out!
+syscall("getpeername", [("int","sockfd")],[("socklen_t", "addrlen-in","sizeof(socklen_t)")], [("struct sockaddr *", "addr", "addrlen-in"),("socklen_t","addrlen-out", "sizeof(socklen_t)")])
+# # getpeername needs in out type too!
+# # "getsockname"
+# "getsockopt",
+syscall("setsockopt",[("int","sockfd"),("int","level"),("int","optname"),("socklen_t","optlen")],[("const void *","optval","optlen")])
+syscall("shutdown",[("int","sockfd"),("int","how")])
 
 
 
