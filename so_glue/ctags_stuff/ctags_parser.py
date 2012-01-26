@@ -11,36 +11,37 @@ SIGNATURE = 3
 OUT_PATH = "./output/"
 c_file = ""
 
-### prints stuff to console
-def cp_my_debug (s) :
-	print s
-
-### opens files with argument
-def cp_my_open_file(f, mode = "r"):
-	return open(f, mode)
-
-### closes file
-def cp_my_close_file(f):
-	f.close()
+def cp_my_debug (message) :
+	"""Prints message to console"""
+	print message
 
 
+def cp_my_open_file(target, mode = "r"):
+	"""Opens target file"""
+	return open(target, mode)
 
 
-### removes the unneeded colums from ctags
-def cp_cleanup(s) :
-	del s[2]
-	s[-1] = s[-1].split(";")[0]
-	if s[-1][-1] == '\n':
-		s[-1] = s[-1][:-1]
+def cp_my_close_file(target):
+	"""Closes target file"""
+	target.close()
+
+
+
+
+def cp_cleanup(strings) :
+	"""Removes the unneeded colums from ctags"""
+	del strings[2]
+	strings[-1] = strings[-1].split(";")[0]
+	if strings[-1][-1] == '\n':
+		strings[-1] = strings[-1][:-1]
 	
-	return s
+	return strings
 
 
-
-### actually does the work determining what should actually be returned
-### TODO figure out what actually should be returned -- coordinate with 
-###	cp_return_type
 def cp_ret_lookup(ret_t) :
+	""" actually does the work determining what should actually be returned """
+	### TODO figure out what actually should be returned -- coordinate with 
+	###	cp_return_type. Import it and put in different class
 	if "int" in ret_t or "char" in ret_t or "long" in ret_t:
 		return str(0)+";"
 	if "void" in ret_t:
@@ -48,9 +49,10 @@ def cp_ret_lookup(ret_t) :
 
 
 
-### determines the return type and plugs in a value
-### TODO figure out what actually should be returned
 def cp_return_type(signature) :
+	""" determines the return type and plugs in a value"""
+	### TODO figure out what actually should be returned
+	
 	ret = ""
 	tmp = signature.split()
 	if "extern" in tmp[0] or "signed" in tmp[0]:
@@ -60,9 +62,10 @@ def cp_return_type(signature) :
 	return ret
 
 
-### deals with the middle of the function
-### TODO will have to deal with the connection magic
+
 def cp_function_middle(signature) :
+	""" deals with the middle of the function"""
+	### TODO will have to deal with the connection magic
 	middle = ""
 	tmp = signature.split()
 
@@ -71,8 +74,9 @@ def cp_function_middle(signature) :
 	return middle
 
 
-### gets full lol and pulls out the struct statring at i
+
 def cp_get_struct(lol, i) :
+	""" gets full lol and pulls out the struct statring at i"""
 	ret_string = ""
 	ret_string = ret_string +lol[i][-1] + "{\n"
 	### struct starts at i and stops 1 line after the members end
@@ -82,29 +86,30 @@ def cp_get_struct(lol, i) :
 		### TODO deal with const 
 		### TODO nested structs
 		if "signed" in str(lol[i][-1].split()[0]):
-			ret_string = ret_string +" " + str(lol[i][-1].split()[1])+" " + lol[i][SYM_NAME]+";\n"
+			ret_string = ret_string +" " + str(lol[i][-1].split()[1])+" " 
+			ret_string = ret_string + lol[i][SYM_NAME]+";\n"
 	
 	ret_string = ret_string +lol[i+1][-1]+";\n"
 	return ret_string
 
 
-### inputs typedefs into the string
 def cp_get_typedef(signature) :
+	""" inputs typedefs into the string"""
 	tmp = ""
 	tmp = tmp + signature +";\n"
 	return tmp 
 
 
-### function signature 	
 def cp_get_fstring(signature) :
+	"""function signature is returned"""
 	function = str(signature)+" {\n"
 	function = function + cp_function_middle(signature)
 	return function+"\n}\n"
 
 
 
-### write c code
 def cp_write_c(lol, filename) :
+	""" write c code"""
 	c_code = ""
 	
 	### deals with typedefs that are not structs
@@ -121,15 +126,15 @@ def cp_write_c(lol, filename) :
 		if item[TYPE] == "prototype":
 			c_code = c_code + cp_get_fstring(item[SIGNATURE])
 	os.system("touch "+OUT_PATH+filename+".andi")
-	f = cp_my_open_file(OUT_PATH+filename+".andi", "w+")
+	f_out = cp_my_open_file(OUT_PATH+filename+".andi", "w+")
 	cp_my_debug(c_code)
-	f.write(c_code)
-	cp_my_close_file(f)
+	f_out.write(c_code)
+	cp_my_close_file(f_out)
 
 
 
-### parses the ctags file (stores element 0,1,4)
 def cp_parse_ctags(filename):
+	""" parses the ctags file (stores element 0,1,4)"""
 	### local list of lists
 	lol = []
 	### open file for reading 
@@ -137,7 +142,7 @@ def cp_parse_ctags(filename):
 	
 	### parses each line of ctags file
 	for line in f:
-		tmp = line.split(None,4)
+		tmp = line.split(None, 4)
 		tmp = cp_cleanup(tmp)
 		lol.append(tmp) 
    
