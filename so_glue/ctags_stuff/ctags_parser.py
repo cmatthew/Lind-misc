@@ -47,6 +47,9 @@ def cp_ret_lookup(ret_t) :
 		return str(0)+";"
 	if "void" in ret_t:
 		return ";"
+	else : 
+		### TODO: THIS IS A HACK. Fix it!!!
+		return str(0) + ";"
 
 
 
