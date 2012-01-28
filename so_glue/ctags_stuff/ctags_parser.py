@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 """
 ctags_parser.py
 	This file parses ctags output file and produces compilable C code.
@@ -29,32 +28,33 @@ SIGNATURE = 4
 OUT_PATH = "./output/"
 c_file = ""
 
+
 def _cp_my_debug (message) :
 	""" cp_my_debug --
-		Prints message to console
-	Arguments:
-		message	text to be printed to console
-	Result: 
-		message is printed to the console
+	#	Prints message to console
+	#Arguments:
+	#	message	text to be printed to console
+	#Result: 
+	#	message is printed to the console
 	"""
 	print message
 
 
 def _cp_my_open_file(target, mode = "r"):
 	""" cp_my_open_file
-		Opens target file
-	Arguments:
-		target 	file to open
-		mode		mode of open, defaults to read only
+	#	Opens target file
+	#Arguments:
+	#	target 	file to open
+	#	mode	mode of open, defaults to read only
 	"""
 	return open(target, mode)
 
 
 def _cp_my_close_file(target):
 	""" cp_my_close_file
-		Closes target file
-	Arguments:
-		target	file to close
+	#	Closes target file
+	#Arguments:
+	#	target	file to close
 	"""
 	target.close()
 
@@ -62,8 +62,13 @@ def _cp_my_close_file(target):
 
 
 def cp_cleanup(strings) :
-	"""Removes the unneeded colums from ctags
-	
+	""" cp_cleanup
+	#	Removes the unneeded colums from ctags, removes newline at end of line
+	#Arguments:
+	#	strings	each line of ctags output is parsed and split into columns
+	#		strings ['SYM_NAME','TYPE','LINE_NUM','SOURCE_FILE','SIGNATURE']
+	#Results:
+	#	Cleaned up data structure, containing only the columns we need
 	"""
 #	del strings[2]
 	strings[-1] = strings[-1].split(";")[0]
