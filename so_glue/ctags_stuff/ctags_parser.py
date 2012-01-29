@@ -32,9 +32,9 @@ c_file = ""
 def _cp_my_debug (message) :
 	""" cp_my_debug --
 	#	Prints message to console
-	#Arguments:
+	# Arguments:
 	#	message	text to be printed to console
-	#Result: 
+	# Result: 
 	#	message is printed to the console
 	"""
 	print message
@@ -43,7 +43,7 @@ def _cp_my_debug (message) :
 def _cp_my_open_file(target, mode = "r"):
 	""" cp_my_open_file
 	#	Opens target file
-	#Arguments:
+	# Arguments:
 	#	target 	file to open
 	#	mode	mode of open, defaults to read only
 	"""
@@ -53,21 +53,19 @@ def _cp_my_open_file(target, mode = "r"):
 def _cp_my_close_file(target):
 	""" cp_my_close_file
 	#	Closes target file
-	#Arguments:
+	# Arguments:
 	#	target	file to close
 	"""
 	target.close()
 
 
-
-
 def cp_cleanup(strings) :
 	""" cp_cleanup
 	#	Removes the unneeded colums from ctags, removes newline at end of line
-	#Arguments:
+	# Arguments:
 	#	strings	each line of ctags output is parsed and split into columns
 	#		strings ['SYM_NAME','TYPE','LINE_NUM','SOURCE_FILE','SIGNATURE']
-	#Results:
+	# Results:
 	#	Cleaned up data structure, containing only the columns we need
 	"""
 #	del strings[2]
@@ -79,8 +77,13 @@ def cp_cleanup(strings) :
 
 
 def cp_ret_lookup(ret_t) :
-	""" actually does the work determining what should actually be returned 
-	
+	""" cp_ret_lookup
+	#	Actually does the work determining what should actually be returned
+	#	based on the signatures return type the 
+	# Arguments:
+	#	ret_t	first OR second word of the function signature (int bla()=>int)
+	# Result:
+	#	value that allows for compilable C code to be generated
 	"""
 	### TODO figure out what actually should be returned -- coordinate with 
 	###	cp_return_type. Import it and put in different class
@@ -93,10 +96,14 @@ def cp_ret_lookup(ret_t) :
 		return str(0) + ";"
 
 
-
 def cp_return_type(signature) :
-	""" determines the return type and plugs in a value
-	
+	""" cp_return_type
+	# Determines the return type and a return value. Later this will be
+	#	changed to return the result of the server-call
+	# Arguments:
+	#	signature	function signature as delivered by ctags
+	# Result:
+	#	string of the form "return <value>;"
 	"""
 	### TODO figure out what actually should be returned
 	
@@ -109,10 +116,18 @@ def cp_return_type(signature) :
 	return ret
 
 
-
 def cp_function_middle(signature) :
-	""" deals with the middle of the function
-	
+	""" cp_function_middle
+	# Deals with the middle of the function. A function should look like this:
+	#	<signature> {
+	#	[<connection magic>]
+	#	return <client-server-call()>;
+	#	}
+	# Arguments:
+	#	signature	signature of the function as delivered by ctags
+	# Result:
+	#	body of the function, including the return statement (i.e the part
+	#	between the '{' '}'
 	"""
 	### TODO will have to deal with the connection magic
 	middle = ""
@@ -123,10 +138,15 @@ def cp_function_middle(signature) :
 	return middle
 
 
-
 def cp_get_struct(lol, i) :
-	""" gets full lol and pulls out the struct statring at i
-	
+	""" cp_get_struct
+	# Gets full lol and pulls out the struct statring at i. Intended to deal
+	#	with multi-line structs, tyedef structs, etc.
+	# Arguments:
+	#	lol	list of lists. Contains line by line representation of ctags
+	#	i	current location in lol, starting point of struct
+	# Result:
+	#	Compilable struct and C code built from ctags information
 	"""
 	ret_string = ""
 	ret_string += lol[i][-1] + "{\n"
@@ -134,7 +154,7 @@ def cp_get_struct(lol, i) :
 	while lol[i+1][TYPE] == "member" :
 		i = i + 1
 		if "," in str(lol[i][-1]) and "[" in str(lol[i][-1]):
-			ret_string += "/* Look into this and FIXME: line "
+			ret_string += "/* Look into this and FIX ME: line "
 			ret_string +=  str(lol[i][LINE_NUM]) + "*/ "
 			ret_string +=  str(lol[i][SIGNATURE]) + ";\n"
 			line_num = lol[i][LINE_NUM]
@@ -159,30 +179,38 @@ def cp_get_struct(lol, i) :
 	return ret_string
 
 
-
 def cp_get_typedef(signature) :
-	""" inputs typedefs into the string
-	
+	""" _cp_get_typedef
+	# Inputs single line typedefs that are not structs into the C file
+	# Arguments:
+	#	signature	signature as delivered by ctags
+	# Result:
+	#	<signature>;"
 	"""
-	tmp = ""
-	tmp += signature +";\n"
-	return tmp 
-
-
+	return signature +";\n"
+	
 
 def cp_get_fstring(signature) :
-	"""function signature is returned
-	
+	""" cp_get_fstring
+	# Complete function is returned
+	# Arguments:
+	#	signature	string from SIGNATURE colum of ctags output
+	# Result:
+	#	C code of the enture function, signature and body
 	"""
 	function = str(signature)+" {\n"
-	function = function + cp_function_middle(signature)
+	function += cp_function_middle(signature)
 	return function+"\n}\n"
 
 
-
 def cp_write_c(lol, filename) :
-	""" write c code
-	
+	""" cp_write_c
+	# Write c code, typedefs first, then structs, then functions
+	# Arguments:
+	#	lol	list of lists, a line by line representation of ctags output
+	#	filename	filename of header file, used to construct name of output file
+	# Result:
+	#	New file in filesystem, client code of RPC with fully compilable C code
 	"""
 	c_code = ""
 	
@@ -206,10 +234,14 @@ def cp_write_c(lol, filename) :
 	_cp_my_close_file(f_out)
 
 
-
 def cp_parse_ctags(filename):
-	""" parses the ctags file into memory 
-	
+	""" cp_parse_ctags
+	# Parses the ctags file into memory, stores it in lol (list of lists)
+	# Arguments:
+	#	filename	output from ctags run
+	# Result:
+	#	Data structure lol is populated, each item in lol contains 1 line from
+	#	the ctags file
 	"""
 	### local list of lists
 	lol = []
@@ -227,16 +259,20 @@ def cp_parse_ctags(filename):
 	return lol
 
 
-
-### starts execution of the program
 def main(filename) :
+	""" main
+	#	Controls the program execution
+	# Arguments:
+	#	filename	name of ctags output file
+	#	Result:
+	#	compilable C code for RPC client and RPC server
+	"""
 	### lol (list of lists) contains each elemet I need to deal with 
 	lol = []
 	### parses the ctags file and populates lol
 	lol = cp_parse_ctags(filename)   
 	### writes out c code using each element in lol
 	cp_write_c(lol, filename)
-
 
 
 ### standard main for python
