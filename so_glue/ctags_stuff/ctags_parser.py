@@ -26,7 +26,6 @@ LINE_NUM = 2
 SOURCE_FILE = 3
 SIGNATURE = 4
 OUT_PATH = "./output/"
-c_file = ""
 
 
 def _cp_my_debug (message) :
@@ -278,8 +277,8 @@ def main(filename) :
 ### standard main for python
 if __name__ == "__main__":
 	if len(sys.argv) > 1:
-		filename = sys.argv[1]
-		main(filename)
+		FILE_NAME = sys.argv[1]
+		main(FILE_NAME)
 	else :
 		_cp_my_debug("no input file")
 		sys.exit()
