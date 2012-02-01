@@ -75,6 +75,20 @@ def cp_cleanup(strings) :
 	return strings
 
 
+def cp_middle_magic(sig) :
+	""" cp_middle_magic
+	# Generates the code/function to connect client and server.
+	# Constructs a function with the arguments that need to be send
+	# Arguments:
+	#	sig	function signature as provided by ctags
+	# Result:
+	# 	middle_string	C code to call function in my library with the right
+	#		number of arguments to be sent accross the network
+	"""
+	sig = sig # pylint likes this better than not using the var
+	return ""
+
+
 def cp_ret_lookup(ret_t) :
 	""" cp_ret_lookup
 	#	Actually does the work determining what should actually be returned
@@ -130,10 +144,15 @@ def cp_function_middle(signature) :
 	"""
 	### TODO will have to deal with the connection magic
 	middle = ""
-
-	return_statement = cp_return_type(signature)
+	return_statement = ""
+	middle += cp_middle_magic(signature)
+	# return statement returns int so that it compiles
+	# later we return middle_magic();
+	return_statement += cp_return_type(signature)
 	middle += return_statement
-	return middle
+	middle = middle # pylint likes this better than not using the var
+	return return_statement
+	# return middle
 
 
 def cp_get_struct(lol, i) :
@@ -213,7 +232,7 @@ def cp_write_c(lol, filename) :
 	c_code = ""
 	
 	### deals with typedefs that are not structs
-	member = False
+	#member = False """ do I need to look into this """
 	for i in range(len(lol)) :
 		if lol[i][TYPE] == "typedef" and lol[i-1][TYPE] != "member":
 			c_code += cp_get_typedef(lol[i][SIGNATURE])
