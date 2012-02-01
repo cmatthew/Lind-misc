@@ -130,7 +130,6 @@ def cp_function_middle(signature) :
 	"""
 	### TODO will have to deal with the connection magic
 	middle = ""
-	tmp = signature.split()
 
 	return_statement = cp_return_type(signature)
 	middle += return_statement
