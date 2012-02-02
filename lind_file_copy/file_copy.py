@@ -327,10 +327,10 @@ def main():
         f.close()
     except IOError, e:
         lind_fs_calls._blank_fs_init()
-    # except KeyError,e:
-    #     print "Error: I have failed to open the file system. The metadata is corrupt"
-    #     #TODO something better?
-    #     sys.exit(1)
+    except KeyError,e:
+        print "Error: I have failed to open the file system. The metadata is corrupt"
+        #TODO something better?
+        sys.exit(1)
     #set up the arg parser to parse the args to the program
     parser = argparse.ArgumentParser(description='Allows the user to manage their lind file systems, and copy files in')
     parser.add_argument('interactive', metavar='-', nargs='?', type=str, help='If specified, the program runs in interactive mode')
