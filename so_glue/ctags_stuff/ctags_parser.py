@@ -220,26 +220,49 @@ def cp_get_fstring(signature) :
 	return function+"\n}\n"
 
 
-def cp_write_c(lol, filename) :
+def cp_user_includes(original_c_file) :
+	""" cp_user_includes
+	# Parses user code to include the same header files. Only searches for
+	#	includes of the format #include <foo> (not #include "foo")
+	# Arguments:
+	#	original_c_file	C code from user that uses standard library
+	# Result:
+	#	string of includes: #include <foo.h>
+	"""
+	ret_s = ""
+	user_code = _cp_my_open_file(original_c_file)
+	### go through it line by line and check for #include
+	for line in user_code:
+		if "#include" in line:
+			ret_s += line 
+
+
+	_cp_my_close_file(user_code)
+	return ret_s
+
+def cp_write_c(lol, filename, orig_c_file) :
 	""" cp_write_c
 	# Write c code, typedefs first, then structs, then functions
 	# Arguments:
 	#	lol	list of lists, a line by line representation of ctags output
 	#	filename	filename of header file, used to construct name of output file
+	#	orig_c_file	original user C code
 	# Result:
 	#	New file in filesystem, client code of RPC with fully compilable C code
 	"""
 	c_code = ""
 	
+	### include the same headers that the user prog included
+	c_code += cp_user_includes(orig_c_file)
 	### deals with typedefs that are not structs
 	#member = False """ do I need to look into this """
 	for i in range(len(lol)) :
 		if lol[i][TYPE] == "typedef" and lol[i-1][TYPE] != "member":
 			c_code += cp_get_typedef(lol[i][SIGNATURE])
 	### deals with structs => Probably wont need this anymore
-	"""for i in range(len(lol)):
-		if lol[i][TYPE] == "struct":
-			c_code += cp_get_struct(lol, i)"""
+	#"""for i in range(len(lol)):
+	#	if lol[i][TYPE] == "struct":
+	#		c_code += cp_get_struct(lol, i)"""
 	### deals with prototypes
 	for item in lol :
 		if item[TYPE] == "prototype":
@@ -276,11 +299,12 @@ def cp_parse_ctags(filename):
 	return lol
 
 
-def main(filename) :
+def main(filename, original_f) :
 	""" main
 	#	Controls the program execution
 	# Arguments:
 	#	filename	name of ctags output file
+	#	original_f	original user C code
 	#	Result:
 	#	compilable C code for RPC client and RPC server
 	"""
@@ -289,15 +313,16 @@ def main(filename) :
 	### parses the ctags file and populates lol
 	lol = cp_parse_ctags(filename)   
 	### writes out c code using each element in lol
-	cp_write_c(lol, filename)
+	cp_write_c(lol, filename, original_f)
 
 
 ### standard main for python
 if __name__ == "__main__":
-	if len(sys.argv) > 1:
+	if len(sys.argv) == 3:
 		FILE_NAME = sys.argv[1]
-		main(FILE_NAME)
+		ORIGINAL_FILE = sys.argv[2]
+		main(FILE_NAME, ORIGINAL_FILE)
 	else :
-		_cp_my_debug("no input file")
+		_cp_my_debug("Usage: ./ctags_parser.py <tags_file> <original_file>")
 		sys.exit()
 
