@@ -245,7 +245,11 @@ def cat_cmd(input_list):
             if len(s) == 0:
                 break
 
-
+def wipe_cmd(input_list):
+    """wipe this file system"""
+    lind_fs_calls._blank_fs_init()
+    print "Filesystem wiped"
+    
 
 #prints the children of the current directory
 def ls_cmd(input_list):
@@ -324,6 +328,8 @@ def parse_input(input_string):
         md5_cmd(input_list[1:])
     elif(cmd == "cat"):
         cat_cmd(input_list[1:])
+    elif(cmd == "wipe"):
+        wipe_cmd(input_list[1:])
         
     else:
         print "%s is not a recognized command" % cmd
