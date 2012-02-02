@@ -309,7 +309,7 @@ def parse_input(input_string):
         cpout_cmd(input_list[1:])
     elif(cmd == "ls"):
         ls_cmd(input_list[1:])
-    elif(cmd == "md5sum"):
+    elif(cmd == "md5sum" or cmd == "md5"):
         md5_cmd(input_list[1:])
         
     else:
@@ -349,7 +349,7 @@ def main():
         input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
 
         #loop until the user hits exit, prompting them to enter a command at each iteration
-        while((not input_value == "exit")):
+        while not (input_value == "exit" or input_value == "quit"):
             parse_input(input_value)
             input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
 
