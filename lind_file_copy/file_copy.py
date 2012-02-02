@@ -232,7 +232,7 @@ def md5_cmd(input_list):
             m.update(s)
             if len(s) == 0:
                 break
-        print filename + ":\t" + m.hexdigest()
+        print m.hexdigest() + "  " + filename
             
 
 
@@ -309,7 +309,7 @@ def parse_input(input_string):
         cpout_cmd(input_list[1:])
     elif(cmd == "ls"):
         ls_cmd(input_list[1:])
-    elif(cmd == "md5"):
+    elif(cmd == "md5sum"):
         md5_cmd(input_list[1:])
         
     else:
