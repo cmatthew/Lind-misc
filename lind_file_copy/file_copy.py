@@ -4,7 +4,7 @@ import sys
 import os
 import stat
 import argparse
-
+import hashlib
 
 # add repy install path to script
 path = os.getenv("REPY_PATH")
@@ -221,6 +221,20 @@ def cd_cmd(input_list):
 
 
 
+#prints the children of the current directory
+def md5_cmd(input_list):
+    """print the md5 digest of all the files"""
+    for filename in input_list:
+        m = hashlib.md5()
+        lindfd = lind_fs_calls.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        while True:
+            s = lind_fs_calls.read_syscall(lindfd,4096)
+            m.update(s)
+            if len(s) == 0:
+                break
+        print filename + ":\t" + m.hexdigest()
+            
+
 
 #prints the children of the current directory
 def ls_cmd(input_list):
@@ -295,6 +309,9 @@ def parse_input(input_string):
         cpout_cmd(input_list[1:])
     elif(cmd == "ls"):
         ls_cmd(input_list[1:])
+    elif(cmd == "md5"):
+        md5_cmd(input_list[1:])
+        
     else:
         print "%s is not a recognized command" % cmd
 
