@@ -233,7 +233,18 @@ def md5_cmd(input_list):
             if len(s) == 0:
                 break
         print m.hexdigest() + "  " + filename
-            
+
+
+def cat_cmd(input_list):
+    """print the contents of all the files"""
+    for filename in input_list:
+        lindfd = lind_fs_calls.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        while True:
+            s = lind_fs_calls.read_syscall(lindfd,4096)
+            print s
+            if len(s) == 0:
+                break
+
 
 
 #prints the children of the current directory
@@ -311,6 +322,8 @@ def parse_input(input_string):
         ls_cmd(input_list[1:])
     elif(cmd == "md5sum" or cmd == "md5"):
         md5_cmd(input_list[1:])
+    elif(cmd == "cat"):
+        cat_cmd(input_list[1:])
         
     else:
         print "%s is not a recognized command" % cmd
