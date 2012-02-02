@@ -236,10 +236,10 @@ def cp_write_c(lol, filename) :
 	for i in range(len(lol)) :
 		if lol[i][TYPE] == "typedef" and lol[i-1][TYPE] != "member":
 			c_code += cp_get_typedef(lol[i][SIGNATURE])
-	### deals with structs
-	for i in range(len(lol)):
+	### deals with structs => Probably wont need this anymore
+	"""for i in range(len(lol)):
 		if lol[i][TYPE] == "struct":
-			c_code += cp_get_struct(lol, i)
+			c_code += cp_get_struct(lol, i)"""
 	### deals with prototypes
 	for item in lol :
 		if item[TYPE] == "prototype":
