@@ -87,7 +87,6 @@ def cp_middle_magic(sig) :
 	"""
 	if "int x" in sig:
 		return "mm_int_test(int x)"
-	sig = sig # pylint likes this better than not using the var
 	return ""
 
 
