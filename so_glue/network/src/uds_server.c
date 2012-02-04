@@ -4,76 +4,83 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-
-int connection_handler(int connection_fd)
+int UNIX_PATH_MAX = 40;
+int
+connection_handler (int connection_fd)
 {
-	 int nbytes;
-	  char buffer[256];
+  int nbytes;
+  char buffer[256];
 
-	   nbytes = read(connection_fd, buffer, 256);
-		 buffer[nbytes] = 0;
+  nbytes = read (connection_fd, buffer, 256);
+  buffer[nbytes] = 0;
 
-		  printf("MESSAGE FROM CLIENT: %s\n", buffer);
-		   nbytes = snprintf(buffer, 256, "hello from the server");
-			 write(connection_fd, buffer, nbytes);
-			  
-			   close(connection_fd);
-				 return 0;
+  printf ("MESSAGE FROM CLIENT: %s\n", (buffer));
+  printf("debug: %s\n", buffer);
+  int tmp;
+  tmp = atoi(buffer)*2;
+  printf("debug: %d\n", atoi(buffer)*2);
+  printf("debug: %d\n", tmp);
+  nbytes = snprintf (buffer, 256, "hello from server");
+  sprintf(buffer, "%d", tmp);
+  write (connection_fd, buffer, nbytes);
+
+  close (connection_fd);
+
+  return 0;
 }
 
-int main(void)
+int
+main (void)
 {
-	 struct sockaddr_un address;
-	  int socket_fd, connection_fd;
-	   socklen_t address_length;
-		 pid_t child;
-		  
-		   socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
-			 if(socket_fd < 0)
-				  {
-					    printf("socket() failed\n");
-						   return 1;
-							 } 
+  struct sockaddr_un address;
+  int socket_fd, connection_fd;
+  socklen_t address_length;
+  pid_t child;
 
-							  unlink("./demo_socket");
+  socket_fd = socket (PF_UNIX, SOCK_STREAM, 0);
+  if (socket_fd < 0)
+    {
+      printf ("socket() failed\n");
+      return 1;
+    }
 
-							   /* start with a clean address structure */
-								 memset(&address, 0, sizeof(struct sockaddr_un));
+  unlink ("./../output/demo_socket");
 
-								  address.sun_family = AF_UNIX;
-								   snprintf(address.sun_path, UNIX_PATH_MAX, "./demo_socket");
+  /* start with a clean address structure */
+  memset (&address, 0, sizeof (struct sockaddr_un));
 
-									 if(bind(socket_fd, 
-										          (struct sockaddr *) &address, 
-													          sizeof(struct sockaddr_un)) != 0)
-										  {
-											    printf("bind() failed\n");
-												   return 1;
-													 }
+  address.sun_family = AF_UNIX;
+  snprintf (address.sun_path, UNIX_PATH_MAX, "./../output/demo_socket");
 
-													  if(listen(socket_fd, 5) != 0)
-														   {
-																  printf("listen() failed\n");
-																    return 1;
-																	  }
+  if (bind (socket_fd,
+	    (struct sockaddr *) &address, sizeof (struct sockaddr_un)) != 0)
+    {
+      printf ("bind() failed\n");
+      return 1;
+    }
 
-																	   while((connection_fd = accept(socket_fd, 
-																			                               (struct sockaddr *) &address,
-																													                                &address_length)) > -1)
-																			 {
-																				   child = fork();
-																					  if(child == 0)
-																						    {
-																								    /* now inside newly created connection handling process */
-																									    return connection_handler(connection_fd);
-																										   }
+  if (listen (socket_fd, 5) != 0)
+    {
+      printf ("listen() failed\n");
+      return 1;
+    }
 
-																											  /* still inside server process */
-																											    close(connection_fd);
-																												  }
+  while ((connection_fd = accept (socket_fd,
+				  (struct sockaddr *) &address,
+				  &address_length)) > -1)
+    {
+      child = fork ();
+      if (child == 0)
+	{
+	  /* now inside newly created connection handling process */
+	  return connection_handler (connection_fd);
+	}
 
-																												   close(socket_fd);
-																													 unlink("./demo_socket");
-																													  return 0;
+      /* still inside server process */
+      close (connection_fd);
+    }
+
+  close (socket_fd);
+  unlink ("./../output/demo_socket");
+  return 0;
 }
-

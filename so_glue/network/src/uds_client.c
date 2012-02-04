@@ -25,7 +25,7 @@ int cli_connect_int(int x) {
   memset (&address, 0, sizeof (struct sockaddr_un));
 
   address.sun_family = AF_UNIX;
-  snprintf (address.sun_path, UNIX_PATH_MAX, "./../../network/demo_socket");
+  snprintf (address.sun_path, UNIX_PATH_MAX, "./../../network/output/demo_socket");
 
   if (connect (socket_fd,
 	       (struct sockaddr *) &address,
@@ -37,8 +37,8 @@ int cli_connect_int(int x) {
 
   nbytes = snprintf (buffer, 256, "hello from a client");
   //write (socket_fd, buffer, nbytes);
-
-	write (socket_fd, &x, sizeof(x));
+	sprintf(buffer, "%d", x);
+	write (socket_fd, buffer , nbytes);
   nbytes = read (socket_fd, buffer, 256);
   buffer[nbytes] = 0;
 
