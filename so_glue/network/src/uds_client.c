@@ -3,16 +3,17 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <string.h>
+#include "uds_helper.h"
+
 
 int UNIX_PATH_MAX = 100;
 
-
 int cli_connect_int(int x) {
 
-	
   struct sockaddr_un address;
   int socket_fd, nbytes;
-  char buffer[256];
+  char buffer[MSG_SIZE];
+	memset(buffer, 'a', MSG_SIZE);
 
   socket_fd = socket (PF_UNIX, SOCK_STREAM, 0);
   if (socket_fd < 0)
@@ -35,18 +36,34 @@ int cli_connect_int(int x) {
       return 1;
     }
 
-  nbytes = snprintf (buffer, 256, "hello from a client");
+  //nbytes = snprintf (buffer, MSG_SIZE, "hello from a client");
   //write (socket_fd, buffer, nbytes);
+//	sprintf(buffer, "%d", x);
 	sprintf(buffer, "%d", x);
-	write (socket_fd, buffer , nbytes);
-  nbytes = read (socket_fd, buffer, 256);
+	int j;
+	for (j = 0; j <50; j++) {
+		printf("%c", buffer[j]);
+	}
+	printf("\n");
+	
+	write (socket_fd, buffer , MSG_SIZE);
+  nbytes = read (socket_fd, buffer, MSG_SIZE);
+	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
+	int i;
+	for (i = 0; i < 40; i++) {
+		printf("%c ", buffer[i]);
+	}
+	printf ("\n");
+
   buffer[nbytes] = 0;
 
+	message *andi = (message *) buffer;
+	printf ("MESSAGE FROM ANDI: %s\n", andi->call_num);
   printf ("MESSAGE FROM SERVER: %s\n", buffer);
 
   close (socket_fd);
 
-  return 0;
+  return atoi(buffer);
 
 
 }

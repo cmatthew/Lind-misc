@@ -4,26 +4,31 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+#include "uds_helper.h"
+
 int UNIX_PATH_MAX = 40;
 int
 connection_handler (int connection_fd)
 {
   int nbytes;
-  char buffer[256];
-
-  nbytes = read (connection_fd, buffer, 256);
+  char buffer[MSG_SIZE];
+	message *andi;
+  nbytes = read (connection_fd, buffer, MSG_SIZE);
   buffer[nbytes] = 0;
-
-  printf ("MESSAGE FROM CLIENT: %s\n", (buffer));
-  printf("debug: %s\n", buffer);
+	andi = (message *) buffer;
+  printf ("MESSAGE FROM CLIENT: %d\n", atoi((buffer)));
+  printf ("MESSAGE FROM ANDI: %s\n", andi->msg_size);
+ // printf("debug: %s\n", buffer);
   int tmp;
-  tmp = atoi(buffer)*2;
+  sprintf(andi->call_num, "%d", atoi(buffer)*3);
   printf("debug: %d\n", atoi(buffer)*2);
   printf("debug: %d\n", tmp);
-  nbytes = snprintf (buffer, 256, "hello from server");
-  sprintf(buffer, "%d", tmp);
-  write (connection_fd, buffer, nbytes);
-
+  
+  //nbytes = snprintf (buffer, 256, "hello from server");
+  
+  //sprintf(buffer, "%d", tmp);
+  //write (connection_fd, buffer, nbytes);
+	write(connection_fd, andi, 30);
   close (connection_fd);
 
   return 0;
