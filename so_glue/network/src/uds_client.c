@@ -45,19 +45,21 @@ int cli_connect_int(int x) {
 		printf("%c", buffer[j]);
 	}
 	printf("\n");
-	
-	write (socket_fd, buffer , MSG_SIZE);
-  nbytes = read (socket_fd, buffer, MSG_SIZE);
+
+
+	message *andi = (message *) buffer;
+	sprintf(andi->num_of_args, "%d", 2);
+	write (socket_fd, andi , MSG_SIZE);
+  nbytes = read (socket_fd, andi, MSG_SIZE);
 	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
 	int i;
-	for (i = 0; i < 40; i++) {
+	for (i = 0; i < 60; i++) {
 		printf("%c ", buffer[i]);
 	}
 	printf ("\n");
 
   buffer[nbytes] = 0;
 
-	message *andi = (message *) buffer;
 	printf ("MESSAGE FROM ANDI: %s\n", andi->call_num);
   printf ("MESSAGE FROM SERVER: %s\n", buffer);
 

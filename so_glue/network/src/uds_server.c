@@ -23,6 +23,7 @@ connection_handler (int connection_fd)
   sprintf(andi->call_num, "%d", atoi(buffer)*3);
   printf("debug: %d\n", atoi(buffer)*2);
   printf("debug: %d\n", tmp);
+  printf("debug: %d\n", atoi(andi->num_of_args));
   
   //nbytes = snprintf (buffer, 256, "hello from server");
   
