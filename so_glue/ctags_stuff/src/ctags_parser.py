@@ -26,7 +26,7 @@ LINE_NUM = 2
 SOURCE_FILE = 3
 SIGNATURE = 4
 OUT_PATH = "../output/"
-
+mm_autogen = "" # "../output/mm_autogen.c"
 
 def _cp_my_debug (message) :
 	""" cp_my_debug --
@@ -73,21 +73,6 @@ def cp_cleanup(strings) :
 		strings[-1] = strings[-1][:-1]
 	
 	return strings
-
-
-def cp_middle_magic(sig) :
-	""" cp_middle_magic
-	# Generates the code/function to connect client and server.
-	# Constructs a function with the arguments that need to be send
-	# Arguments:
-	#	sig	function signature as provided by ctags
-	# Result:
-	# 	middle_string	C code to call function in my library with the right
-	#		number of arguments to be sent accross the network
-	"""
-	if "int x" in sig:
-		return "mm_int_test(int x)"
-	return ""
 
 
 def cp_ret_lookup(ret_t) :
@@ -141,11 +126,54 @@ def cp_middle_magic(sig) :
 	#		number of arguments to be sent accross the network
 	"""
 	ret_str = ""
-	if "int x" in sig:
-		return "return mm_int_test(x);"
-	else :
-		ret_str += cp_return_type(sig)
-		sig = sig # pylint likes this better than not using the var
+	if "int x" in sig or "" in sig:
+		"""disect the signature into its components
+			autogen_info[0]: function name
+			autogen_info[1]: num_of_arguments
+			autogen_info[2;-1]: [sizeof(arg), type, arg]
+		"""
+		autogen_info = []
+		"""getting the function name"""
+		tmp = sig.split('(')
+		autogen_info.append(tmp[0].split()[-1])
+		""" getting the function arguments"""
+		tmp2 = tmp[1].split(')')[0].split(',')
+		tmp = tmp2
+		autogen_info.append(str(len(tmp)))
+		for item in tmp:
+			autogen_info.append("sizeof("+str(item.split()[-1])+")")
+			autogen_info.append(str(item.split()[0:-1]))
+			autogen_info.append(str(item.split()[-1]))
+		#for item in autogen_info:
+		#	print item
+		print "###########################"
+		#	FIX THIS:
+		#	should be: 
+		#	char buffer[4096];
+		#	serialize_foo(the info I just put in autogen_info)
+		#	return mm_send(buffer)
+		""" write stuff out into the main implementation output file"""
+		tmp = ""
+		tmp += "serialize_" + autogen_info[0]+"("
+		for i in range(0,len(autogen_info)):
+			print i
+			if i % 3 == 0:
+				continue
+			if i != 1:
+				tmp += ", "
+			tmp += str(autogen_info[i])
+
+		tmp += ");\n"
+
+		tmp += ""
+		print tmp
+		""" write stub into the mm_middle magic serializer header 
+			to contain serialize_foo() stub. middle_magic_<*.h> will 
+			be generated automatically
+		"""
+	
+		ret_str += "return " + tmp 	
+		#return "return mm_int_test(x);"
 	return ret_str
 
 
@@ -321,7 +349,7 @@ def main(filename, original_f) :
 	# Arguments:
 	#	filename	name of ctags output file
 	#	original_f	original user C code
-	#	Result:
+	# Result:
 	#	compilable C code for RPC client and RPC server
 	"""
 	### lol (list of lists) contains each elemet I need to deal with 

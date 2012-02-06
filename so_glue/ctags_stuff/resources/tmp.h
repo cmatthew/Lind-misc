@@ -4,7 +4,7 @@
 
 
 int foo(int x);
-
+unsigned int foo_add(int x, int y);
 
 #include <eti.h> /* works */
 #include <crypt.h> /* works */
