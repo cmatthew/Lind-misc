@@ -172,9 +172,12 @@ def cp_fill_mm_code(info):
 			i += 1
 			mm_sig += ", int arg" + str(i/(offset+1)) + "_size, "
 			continue
-		mm_sig += info[i].replace("'", "").replace("[", "").replace(",", "")\
-			.replace("]","")
-		mm_sig += " " + info[i+1]#.replace('*', "")
+		if "void" in info[i+1]:
+			mm_sig += "int x /* FIX ME */"
+		else:
+			mm_sig += info[i].replace("'", "").replace("[", "").replace(",", "")\
+				.replace("]","")
+			mm_sig += " " + info[i+1]#.replace('*', "")
 		i += 2
 		
 	mm_sig += ");\n"
@@ -191,8 +194,8 @@ def cp_middle_magic(sig) :
 	# Arguments:
 	#	sig	function signature as provided by ctags
 	# Result:
-	# 	middle_string	C code to call function in my library with the right
-	#		number of arguments to be sent accross the network
+	# 	ret_str	C code to call function in my library with the right
+	#		number of arguments to be sent accross the network. Local impl!!!
 	"""
 	ret_str = ""
 	if "int x" in sig or "" in sig:
@@ -225,7 +228,9 @@ def cp_middle_magic(sig) :
 				continue
 			if i != 1:
 				tmp += ", "
-			if "*" in autogen_info[i] :
+			if "void" in autogen_info[i]:
+				tmp += "0 /* FIX ME */"
+			elif "*" in autogen_info[i] :
 				tmp += autogen_info[i].replace('*', "")
 			else :
 				tmp += (autogen_info[i])
@@ -340,7 +345,6 @@ def cp_user_includes(original_c_file) :
 	#	string of includes: #include <foo.h>
 	"""
 	ret_s = '#include "../../network/src/middle_magic.h"\n'
-	ret_s += '#include "'+ mm_h_out +'"\n'
 	user_code = _cp_my_open_file(original_c_file)
 	### go through it line by line and check for #include
 	for line in user_code:
@@ -366,6 +370,7 @@ def cp_write_c(lol, filename, orig_c_file) :
 	c_code += cp_user_includes(orig_c_file)
 	cp_write_headers('#include "' + mm_h_out + '"\n', mm_c_out)
 	cp_write_headers(c_code, mm_h_out)
+	c_code +=  '#include "'+ mm_h_out +'"\n'
 	### deals with typedefs that are not structs
 	#member = False """ do I need to look into this """
 	for i in range(len(lol)) :
