@@ -30,7 +30,7 @@ ctags --c-types=+p -x ../output/tmp2.h >	../output/tagstmp.h
 sort -k 3,3n ../output/tagstmp.h > ../output/tagstmp2.h
 mv ../output/tagstmp2.h ../output/tagstmp.h
 #./simplify.py xxx$1
-./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
+pycallgraph --include-timing="*" ./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
 mv ../output/tagstmp.h.andi "../test/tmptest.c"
 cp ../output/tmp.h "../test/tmptest.h"
 #./parser.py complexxxx$1
