@@ -29,6 +29,10 @@ OUT_PATH = "../output/"
 mm_autogen = "" # "../output/mm_autogen.c"
 mm_code = ""
 
+mm_c_out = ""
+mm_h_out = ""
+
+
 def _cp_my_debug (message) :
 	""" cp_my_debug --
 	#	Prints message to console
@@ -40,7 +44,7 @@ def _cp_my_debug (message) :
 	print message
 
 
-def _cp_my_open_file(target, mode = "r"):
+def _cp_my_open_file(target, mode = 'r'):
 	""" cp_my_open_file
 	#	Opens target file
 	# Arguments:
@@ -115,16 +119,32 @@ def cp_return_type(signature) :
 		ret += "return " + cp_ret_lookup(tmp[0])
 	return ret
 
-def cp_write_mm_magic(target):
+def cp_write_mm_magic_c(value):
 	"""
 		total bla
 	"""
+	target = _cp_my_open_file(mm_c_out, 'a')
+	target.write(value[0:-2])
+	target.write("{\n\treturn 0;\n}\n\n")
+	_cp_my_close_file(target)
 
 
-def cp_write_mm_magic_code(target):
+def cp_write_mm_magic_h(value):
 	"""
 	total bla too
 	"""
+### open file for append
+	target = _cp_my_open_file(mm_h_out, 'a')
+### write out the target 
+	target.write(value)
+	_cp_my_close_file(target)
+
+def cp_write_headers(includes, target_file) :
+	target = _cp_my_open_file(target_file, 'a')
+	target.write(includes+"\n")
+	_cp_my_close_file(target)
+	### write include header to mm_c_out and mm_h_out
+
 
 def cp_fill_mm_code(info):
 	""" cp_fill_mm_code
@@ -137,7 +157,10 @@ def cp_fill_mm_code(info):
 	global mm_code
 	mm_sig = ""
 	i = 0
-	mm_sig += "int serialize_" + str(info[0])+ "("
+	if '*' in info[0]:
+		mm_sig += "int *serialize_"+str(info[0].replace('*', "")) + "("
+	else :
+		mm_sig += "int serialize_" + str(info[0])+ "("
 	offset = 2 
 	i = 1 
 	while i < len(info):
@@ -149,17 +172,15 @@ def cp_fill_mm_code(info):
 			i += 1
 			mm_sig += ", int arg" + str(i/(offset+1)) + "_size, "
 			continue
-#		if i != 3 :
-#			mm_sig += ", "
 		mm_sig += info[i].replace("'", "").replace("[", "").replace(",", "")\
 			.replace("]","")
-		mm_sig += " " + info[i+1]
+		mm_sig += " " + info[i+1]#.replace('*', "")
 		i += 2
 		
 	mm_sig += ");\n"
 	""" write sig out into *.h and *.c then populate *.c"""
-	cp_write_mm_magic(mm_sig)
-	cp_write_mm_magic_code(mm_sig)
+	cp_write_mm_magic_c(mm_sig)
+	cp_write_mm_magic_h(mm_sig)
 	mm_code += mm_sig
 	
 
@@ -192,28 +213,26 @@ def cp_middle_magic(sig) :
 			autogen_info.append("sizeof("+str(item.split()[-1])+")")
 			autogen_info.append(str(item.split()[0:-1]))
 			autogen_info.append(str(item.split()[-1]))
-		#for item in autogen_info:
-		#	print item
-		print "###########################"
-		#	FIX THIS:
-		#	should be: 
-		#	char buffer[4096];
-		#	serialize_foo(the info I just put in autogen_info)
-		#	return mm_send(buffer)
 		""" write stuff out into the main implementation output file"""
 		tmp = ""
-		tmp += "serialize_" + autogen_info[0]+"("
+		if '*' in autogen_info[0]:
+			tmp += "*serialize_" + autogen_info[0].replace('*', "")+"("
+		else : 
+			tmp += "serialize_" + autogen_info[0]+"("
 		for i in range(0,len(autogen_info)):
+			
 			if i % 3 == 0:
 				continue
 			if i != 1:
 				tmp += ", "
-			tmp += (autogen_info[i])
+			if "*" in autogen_info[i] :
+				tmp += autogen_info[i].replace('*', "")
+			else :
+				tmp += (autogen_info[i])
 
 		tmp += ");\n"
 
 		tmp += ""
-		print tmp 
 		""" write stub into the mm_middle magic serializer header 
 			to contain serialize_foo() stub. middle_magic_<*.h> will 
 			be generated automatically
@@ -221,7 +240,6 @@ def cp_middle_magic(sig) :
 		cp_fill_mm_code(autogen_info)
 	
 		ret_str += "return " + tmp 	
-		#return "return mm_int_test(x);"
 	return ret_str
 
 
@@ -322,6 +340,7 @@ def cp_user_includes(original_c_file) :
 	#	string of includes: #include <foo.h>
 	"""
 	ret_s = '#include "../../network/src/middle_magic.h"\n'
+	ret_s += '#include "'+ mm_h_out +'"\n'
 	user_code = _cp_my_open_file(original_c_file)
 	### go through it line by line and check for #include
 	for line in user_code:
@@ -345,6 +364,8 @@ def cp_write_c(lol, filename, orig_c_file) :
 	c_code = ""
 	### include the same headers that the user prog included
 	c_code += cp_user_includes(orig_c_file)
+	cp_write_headers('#include "' + mm_h_out + '"\n', mm_c_out)
+	cp_write_headers(c_code, mm_h_out)
 	### deals with typedefs that are not structs
 	#member = False """ do I need to look into this """
 	for i in range(len(lol)) :
@@ -363,8 +384,8 @@ def cp_write_c(lol, filename, orig_c_file) :
 	_cp_my_debug(c_code)
 	f_out.write(c_code)
 	_cp_my_close_file(f_out)
-	print "$$$$$$$$$$$$$$$$$$$$$$$$"
-	print mm_code
+	_cp_my_debug("$$$$$$$$$$$$$$$$$$$$$$$$")
+	_cp_my_debug(mm_code)
 
 
 def cp_parse_ctags(filename):
@@ -411,10 +432,15 @@ def main(filename, original_f) :
 
 ### standard main for python
 if __name__ == "__main__":
-	if len(sys.argv) == 3:
+	if len(sys.argv) == 5:
+		global _MM_C_OUT
+		global _MM_H_OUT
 		FILE_NAME = sys.argv[1]
 		ORIGINAL_FILE = sys.argv[2]
+		mm_c_out = sys.argv[3]
+		mm_h_out = sys.argv[4]
 		main(FILE_NAME, ORIGINAL_FILE)
+
 	else :
 		_cp_my_debug("Usage: ./ctags_parser.py <tags_file> <original_file>")
 		sys.exit()
