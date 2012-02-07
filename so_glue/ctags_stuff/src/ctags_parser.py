@@ -27,6 +27,7 @@ SOURCE_FILE = 3
 SIGNATURE = 4
 OUT_PATH = "../output/"
 mm_autogen = "" # "../output/mm_autogen.c"
+mm_code = ""
 
 def _cp_my_debug (message) :
 	""" cp_my_debug --
@@ -114,6 +115,53 @@ def cp_return_type(signature) :
 		ret += "return " + cp_ret_lookup(tmp[0])
 	return ret
 
+def cp_write_mm_magic(target):
+	"""
+		total bla
+	"""
+
+
+def cp_write_mm_magic_code(target):
+	"""
+	total bla too
+	"""
+
+def cp_fill_mm_code(info):
+	""" cp_fill_mm_code
+	# Generates the middle magic implementation of the serialization stubs
+	# Arguments:
+	#	info	parsed list of the function signature including arguments
+	# Result:
+	#	side effects are at the global variable mm_code
+	"""
+	global mm_code
+	mm_sig = ""
+	i = 0
+	mm_sig += "int serialize_" + str(info[0])+ "("
+	offset = 2 
+	i = 1 
+	while i < len(info):
+		if i == 1 :
+			mm_sig += "int num_of_args"
+			i += 1
+			continue
+		if (i - offset) % 3 == 0: 
+			i += 1
+			mm_sig += ", int arg" + str(i/(offset+1)) + "_size, "
+			continue
+#		if i != 3 :
+#			mm_sig += ", "
+		mm_sig += info[i].replace("'", "").replace("[", "").replace(",", "")\
+			.replace("]","")
+		mm_sig += " " + info[i+1]
+		i += 2
+		
+	mm_sig += ");\n"
+	""" write sig out into *.h and *.c then populate *.c"""
+	cp_write_mm_magic(mm_sig)
+	cp_write_mm_magic_code(mm_sig)
+	mm_code += mm_sig
+	
 
 def cp_middle_magic(sig) :
 	""" cp_middle_magic
@@ -156,21 +204,21 @@ def cp_middle_magic(sig) :
 		tmp = ""
 		tmp += "serialize_" + autogen_info[0]+"("
 		for i in range(0,len(autogen_info)):
-			print i
 			if i % 3 == 0:
 				continue
 			if i != 1:
 				tmp += ", "
-			tmp += str(autogen_info[i])
+			tmp += (autogen_info[i])
 
 		tmp += ");\n"
 
 		tmp += ""
-		print tmp
+		print tmp 
 		""" write stub into the mm_middle magic serializer header 
 			to contain serialize_foo() stub. middle_magic_<*.h> will 
 			be generated automatically
 		"""
+		cp_fill_mm_code(autogen_info)
 	
 		ret_str += "return " + tmp 	
 		#return "return mm_int_test(x);"
@@ -295,7 +343,6 @@ def cp_write_c(lol, filename, orig_c_file) :
 	#	New file in filesystem, client code of RPC with fully compilable C code
 	"""
 	c_code = ""
-	
 	### include the same headers that the user prog included
 	c_code += cp_user_includes(orig_c_file)
 	### deals with typedefs that are not structs
@@ -316,6 +363,8 @@ def cp_write_c(lol, filename, orig_c_file) :
 	_cp_my_debug(c_code)
 	f_out.write(c_code)
 	_cp_my_close_file(f_out)
+	print "$$$$$$$$$$$$$$$$$$$$$$$$"
+	print mm_code
 
 
 def cp_parse_ctags(filename):
