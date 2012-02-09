@@ -14,13 +14,17 @@ all_executables: test
 test: ../output/user.o ../../network/output/middle_magic.o \
 		../../network/output/uds_client.o 
 	$(CC) $(LINK_FLAGS) -o test ../output/user.o ../output/tmptest.o \
-		../../network/output/middle_magic.o ../../network/output/uds_client.o
+		../../network/output/middle_magic.o ../../network/output/uds_client.o \
+		../output/tagstmp.o
 
 ../output/user.o: user.c ../output/tmptest.o #diskinfo.h parser.h execute.h
 	$(CC) $(COMPILE_FLAGS) -o ../output/user.o user.c
 
-../output/tmptest.o: tmptest.c ../../network/output/middle_magic.o
+../output/tmptest.o: tmptest.c ../output/tagstmp.o ../../network/output/middle_magic.o
 	$(CC) $(COMPILE_FLAGS) -o ../output/tmptest.o tmptest.c
+
+../output/tagstmp.o: ../output/tagstmp_mm.c
+	$(CC) $(COMPILE_FLAGS) -o ../output/tagstmp.o ../output/tagstmp_mm.c
 
 ../../network/output/middle_magic.o: ../../network/src/middle_magic.c ../../network/output/uds_client.o
 	$(CC) $(COMPILE_FLAGS) -o ../../network/output/middle_magic.o ../../network/src/middle_magic.c
