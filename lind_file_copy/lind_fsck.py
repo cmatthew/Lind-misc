@@ -94,6 +94,7 @@ def loop_through_dir_tree_recursive(inode_num, full_path, make_changes_flag):
 		lind_fs_calls.filesystemmetadata['inodetable'][inode_num]
 	except KeyError, e:
 		#the inode doesn't exist, so return that to the caller
+		print "here"
 		return error_types.inode_not_found
 	
 	#check to see if the inode's mode is zero...if it IS zero, something funky has happened....
