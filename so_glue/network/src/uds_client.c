@@ -3,12 +3,64 @@
 #include <sys/un.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #include "uds_helper.h"
+
 
 
 int UNIX_PATH_MAX = 100;
 
-int cli_connect_int(int x) {
+int cli_connect_buffer(message * andi) {
+	
+	struct sockaddr_un address;
+  int socket_fd, nbytes;
+
+  socket_fd = socket (PF_UNIX, SOCK_STREAM, 0);
+  if (socket_fd < 0)
+    {
+      printf ("socket() failed\n");
+      return 1;
+    }
+
+  
+  memset (&address, 0, sizeof (struct sockaddr_un));
+
+  address.sun_family = AF_UNIX;
+  snprintf (address.sun_path, UNIX_PATH_MAX, "./../../network/output/demo_socket");
+
+  if (connect (socket_fd,
+	       (struct sockaddr *) &address,
+	       sizeof (struct sockaddr_un)) != 0)
+    {
+      printf ("connect() failed\n");
+      return 1;
+    }
+	printf("message size: %s\n", andi->msg_size);
+	write (socket_fd, andi , MSG_SIZE);
+  nbytes = read (socket_fd, andi, MSG_SIZE);
+	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
+	int i;
+	for (i = 0; i < 100; i++) {
+		printf("%c ", andi[i]);
+	}
+	printf ("\n");
+
+  
+
+	printf ("MESSAGE FROM ANDI: %s\n", andi->msg_size);
+  printf ("MESSAGE FROM SERVER: %s\n", andi->call_num);
+
+  close (socket_fd);
+
+  return atoi(andi->call_num);
+
+	
+	printf("printing this here: %d\n", atoi(andi->msg_size));
+	return 12345;
+}
+
+
+int cli_connect_int(x) {
 
   struct sockaddr_un address;
   int socket_fd, nbytes;
@@ -51,7 +103,7 @@ int cli_connect_int(int x) {
 	sprintf(andi->num_of_args, "%d", 2);
 	write (socket_fd, andi , MSG_SIZE);
   nbytes = read (socket_fd, andi, MSG_SIZE);
-	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
+	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
 	int i;
 	for (i = 0; i < 60; i++) {
 		printf("%c ", buffer[i]);
@@ -65,7 +117,7 @@ int cli_connect_int(int x) {
 
   close (socket_fd);
 
-  return atoi(buffer);
+  return atoi(andi->call_num);
 
 
 }

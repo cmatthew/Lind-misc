@@ -31,7 +31,8 @@ MM_CODE = ""
 
 MM_C_OUT = ""
 MM_H_OUT = ""
-
+CUR_CALL_NUM = 0
+CALL_NUM_DICT = dict()
 
 def _cp_my_debug (message) :
 	""" cp_my_debug --
@@ -81,6 +82,36 @@ def cp_cleanup(strings) :
 
 
 
+def cp_serialize(serialize_me) :
+	""" cp_serialize
+	# Produces code that seriailzed all parameters coming in
+	# Arguments:
+	#	serialize_me	function signature
+	# Result:
+	#	ser_code	C code for serialization
+	"""
+	_cp_my_debug(serialize_me)
+	tmp = serialize_me.split("(")[1].split(")")[0]
+	tmp = tmp.split(',')
+	tmp2 = []
+	for item in tmp:
+		if "void" in item:
+			tmp2.append("call_num /*FIX ME*/")
+		else:
+			tmp2.append(item.split()[-1])
+	tmp = tmp2
+	ser_code = ""
+	ser_code += "int nbytes;\n\tnbytes = 0;\n"
+	size = 4096
+	ser_code += 'nbytes = sprintf(&buffer[nbytes], "%d",'+str(size)+');\n '
+	for item in tmp:
+		ser_code += '\tnbytes = sprintf(&buffer[nbytes], "%d", ' + str(item) \
+			+ ") + 1;\n"
+	#print ser_code
+	#sys.exit()
+	return ser_code 
+
+
 def cp_write_mm_magic_c(value):
 	""" _cp_write_mm_magic_c
 	# Writes contents of to the MM_C_OUT (serialization and mashalling)
@@ -91,7 +122,10 @@ def cp_write_mm_magic_c(value):
 	"""
 	target = _cp_my_open_file(MM_C_OUT, 'a')
 	target.write(value[0:-2])
-	target.write("{\n\treturn 0;\n}\n\n")
+	target.write("{\n\t")
+	target.write('memset(buffer, 0, BUF_SIZE);\n')
+	target.write(cp_serialize(value))
+	target.write("\treturn cli_connect_buffer(buffer);\n}\n\n")
 	_cp_my_close_file(target)
 
 
@@ -103,7 +137,7 @@ def cp_write_mm_magic_h(value):
 	# Result:
 	#	sideeffects happen in the globablly specified file MM_H_OUT
 	"""
-	
+
 	# open file for append 
 	target = _cp_my_open_file(MM_H_OUT, 'a')
 	# write out the target 
@@ -135,6 +169,8 @@ def cp_fill_MM_CODE(info):
 	#	side effects are at the global variable MM_CODE
 	"""
 	global MM_CODE
+	global CUR_CALL_NUM
+	# get info needed to write out strings
 	mm_sig = ""
 	i = 0
 	if '*' in info[0]:
@@ -153,15 +189,16 @@ def cp_fill_MM_CODE(info):
 			mm_sig += ", int arg" + str(i/(offset+1)) + "_size, "
 			continue
 		if "void" in info[i+1]:
-			mm_sig += "int x /* FIX ME */"
+			mm_sig += "int x/*FIXME*/"
 		else:
 			mm_sig += info[i].replace("'", "").replace("[", "").replace(",", "")\
 				.replace("]","")
 			mm_sig += " " + info[i+1]#.replace('*', "")
 		i += 2
-		
+	
+	mm_sig += ", int call_num" 
 	mm_sig += ");\n"
-	""" write sig out into *.h and *.c then populate *.c"""
+	# write sig out into *.h and *.c then populate *.c
 	cp_write_mm_magic_c(mm_sig)
 	cp_write_mm_magic_h(mm_sig)
 	MM_CODE += mm_sig
@@ -177,6 +214,8 @@ def cp_middle_magic(sig) :
 	# 	ret_str	C code to call function in my library with the right
 	#		number of arguments to be sent accross the network. Local impl!!!
 	"""
+	global CUR_CALL_NUM
+	global CALL_NUM_DICT
 	ret_str = ""
 	# catch all, it appears to work ????
 	if "int x" in sig or "" in sig: 
@@ -215,24 +254,24 @@ def cp_middle_magic(sig) :
 				tmp += ", "
 			# User inspection required to figure out what is happening
 			if "void" in autogen_info[i]:
-				tmp += "0 /* FIX ME */"
+				tmp += "0/*FIX ME*/"
 				# we can generally infer what happens (hopefully)
 				# pointers don't need the * in this case
 			elif "*" in autogen_info[i] :
 				tmp += autogen_info[i].replace('*', "")
 			else :
 				tmp += (autogen_info[i])
-
+		tmp += ", " + str(CUR_CALL_NUM)
+		CALL_NUM_DICT[CUR_CALL_NUM] = str(autogen_info[0])
+		CUR_CALL_NUM += 1
 		tmp += ");\n"
 
-		# write stub into the mm_middle magic serializer header 
-		# to contain serialize_foo() stub. middle_magic_<*.h> will 
+		#write to contain serialize_foo() stub. middle_magic_<*.h> will
 		# be generated automatically
-		
 		cp_fill_MM_CODE(autogen_info)
+		
 		# return value will be appended to the local implementation of the 
 		# implementation.
-		
 		ret_str += "return " + tmp 	
 	return ret_str
 
@@ -252,6 +291,8 @@ def cp_function_middle(signature) :
 	#	body of the function, including the return statement (i.e the part
 	#	between the '{' '}'
 	"""
+	# kick this function out it doesn't need to be here since it does nothing,
+	# just call _cp_middle_magic(signature) directly
 	middle = ""
 	middle += cp_middle_magic(signature)
 	return middle
@@ -318,6 +359,8 @@ def cp_write_c(lol, filename, orig_c_file) :
 	c_code += cp_user_includes(orig_c_file)
 	cp_write_headers('#include "' + MM_H_OUT + '"\n', MM_C_OUT)
 	cp_write_headers(c_code, MM_H_OUT)
+	cp_write_headers("#include <string.h>\n#include <stdio.h>\n\n", MM_C_OUT)
+	cp_write_headers("#define BUF_SIZE 4094\nchar buffer[BUF_SIZE];\n", MM_C_OUT)
 	c_code +=  '#include "'+ MM_H_OUT +'"\n'
 	### deals with typedefs that are not structs
 	#member = False """ do I need to look into this """
