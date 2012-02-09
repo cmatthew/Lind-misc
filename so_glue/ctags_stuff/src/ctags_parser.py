@@ -103,10 +103,31 @@ def cp_serialize(serialize_me) :
 	ser_code = ""
 	ser_code += "int nbytes;\n\tnbytes = 0;\n"
 	size = 4096
-	ser_code += 'nbytes = sprintf(&buffer[nbytes], "%d",'+str(size)+');\n '
-	for item in tmp:
-		ser_code += '\tnbytes = sprintf(&buffer[nbytes], "%d", ' + str(item) \
-			+ ") + 1;\n"
+	# msg_size
+	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",'+str(size)+')+10;\n '
+	# call_num
+	ser_code += '\tnbytes += sprintf(&buffer[10], "%d",'+ str(tmp[-1])+')+10;\n '
+	# version_num ==> faked
+	ser_code += '\tnbytes += sprintf(&buffer[20], "%d",'+str(0)+')+10;\n '
+	# flags => faked
+	ser_code += '\tnbytes += sprintf(&buffer[30], "%d",'+str(0)+')+10;\n '
+	# num_of_args
+	ser_code += '\tnbytes += sprintf(&buffer[40], "%d",'+ tmp[0]+')+10;\n'
+	ser_code += '\tnbytes = 50;\n'
+	for i in range(1, len(tmp)-1) :
+		if i % 2 == 1 : 
+			ser_code += '\tsprintf(&buffer[nbytes], "%d", ' + tmp[i]+')+1;\n'
+			ser_code += '\tnbytes += 10;\n'
+		else :
+			ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",' + tmp[i]+')+1;\n'
+
+
+
+
+
+	#for item in tmp:
+	#	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d", ' + str(item) \
+	#		+ ") + 1;\n"
 	#print ser_code
 	#sys.exit()
 	return ser_code 
@@ -333,7 +354,8 @@ def cp_user_includes(original_c_file) :
 	# Result:
 	#	string of includes: #include <foo.h>
 	"""
-	ret_s = '#include "../../network/src/middle_magic.h"\n'
+	ret_s = ""
+	#ret_s = '#include "../../network/src/middle_magic.h"\n'
 	user_code = _cp_my_open_file(original_c_file)
 	### go through it line by line and check for #include
 	for line in user_code:

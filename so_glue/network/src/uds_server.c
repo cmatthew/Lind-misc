@@ -22,9 +22,24 @@ connection_handler (int connection_fd)
  // printf("debug: %s\n", buffer);
   int tmp;
   tmp = 0;
-  sprintf(andi->call_num, "%d", atoi(buffer)*3);
+  //sprintf(andi->call_num, "%d", atoi(buffer)*3);
   printf("debug: %d\n", atoi(buffer)*2);
-  printf("debug: %d\n", tmp);
+  printf("andi->msg_size: %s\n", andi->msg_size);
+  printf("andi->call_num: %s\n", andi->call_num);
+  printf("andi->version_num: %s\n", andi->version_num);
+  printf("andi->flags: %s\n", andi->flags);
+  printf("andi->num_of_args: %s\n", andi->num_of_args);
+  printf("andi->data: %s, %d\n", andi->data, strlen(andi->data));
+ 	int i;
+	tmp = 0;
+	for ( i = tmp; i < 100; i++) {
+		if((andi->data[i]) == '\0') {
+			printf("X");
+		}
+		printf("%c", andi->data[i]);
+	}
+	printf ("\n");
+  printf("debug: %s\n", andi->call_num);
   printf("debug: %d\n", atoi(andi->num_of_args));
   
   //nbytes = snprintf (buffer, 256, "hello from server");

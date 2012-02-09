@@ -5,13 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include "uds_helper.h"
-
+#include "uds_client.h"
 
 
 int UNIX_PATH_MAX = 100;
 
-int cli_connect_buffer(message * andi) {
+int cli_connect_buffer(char * buffer) {
 	
+	message *andi;
+	andi = (message *) buffer;
 	struct sockaddr_un address;
   int socket_fd, nbytes;
 
@@ -35,20 +37,23 @@ int cli_connect_buffer(message * andi) {
       printf ("connect() failed\n");
       return 1;
     }
-	printf("message size: %s\n", andi->msg_size);
+	printf("message size: %s, %s\n", andi->msg_size, andi->call_num);
 	write (socket_fd, andi , MSG_SIZE);
   nbytes = read (socket_fd, andi, MSG_SIZE);
 	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
 	int i;
 	for (i = 0; i < 100; i++) {
-		printf("%c ", andi[i]);
+		if (&andi[i] == '\0') {
+			printf("X");
+		}
+		printf("%c ", &andi[i]);
 	}
-	printf ("\n");
+	printf ("<<\n");
 
   
 
-	printf ("MESSAGE FROM ANDI: %s\n", andi->msg_size);
-  printf ("MESSAGE FROM SERVER: %s\n", andi->call_num);
+	printf ("MESSAGE FROM ANDI: %d\n", andi->msg_size);
+  printf ("MESSAGE FROM SERVER: %d\n", andi->call_num);
 
   close (socket_fd);
 
