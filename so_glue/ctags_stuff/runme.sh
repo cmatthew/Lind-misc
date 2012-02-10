@@ -31,7 +31,7 @@ ctags --c-types=+p -x xxx$1 >	tags$1
 sort -k 3,3n tags$1 > tmp
 mv tmp tags$1
 #./simplify.py xxx$1
-#./ctags_parser.py simplexxx$1
+./ctags_parser.py tags$1 $1 
 #./parser.py complexxxx$1
 #./parser.py xxx$1
 
