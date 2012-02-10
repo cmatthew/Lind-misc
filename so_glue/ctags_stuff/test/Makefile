@@ -14,7 +14,7 @@ all_executables: test
 test: ../output/user.o  \
 		../../network/output/uds_client.o 
 	$(CC) $(LINK_FLAGS) -o test ../output/user.o ../output/tmptest.o \
-		../../network/output/middle_magic.o ../../network/output/uds_client.o \
+		../../network/output/uds_client.o \
 		../output/tagstmp.o
 
 ../output/user.o: user.c ../output/tmptest.o ../output/tagstmp.o #diskinfo.h parser.h execute.h
