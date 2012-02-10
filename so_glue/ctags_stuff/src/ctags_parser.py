@@ -116,22 +116,16 @@ def cp_serialize(serialize_me) :
 	ser_code += 'memcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
 	ser_code += '\tnbytes += sizeof(num_of_args);\n'
 	for i in range(1, len(tmp)-1) :
-		if i % 1 == 0 : 
+		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
+			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i].replace('*', "") +\
+				', sizeof('+str(tmp[i]) +'));\n'
+			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
+		else :
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+str(tmp[i])+'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
-		#else :
-		#	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",' + tmp[i]+')+1;\n'
-
-
-
-
-
-	#for item in tmp:
-	#	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d", ' + str(item) \
-	#		+ ") + 1;\n"
-	#print ser_code
-	#sys.exit()
+	
 	return ser_code 
+
 
 
 def cp_write_mm_magic_c(value):
