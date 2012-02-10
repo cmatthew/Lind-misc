@@ -11,7 +11,10 @@
 int UNIX_PATH_MAX = 100;
 
 int cli_connect_buffer(char * buffer) {
-	
+
+	int s;
+	memcpy(&s, &buffer[0], 4);
+	printf("this worked like this: %d\n", s);
 	message *andi;
 	andi = (message *) buffer;
 	struct sockaddr_un address;
@@ -37,7 +40,9 @@ int cli_connect_buffer(char * buffer) {
       printf ("connect() failed\n");
       return 1;
     }
-	printf("message size: %s, %s\n", andi->msg_size, andi->call_num);
+	 int t;
+	 memcpy(&t, &buffer[0], 4);
+	printf("message size: %d, %d, %d\n", &(andi->msg_size)[0], t, buffer);
 	write (socket_fd, andi , MSG_SIZE);
   nbytes = read (socket_fd, andi, MSG_SIZE);
 	printf("3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333\n");
@@ -52,10 +57,18 @@ int cli_connect_buffer(char * buffer) {
 
   
 
-	printf ("MESSAGE FROM ANDI: %d\n", andi->msg_size);
-  printf ("MESSAGE FROM SERVER: %d\n", andi->call_num);
-
-  close (socket_fd);
+	printf ("MESSAGE FROM ANDI: %d\n", &andi->msg_size);
+	int tmp;
+	memcpy(&tmp, &andi->data, 4);
+  printf ("MESSAGE FROM SERVER: %d\n", andi->data);
+  printf ("MESSAGE FROM SERVER: %d\n", tmp);
+	memcpy(&tmp, &andi->num_of_args, 4);
+	printf("MESSAGE FROM SERVER: %d\n", tmp);
+	memcpy(&tmp, &andi->call_num, 4);
+	printf("MESSAGE FROM SERVER: %d\n", tmp);
+	memcpy(&tmp, &andi->data, 4);
+	printf("MESSAGE FROM SERVER: %d\n", tmp);
+close (socket_fd);
 
   return atoi(andi->call_num);
 

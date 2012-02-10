@@ -102,24 +102,25 @@ def cp_serialize(serialize_me) :
 	tmp = tmp2
 	ser_code = ""
 	ser_code += "int nbytes;\n\tnbytes = 0;\n"
-	size = 4096
 	# msg_size
-	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",'+str(size)+')+10;\n '
+	ser_code += 'memcpy(&buffer[nbytes], &my_s_size, sizeof(my_s_size));\n'
+	ser_code += '\tnbytes += sizeof(my_s_size);\n'
 	# call_num
-	ser_code += '\tnbytes += sprintf(&buffer[10], "%d",'+ str(tmp[-1])+')+10;\n '
+	ser_code += 'memcpy(&buffer[nbytes], &call_num, sizeof(call_num));\n'
+	ser_code += '\tnbytes += sizeof(call_num);\n'
 	# version_num ==> faked
-	ser_code += '\tnbytes += sprintf(&buffer[20], "%d",'+str(0)+')+10;\n '
+	ser_code += '\tnbytes += 4;\n '
 	# flags => faked
-	ser_code += '\tnbytes += sprintf(&buffer[30], "%d",'+str(0)+')+10;\n '
+	ser_code += '\tnbytes += 4;\n '
 	# num_of_args
-	ser_code += '\tnbytes += sprintf(&buffer[40], "%d",'+ tmp[0]+')+10;\n'
-	ser_code += '\tnbytes = 50;\n'
+	ser_code += 'memcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
+	ser_code += '\tnbytes += sizeof(num_of_args);\n'
 	for i in range(1, len(tmp)-1) :
-		if i % 2 == 1 : 
-			ser_code += '\tsprintf(&buffer[nbytes], "%d", ' + tmp[i]+')+1;\n'
-			ser_code += '\tnbytes += 10;\n'
-		else :
-			ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",' + tmp[i]+')+1;\n'
+		if i % 1 == 0 : 
+			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+str(tmp[i])+'));\n'
+			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
+		#else :
+		#	ser_code += '\tnbytes += sprintf(&buffer[nbytes], "%d",' + tmp[i]+')+1;\n'
 
 
 
@@ -144,7 +145,11 @@ def cp_write_mm_magic_c(value):
 	target = _cp_my_open_file(MM_C_OUT, 'a')
 	target.write(value[0:-2])
 	target.write("{\n\t")
-	target.write('memset(buffer, 0, BUF_SIZE);\n')
+	# initialize buffer
+	target.write('memset(buffer, \'\\0\', BUF_SIZE);\n')
+	# set up vars
+	target.write('int my_s_size;\nmy_s_size = BUF_SIZE;\n')
+	# populate common fields
 	target.write(cp_serialize(value))
 	target.write("\treturn cli_connect_buffer(buffer);\n}\n\n")
 	_cp_my_close_file(target)
