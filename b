@@ -98,11 +98,11 @@ function build_sdk {
 }
 
 function test_repy {
-    set -o errexit
+    set +o errexit
     cd $REPY_PATH/repy/
-    for file in ut_lind_fs_*; do 
+    for file in ut_lind_*; do 
 	echo $file 
-	python $file
+	python $file 2>&1 | grep  -vE "object has no attribute 'acquire'"
     done
 }
 
@@ -143,6 +143,8 @@ function build_repy {
     python preparetest.py -t $repy_loc
     cp ${repy_loc}serialize.repy ${repy_loc}serialize.py
     print "Done building Repy in $repy_loc"
+	cd seattlelib
+	etags -l python *.mix *.repy
     cd $here
 }
 
@@ -225,13 +227,15 @@ function build_glibc {
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
-	 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
-	 print "Glibc Build failed"
-	 echo -e "\a"
-	 exit $rc
+		 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
+		 print "Glibc Build failed"
+		 echo -e "\a"
+		 exit $rc
      else
-	 print "Building glibc_64 Succeeded."
+		 print "Building glibc_64 Succeeded."
      fi
+	 cd ~/lind/nacl-glibc/sysdeps/nacl/
+	 etags *.c
      print "Done partial build."
 } 
 

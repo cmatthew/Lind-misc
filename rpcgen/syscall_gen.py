@@ -219,6 +219,28 @@ def is_string(type_arg):
     return type_arg == "char *" or type_arg == "const char *"
 
 
+def determine_reply_size(out_args):
+    """Given an out arugments list,
+    figure out the optimal size of the return buffer.
+    """
+    # find the size of each type 
+    type_sizes = []
+    for types in out_args:
+        if len(types) <= 2:
+            type_sizes.append("sizeof(" + types[0] + ")")
+        else:
+            type_sizes.append(types[2])
+    if not type_sizes:
+        type_sizes = ["0"]
+
+    #make room for the reply header
+    type_sizes.append( "sizeof(lind_reply)")
+
+    # now make the total
+    size_stmt = "size_t reply_size = " + " + ".join(type_sizes) + ";"
+    return (size_stmt, "reply_size")
+
+
 def syscall(name, in_args, ref_args=[], out_args=[]):
     """
     Build a system call rpc call.
@@ -272,10 +294,17 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
     output.append(func_decl(call_name, all_args) + ' {')
 
     # set up the request and reply buffers
+    (setup, reply_size_expr) = determine_reply_size(out_args)
     output.extend(["lind_request request;",
                    "memset(&request, 0, sizeof(request));",
-                   "lind_reply reply;",
-                   "memset(&reply, 0, sizeof(reply));",
+                   setup,
+#                   "nacl_strace(\"" + call_name + "\"); nacl_strace(nacl_itoa(reply_size));",
+                   "lind_reply* reply_buffer = malloc(" + \
+                   reply_size_expr + ");",
+                   "assert(reply_buffer!=NULL);",
+                   "/* These memsets are mainly for saftey.*/",
+                   "memset(reply_buffer, 0, " + reply_size_expr  \
+                   + ");",
 
                    "struct lind_" + name + "_rpc_s args;",
                    "memset(&args, 0, sizeof(struct lind_" + name + "_rpc_s));",
@@ -318,28 +347,30 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
         vargs = "0"
 
     # make the actual RPC call
-    output.append("nacl_rpc_syscall_proxy(&request, &reply, " + vargs + ");")
+    output.append("nacl_rpc_syscall_proxy(&request, reply_buffer, " + vargs + ");")
 
     # now deal with the returned informatoin
     check_ret_code = ["/* on error return negative so we can set ERRNO. */",
-                      "if (reply.is_error) {",
-                      "return_code = reply.return_code * -1;",
+                      "if (reply_buffer->is_error) {",
+                      "return_code = reply_buffer->return_code * -1;",
                       "} else {",
-                      "return_code = reply.return_code;"]
+                      "return_code = reply_buffer->return_code;"]
     output.extend(check_ret_code)
 
     # if there is an out arg, check its size and copy it into the target
     if out_args:
         # size check arguement is present
         if len(out_args[0]) == 3:
-            output.append("assert( CONTENTS_SIZ(reply) <= " +
+            output.append("assert( CONTENTS_SIZ(reply_buffer) <= " +
                           out_args[0][2] + ");")
         # copy from the RPC payload to the target pointer
         output.append("void *restrict ptr = " + out_args[0][1] +
                       ";\n" +
-                      "memcpy(ptr, reply.contents, CONTENTS_SIZ(reply));")
+                      "memcpy(ptr, &(reply_buffer->contents), \
+                      CONTENTS_SIZ(reply_buffer));")
     # finally return and close function body
     output.extend(["}",
+                   "free(reply_buffer);",
                   "return return_code;",
                    "}"])
 

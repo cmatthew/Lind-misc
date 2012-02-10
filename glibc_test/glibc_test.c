@@ -18,49 +18,26 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <dirent.h> 
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
-#define FILE_NAME "3f23f9a0c6771d4e79fe0ea7"
-#define FILE_NAME2 "SbdcO1HjzjFxn7qhtr"
-
-
-void exit_message(void) {
-  puts("[output][Hello] Program done.\n");
-  fflush(stdout);
-}
-
+#define FILE_NAME  "3f23f9a0c6771d4e79fe0ea7"
+#define FILE_NAME2 "SbdcO1HjzjFxn7qhtrhjyfvv"
+#define FILE_NAME3 "asdfpomasaetgedkkfelesfm"
+#define FILE_NAME_FSTAT "nghjuuiblkbjgzfasdasdnjk"
 
 void check_fstat(void) {
-  /* code derived from http://codewiki.wikidot.com/c:system-calls:fstat */
-  const char * f_name = "foo.txt";
   int file=0;
-  if((file=open(f_name,O_RDONLY)) < -1)
+  if((file=open(FILE_NAME_FSTAT,O_RDONLY)) < -1)
     return;
  
   struct stat fileStat;
   if(fstat(file,&fileStat) < 0)    
     return;
  
-  printf("Information for %s\n",f_name);
-  printf("---------------------------\n");
-  printf("File Size: \t\t%d bytes\n",(int)fileStat.st_size);
-  printf("Number of Links: \t%d\n",(int)fileStat.st_nlink);
-  printf("File inode: \t\t%d\n",(int)fileStat.st_ino);
- 
-  printf("File Permissions: \t");
-  printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-  printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
-  printf("\n\n");
- 
-  printf("The file %s a symbolic link\n\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
- 
+  assert((int)fileStat.st_size==512);
+  assert((int)fileStat.st_nlink==1);
+  assert (! S_ISLNK(fileStat.st_mode)); 
 
 }
 
@@ -152,18 +129,22 @@ void check_file_write(void) {
 void check_access(void) {
    printf("[output][glibc_test] Access\n");
 
+   /* a simple file which should not exist */
    int access_test = access("afilethatdoesnotexist.txt", W_OK);
-   printf("[output][glibc_test] Access 1 returned %d\n",access_test );
    assert(access_test == -1);
 
+   /* check that longer path names work as well*/
    access_test = access("somevvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvverylongname.txt", R_OK);
-   printf("[output][glibc_test] Access 2 returned %d\n",access_test );
    assert(access_test == -1);
+
+   /* now make a file, and check it is found */
+   FILE* f = fopen(FILE_NAME, "w");
+   assert(f != NULL);
+   fclose(f);
 
    access_test = access(FILE_NAME, R_OK);
-   printf("[output][glibc_test] Access 2 returned %d\n",access_test );
    assert(access_test == 0);
-   
+
 }
 
 #define LINK_FILENAME "foo3.txt"
@@ -242,208 +223,256 @@ void check_rmdir(void) {
    assert(rmdir_test == 0);
    rmdir_test = rmdir("/usr/");
    assert(rmdir_test == 0);
-   rmdir_test = rmdir("/");
-   assert(rmdir_test == -1);
+   /* rmdir_test = rmdir("/"); */
+   /* assert(rmdir_test == -1); */
 }
 
-
-void hello_world(void) {
-  /* printf("unsigned long int %u", sizeof(unsigned long int)); */
-  /* printf("Hello Files\n"); */
-  /* fflush(stdout); */
-
-  /* printf("Sizeof(struct statfs)=%u\n", sizeof(struct statfs)); */
-  /* printf("O_CREAT=%o\nO_ASYNC=%o\nO_WRONLY=%o\n",O_CREAT, O_ASYNC, O_WRONLY); */
-}
 
 #define DOUBLE_OPEN_FILE_NAME "double_open_file"
 
+
+/* One way in which things can break is if we open the same file twice.
+ *  This test case makes sure that works okay.
+ */
 void check_double_open(void) {
-  printf("Doing Double Open Test:\n");
-  char * test = "abcd1234\n";
-  char * test2 = "foo";
-   struct stat fileStat;
-   int f = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY|O_CREAT|O_TRUNC, 0666);
-   if(fstat(f, &fileStat) < 0)    
-    return;
- 
-  printf("Information for %s\n",DOUBLE_OPEN_FILE_NAME);
-  printf("---------------------------\n");
-  printf("File Size: \t\t%d bytes\n",(int)fileStat.st_size);
-  printf("Number of Links: \t%d\n",(int)fileStat.st_nlink);
-  printf("File inode: \t\t%d\n",(int)fileStat.st_ino);
- 
-  printf("File Permissions: \t");
-  printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-  printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
-  printf("\n\n");
- 
-  printf("The file %s a symbolic link\n\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
+  char * a = "hello\n";
+  int f = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+  write(f, a, strlen(a)+1);
+  
 
-
-  int rc = write(f, test, strlen(test)+1);
-  printf("RC=%d\n",rc);
   /* check double opens work */
   int f2 = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY|O_CREAT|O_TRUNC, 0666);
 
-  /* rc = write(f2, test, strlen(test)+1); */
-  printf("RC=%d\n",rc);
-
- 
-  rc = write(f, test2, strlen(test2)+1);
-  printf("RC=%d\n",rc);
-
-
-  if(fstat(f, &fileStat) < 0)    
-    return;
- 
-  printf("Information for %s\n",DOUBLE_OPEN_FILE_NAME);
-  printf("---------------------------\n");
-  printf("File Size: \t\t%d bytes\n",(int)fileStat.st_size);
-  printf("Number of Links: \t%d\n",(int)fileStat.st_nlink);
-  printf("File inode: \t\t%d\n",(int)fileStat.st_ino);
- 
-  printf("File Permissions: \t");
-  printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-  printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
-  printf("\n\n");
- 
-  printf("The file %s a symbolic link\n\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
-
-  if(fstat(f2, &fileStat) < 0)    
-    return;
- 
-  printf("Information for %s\n",DOUBLE_OPEN_FILE_NAME);
-  printf("---------------------------\n");
-  printf("File Size: \t\t%d bytes\n",(int)fileStat.st_size);
-  printf("Number of Links: \t%d\n",(int)fileStat.st_nlink);
-  printf("File inode: \t\t%d\n",(int)fileStat.st_ino);
- 
-  printf("File Permissions: \t");
-  printf( (S_ISDIR(fileStat.st_mode)) ? "d" : "-");
-  printf( (fileStat.st_mode & S_IRUSR) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWUSR) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXUSR) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IRGRP) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWGRP) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXGRP) ? "x" : "-");
-  printf( (fileStat.st_mode & S_IROTH) ? "r" : "-");
-  printf( (fileStat.st_mode & S_IWOTH) ? "w" : "-");
-  printf( (fileStat.st_mode & S_IXOTH) ? "x" : "-");
-  printf("\n\n");
- 
-  printf("The file %s a symbolic link\n\n", (S_ISLNK(fileStat.st_mode)) ? "is" : "is not");
-
-
-
-
-
   close(f2);
+ 
   close(f);
-
-  printf("Done Double Open Test.\n");
-
-
 }
 
+
+void check_two_open(void) {
+  printf("Check Two Open\n");
+  char * a = "hello\n";
+  int f = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+  write(f, a, strlen(a)+1);
+  printf("close1\n");
+  fflush(stdout);
+
+  close(f);
+
+  /* check double opens work */
+  int f2 = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY,0);
+  printf("Close 2\n");
+  fflush(stdout);
+
+  close(f2);
+ 
+  
+}
+
+
+/* Make sure the getdents syscall works */
 void check_readdir(void) {
+  fprintf(stderr,"starting stderr\n");
+  /* FILE *f = fopen("afile","w"); */
+  /* fclose(f); */
   printf("Doing chdir\n");
   assert (chdir("/") == 0);
   printf("Doing Opendir\n");
   DIR* dirp = opendir(".");
+  /*  perror("opening dir:"); */
   assert(dirp != NULL);
   struct dirent * dp = NULL;
   printf("Doing Readdir\n");
-
   while ((dp = readdir(dirp)) != NULL ) {
-    printf("One ent:\n");
-    printf("%s\n", dp->d_name);
-    
+	printf("dp=%p d_ino = %llu, d_off= %llu d_name=%s\n", (void*)dp, dp->d_ino,dp->d_off, dp->d_name);
   }
   printf("Closedir\n");
   closedir(dirp);
 }
 
+/* make sure the statfs syscall works. Most of the values it returns are 
+ hard coded though.  */
 void check_statfs(void) {
     FILE* f = fopen(".", "r");
     struct statfs buf;
     int rc = fstatfs(fileno(f), &buf);
 
-    printf("fstatfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize,
-	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc);
+    /* printf("fstatfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize, */
+    /* 	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc); */
     assert(rc==0);
 
     rc = statfs(".", &buf);
 
-    printf("statfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize,
-	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc);
+    /* printf("statfs: type: %x, bsize %d, blocks %ld, bfree %ld rc=%d\n", buf.f_type, buf.f_bsize, */
+    /* 	   (long int)buf.f_blocks, (long int)buf.f_bfree, rc); */
     assert(rc==0);
     
 }
 
 
+
+/* check the dup and dup2 syscalls work 
+   Right now I can't think how to test these besides making sure they return.
+*/
 void check_dups(void) {
   dup(12);
   dup2(15, 16);
-  
-
 }
 
 
-
+/* CREAT is a special case of open, but check it here anyways.*/
 void check_creat(void) {
   int rc = creat(FILE_NAME2, O_WRONLY);
   assert(rc != 0);
   close(rc);
+}
+
+/* function control currently returns zeros, but check it works anyhow.*/
+void check_fcntl(void) {
+
+  int fd = creat(FILE_NAME3, O_WRONLY);
+  assert(fd != -1);
+  int rc = fcntl(fd, F_GETFD, 0);
+  assert(rc == 0); 		/* we don't have any flags yet. */
   
+}
+/* function control currently returns zeros, but check it works anyhow.*/
+void check_socket(void) {
+
+  int fd = socket(AF_INET, SOCK_STREAM, 0);
+  assert(fd != -1);
+
+  struct sockaddr_in ip4addr;
+
+
+  ip4addr.sin_family = AF_INET;
+  ip4addr.sin_port = htons(3490);
+  inet_pton(AF_INET, "10.0.0.1", &ip4addr.sin_addr);
+
+  int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
+
+  assert(rc == 0);
+  shutdown(fd, SHUT_RD);
+}
+
+#define INT_FN "ints"
+void screaming_files_test(void) {
+  int limit = 2072576; 
+
+  printf("Writing a file of %d bytes.\n", (limit/sizeof(int)));
+  FILE* f = fopen(INT_FN, "w");
+  assert(f != NULL);
+  int size = 0;
+  int i = 0;
+  for (i = 0; i < limit; i++) {
+	size = fwrite(&i, sizeof(int), 1, f);
+	/* assert(size == sizeof(int)); */
+  }
+ 
+  int rc = fclose(f);
+  assert(rc == 0);
+  f = NULL;
+
+  printf("Checking a file of %d bytes.\n", (limit/sizeof(int)));
+
+  /* check we can do a read. */
+  f = fopen(INT_FN, "r");
+  assert(f != NULL);
+  int num = 0;
+  for (i=0; i<limit;i++) {
+	size = fread(&num, sizeof(int), 1, f);
+	assert(num == i);
+  }
+ 
+  fclose(f);
+  f = NULL;
+  printf("Done checking ints\n");
 
 }
 
 
+/* void test_inet_ops(void) { */
+  
+/*   unsigned long addr = 0; */
+/*   int rc = inet_pton(AF_INET, "255.0.255.255", &addr); */
+/*   assert(rc == 1); */
+
+  
+/*   printf(">> %lX\n", addr); */
+/*   rc = inet_pton(AF_INET, "255.0.0.0", &addr); */
+/*   assert(rc == 1); */
+/*   printf(">> %lx\n", addr); */
+/*   rc = inet_pton(AF_INET, "0.255.0.0", &addr); */
+/*   assert(rc == 1); */
+/*   printf(">> %lx\n", addr); */
+/*   rc = inet_pton(AF_INET, "0.0.255.0", &addr); */
+/*   assert(rc == 1); */
+/*   printf(">> %lx\n", addr);  */
+/*   rc = inet_pton(AF_INET, "0.0.0.255", &addr); */
+/*   assert(rc == 1); */
+/*   printf(">> %lx\n", addr); */
+
+/*   printf("sockaddr = %d\n", sizeof(struct sockaddr)); */
+
+/* } */
+
+
+#define BYTE_SIZE 8
+void print_sizes(void)
+{
+
+  int sizeof_int = sizeof(int) * BYTE_SIZE;
+  int sizeof_long = sizeof(long) * BYTE_SIZE;
+  int sizeof_ptr = sizeof(&sizeof_int) * BYTE_SIZE;
+
+  printf("Size of int: %d, long: %d, pointer: %d\n",
+         sizeof_int, sizeof_long, sizeof_ptr );
+  int sizeof_uint = sizeof(unsigned int) * BYTE_SIZE;
+  int sizeof_ulong = sizeof(unsigned long) * BYTE_SIZE;
+
+  printf("Size of unsigned int: %d, unsigned long %d\n",
+         sizeof_uint, sizeof_ulong);
+
+  int sizeof_longint = sizeof(long int) * BYTE_SIZE;
+  int sizeof_longlong = sizeof(long long) * BYTE_SIZE;
+
+  printf("Size of long int: %d, long long: %d\n",
+         sizeof_longint, sizeof_longlong );
+}
+
 
 
 int main() {
+  print_sizes();
+  /* test_inet_ops(); */
+  check_two_open();
 
-  /* hello_world(); */
-  /* check_double_open(); */
-
-  /* check_file_ops(); */
+  check_double_open();
+  check_getpid();
+  
+  check_file_ops();
   check_statfs();
   check_dups();
   check_creat();
-  /* check_readdir(); */
+  check_fcntl();
+  check_access();
 
-  /* exit(0); */
-  /* check_access(); */
-  /* check_getpid();  */
-  /* check_fstat(); */
-  /* check_file_write(); */
-  /* check_mkdir(); */
-  /* check_link(); */
-  /* check_unlink(); */
+  check_two_open();
 
-  /* check_chdir(); */
-  /* check_rmdir(); */
-
+  check_fstat();
+  check_file_write();
+  check_mkdir();
+  check_link();
+  check_unlink();
+  check_chdir();
+  check_rmdir();
+  /* check_socket(); */
   /* check_ioctl(); */
-  /* exit_message(); */
+  check_readdir();
 
-  return 0;
+  check_two_open();
+  screaming_files_test();
+  printf("All tests ran sucessfully!\n");
+  return EXIT_SUCCESS;
 
 }
