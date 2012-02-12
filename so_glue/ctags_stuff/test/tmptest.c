@@ -91,6 +91,6 @@ return serialize_no_comments(1, sizeof(string), string, 20);
 
 }
 char* one_line(char * string) {
-return serialize_one_line(1, sizeof(string), string, 21);
+return *serialize_one_line(1, sizeof(string), string, 21);
 
 }

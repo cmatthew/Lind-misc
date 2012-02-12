@@ -6,49 +6,21 @@
 #include <string.h>
 #include <stdlib.h>
 #include "uds_helper.h"
-
+#include "../../ctags_stuff/output/deserializer.h"
 int UNIX_PATH_MAX = 40;
-int
-connection_handler (int connection_fd)
-{
-  int nbytes;
-  char buffer[MSG_SIZE];
-	message *andi;
-  nbytes = read (connection_fd, buffer, MSG_SIZE);
-  buffer[nbytes] = 0;
-	andi = (message *) buffer;
-  printf ("MESSAGE FROM CLIENT in server: %d\n", atoi((buffer)));
-  printf ("MESSAGE FROM ANDI in server: %d\n", andi->msg_size[0]);
- // printf("debug: %s\n", buffer);
-  int tmp;
-  tmp = 0;
-  //sprintf(andi->call_num, "%d", atoi(buffer)*3);
-  printf("debug: %d\n", atoi(buffer)*2);
-  printf("andi->msg_size: %d\n", andi->msg_size);
-  printf("andi->call_num: %d\n", andi->call_num);
-  printf("andi->version_num: %d\n", andi->version_num);
-  printf("andi->flags: %d\n", andi->flags);
-  printf("andi->num_of_args: %d\n", andi->num_of_args);
-  printf("andi->data: %s, %d\n", andi->data, strlen(andi->data));
- 	int i;
-	tmp = 0;
-	for ( i = tmp; i < 100; i++) {
-		if((andi->data[i]) == '\0') {
-			printf("X");
-		}
-		printf("%c", andi->data[i]);
-	}
-	printf ("\n");
-  printf("debug: %s\n", andi->call_num);
-  printf("debug: %d\n", atoi(andi->num_of_args));
-  
-  //nbytes = snprintf (buffer, 256, "hello from server");
-  
-  //sprintf(buffer, "%d", tmp);
-  //write (connection_fd, buffer, nbytes);
-	write(connection_fd, andi, 30);
-  close (connection_fd);
 
+
+int connection_handler (int connection_fd) {
+	int nbytes;
+	char buffer[MSG_SIZE];
+	message *andi;
+	nbytes = read (connection_fd, buffer, MSG_SIZE);
+	andi = (message *) buffer;
+		
+	
+	write(connection_fd, andi, MSG_SIZE);
+	close (connection_fd);
+	printf("deserialize result: %d\n", des(buffer));
   return 0;
 }
 

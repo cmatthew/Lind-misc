@@ -27,7 +27,7 @@ test: ../output/user.o  \
 	$(CC) $(COMPILE_FLAGS) -o ../output/tagstmp.o ../output/tagstmp_mm.c
 
 
-../../network/output/uds_client.o: ../../network/src/uds_client.c ../../network/src/uds_client.h
+../../network/output/uds_client.o: ../../network/src/uds_client.c ../../network/src/uds_client.h ../../network/src/uds_helper.h
 	$(CC) $(COMPILE_FLAGS) -o ../../network/output/uds_client.o ../../network/src/uds_client.c
 
 

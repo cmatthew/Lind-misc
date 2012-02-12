@@ -101,19 +101,19 @@ def cp_serialize(serialize_me) :
 			tmp2.append(item.split()[-1])
 	tmp = tmp2
 	ser_code = ""
-	ser_code += "int nbytes;\n\tnbytes = 0;\n"
+	ser_code += "\tint nbytes;\n\tnbytes = 0;\n"
 	# msg_size
-	ser_code += 'memcpy(&buffer[nbytes], &my_s_size, sizeof(my_s_size));\n'
+	ser_code += '\tmemcpy(&buffer[nbytes], &my_s_size, sizeof(my_s_size));\n'
 	ser_code += '\tnbytes += sizeof(my_s_size);\n'
 	# call_num
-	ser_code += 'memcpy(&buffer[nbytes], &call_num, sizeof(call_num));\n'
+	ser_code += '\tmemcpy(&buffer[nbytes], &call_num, sizeof(call_num));\n'
 	ser_code += '\tnbytes += sizeof(call_num);\n'
 	# version_num ==> faked
 	ser_code += '\tnbytes += 4;\n '
 	# flags => faked
 	ser_code += '\tnbytes += 4;\n '
 	# num_of_args
-	ser_code += 'memcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
+	ser_code += '\tmemcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
 	ser_code += '\tnbytes += sizeof(num_of_args);\n'
 	for i in range(1, len(tmp)-1) :
 		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
@@ -191,12 +191,18 @@ def cp_fill_MM_CODE(info):
 	global MM_CODE
 	global CUR_CALL_NUM
 	# get info needed to write out strings
+	print info
+	ret_type = info[0].split()[0:-1]
+	info[0] = info[0].split()[-1]
+	print info
+	print ret_type
+	#ret_type = "int"
 	mm_sig = ""
 	i = 0
 	if '*' in info[0]:
-		mm_sig += "int *serialize_"+str(info[0].replace('*', "")) + "("
+		mm_sig += str(ret_type[-1]) + " *serialize_"+str(info[0].replace('*', "")) + "("
 	else :
-		mm_sig += "int serialize_" + str(info[0])+ "("
+		mm_sig += str(ret_type[-1]) + " serialize_" + str(info[0])+ "("
 	offset = 2 
 	i = 1 
 	while i < len(info):
@@ -245,9 +251,9 @@ def cp_middle_magic(sig) :
 		#	autogen_info[2;-1]: [sizeof(arg), type, arg]
 		#
 		autogen_info = []
-		# getting the function name
+		# getting the function name and return type
 		tmp = sig.split('(')
-		autogen_info.append(tmp[0].split()[-1])
+		autogen_info.append(tmp[0])
 		# getting the function arguments
 		tmp2 = tmp[1].split(')')[0].split(',')
 		tmp = tmp2
@@ -263,9 +269,9 @@ def cp_middle_magic(sig) :
 		# write stuff out into the main implementation output file
 		tmp = ""
 		if '*' in autogen_info[0]:
-			tmp += "*serialize_" + autogen_info[0].replace('*', "")+"("
+			tmp += "*serialize_" + autogen_info[0].split()[-1].replace('*', "")+"("
 		else : 
-			tmp += "serialize_" + autogen_info[0]+"("
+			tmp += "serialize_" + autogen_info[0].split()[-1]+"("
 		for i in range(0, len(autogen_info)):
 				
 			if i % 3 == 0:
@@ -293,6 +299,8 @@ def cp_middle_magic(sig) :
 		# return value will be appended to the local implementation of the 
 		# implementation.
 		ret_str += "return " + tmp 	
+		#print tmp
+		#sys.exit(1)
 	return ret_str
 
 
