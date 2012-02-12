@@ -190,13 +190,11 @@ def cp_fill_MM_CODE(info):
 	"""
 	global MM_CODE
 	global CUR_CALL_NUM
+	
 	# get info needed to write out strings
-	print info
 	ret_type = info[0].split()[0:-1]
 	info[0] = info[0].split()[-1]
-	print info
-	print ret_type
-	#ret_type = "int"
+	
 	mm_sig = ""
 	i = 0
 	if '*' in info[0]:
@@ -299,8 +297,6 @@ def cp_middle_magic(sig) :
 		# return value will be appended to the local implementation of the 
 		# implementation.
 		ret_str += "return " + tmp 	
-		#print tmp
-		#sys.exit(1)
 	return ret_str
 
 
