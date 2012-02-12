@@ -121,7 +121,8 @@ def cp_serialize(serialize_me) :
 				', sizeof('+str(tmp[i]) +'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
 		else :
-			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+str(tmp[i])+'));\n'
+			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
+				str(tmp[i])+'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
 	
 	return ser_code 
@@ -198,7 +199,8 @@ def cp_fill_MM_CODE(info):
 	mm_sig = ""
 	i = 0
 	if '*' in info[0]:
-		mm_sig += str(ret_type[-1]) + " *serialize_"+str(info[0].replace('*', "")) + "("
+		mm_sig += str(ret_type[-1]) + " *serialize_"\
+			+str(info[0].replace('*', "")) + "("
 	else :
 		mm_sig += str(ret_type[-1]) + " serialize_" + str(info[0])+ "("
 	offset = 2 
