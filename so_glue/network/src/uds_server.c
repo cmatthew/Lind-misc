@@ -20,7 +20,11 @@ int connection_handler (int connection_fd) {
 	
 	write(connection_fd, andi, MSG_SIZE);
 	close (connection_fd);
-	printf("deserialize result: %d\n", des(buffer));
+	buffer = (char *) des(buffer);
+	int ret_val, ret_size;
+	memcpy(&ret_size, &buffer[0], 4);
+	memcpy(&ret_val, &buffer[4], ret_size);
+	printf("deserialize result: %d\n", ret_val);
   return 0;
 }
 

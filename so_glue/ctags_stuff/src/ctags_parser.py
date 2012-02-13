@@ -80,6 +80,50 @@ def cp_cleanup(strings) :
 	
 	return strings
 
+def cp_deserialize(deserialize_me) :
+	""" cp_serialize
+	# Produces code that seriailzed all parameters coming in
+	# Arguments:
+	#	serialize_me	function signature
+	# Result:
+	#	ser_code	C code for serialization
+	"""
+	_cp_my_debug(serialize_me)
+	tmp = serialize_me.split("(")[1].split(")")[0]
+	tmp = tmp.split(',')
+	tmp2 = []
+	for item in tmp:
+		if "void" in item:
+			tmp2.append("call_num /*FIX ME*/")
+		else:
+			tmp2.append(item.split()[-1])
+	tmp = tmp2
+	ser_code = ""
+	ser_code += "\tint nbytes;\n\tnbytes = 0;\n"
+	# msg_size
+	ser_code += '\tmemcpy(&buffer[nbytes], &my_s_size, sizeof(my_s_size));\n'
+	ser_code += '\tnbytes += sizeof(my_s_size);\n'
+	# call_num
+	ser_code += '\tmemcpy(&buffer[nbytes], &call_num, sizeof(call_num));\n'
+	ser_code += '\tnbytes += sizeof(call_num);\n'
+	# version_num ==> faked
+	ser_code += '\tnbytes += 4;\n '
+	# flags => faked
+	ser_code += '\tnbytes += 4;\n '
+	# num_of_args
+	ser_code += '\tmemcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
+	ser_code += '\tnbytes += sizeof(num_of_args);\n'
+	for i in range(1, len(tmp)-1) :
+		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
+			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i].replace('*', "") +\
+				', sizeof('+str(tmp[i]) +'));\n'
+			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
+		else :
+			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
+				str(tmp[i])+'));\n'
+			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
+	
+	return ser_code 
 
 
 def cp_serialize(serialize_me) :
@@ -96,7 +140,7 @@ def cp_serialize(serialize_me) :
 	tmp2 = []
 	for item in tmp:
 		if "void" in item:
-			tmp2.append("call_num /*FIX ME*/")
+			tmp2.append("call_num /*FIXME*/")
 		else:
 			tmp2.append(item.split()[-1])
 	tmp = tmp2
@@ -353,7 +397,7 @@ def cp_user_includes(original_c_file) :
 	""" cp_user_includes
 	# Parses user code to include the same header files. Only searches for
 	#	includes of the format #include <foo> (not #include "foo"). Also
-	#	include middle_magic.h
+	#	include middle_magic.h => NOT ANYMORE
 	# Arguments:
 	#	original_c_file	C code from user that uses standard library
 	# Result:
