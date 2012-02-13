@@ -11,5 +11,5 @@ setup(name='lindfstools',
       author='Paul Demchuk',
       author_email='pademchuk@gmail.com',
       url='https://github.com/cmatthew/Lind-misc/',
-      scripts=['file_copy.py', 'argparse.py']
+      scripts=['file_copy.py', 'argparse.py', 'lind_fsck.py']
       )
