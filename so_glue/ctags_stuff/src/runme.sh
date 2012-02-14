@@ -9,6 +9,17 @@ if [ $# != 1 ]
    exit
 fi
 
+version_file="version.output"
+
+ctags -V /dev/null > $version_file 
+
+
+if grep -FqE "emacs|Emacs" $version_file
+then
+    echo "Please install full ctags, no etags"
+	exit 1
+fi
+
 
 gcc -E $1 > "../output/tmp.h"
 gcc -fpreprocessed -dD -E "../output/tmp.h" > "../output/tmp2.h"
@@ -27,10 +38,16 @@ sed '/^\#/d' "../output/tmp2.h" > "../output/tmp.h"
 tr "\t" " " < "../output/tmp.h" > "../output/tmp2.h"
 
 ctags --c-types=+p -x ../output/tmp2.h >	../output/tagstmp.h
+cat ../output/tagstmp.h
 sort -k 3,3n ../output/tagstmp.h > ../output/tagstmp2.h
 mv ../output/tagstmp2.h ../output/tagstmp.h
 #./simplify.py xxx$1
-pycallgraph --include-timing="*" ./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
+
+
+#type -P pycallgraph &>/dev/null && pycallgraph --include-timing="*"
+#  || echo "PycallGraph Not Found. Skipping.";  
+./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
+
 mv ../output/tagstmp.h.andi "../test/tmptest.c"
 cp ../output/tmp.h "../test/tmptest.h"
 #./parser.py complexxxx$1
