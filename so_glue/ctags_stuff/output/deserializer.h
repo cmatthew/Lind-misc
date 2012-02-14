@@ -1,7 +1,6 @@
+#ifndef _DESERIALIZER_H_
+#define _DESERIALIZER_H_
 
+void * des(void * buffer);
 
-
-//#include "../../network/src/uds_helper.h"
-
-char * des(char * buffer);
-
+#endif /* _DESERIALIZER_H_ */

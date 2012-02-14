@@ -8,7 +8,6 @@ int main () {
 //	printf("foo passing in %d, getting out %d\n", x, foo(x));
 	printf("foo passing in %d, %d and getting out %d\n", x,y, foo_add(x, y));
 	
-	MD4_CTX * test_MD4;
 //	printf("hmmm: %d\n", MD4_Init(test_MD4));
 	return 0;
 }

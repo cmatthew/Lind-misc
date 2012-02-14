@@ -489,6 +489,9 @@ def main(filename, original_f) :
 	# Result:
 	#	compilable C code for RPC client and RPC server
 	"""
+	target = _cp_my_open_file(MM_C_OUT, 'a')
+	target.write("#include \"../../network/src/uds_helper.h\"");
+	_cp_my_close_file(target)
 	### lol (list of lists) contains each elemet I need to deal with 
 	lol = []
 	### parses the ctags file and populates lol

@@ -6,8 +6,6 @@
 
 
 int foo_add(int x, int y) {
-  printf("HelloWorld\n");
-
 	return x + y;
 }
 
@@ -79,7 +77,6 @@ void * des(void * buffer) {
 	switch (msg->call_num) {
 		//case 0: return deserialize_foo(msg); break;
 		case 1: 
-
 		  return (char *) deserialize_foo_add(msg);
           
         default : assert(0);
