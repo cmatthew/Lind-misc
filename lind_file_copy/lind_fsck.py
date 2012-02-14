@@ -91,10 +91,10 @@ def loop_through_dir_tree_recursive(inode_num, full_path, make_changes_flag):
 	
 	#check to see if the inode actually exists
 	try:
+		
 		lind_fs_calls.filesystemmetadata['inodetable'][inode_num]
 	except KeyError, e:
 		#the inode doesn't exist, so return that to the caller
-		print "here"
 		return error_types.inode_not_found
 	
 	#check to see if the inode's mode is zero...if it IS zero, something funky has happened....
@@ -131,7 +131,7 @@ def loop_through_dir_tree_recursive(inode_num, full_path, make_changes_flag):
 	#if the current inode IS a directory, recursively call this function on each of its children		
 	else:
 		for child_name, child_num in lind_fs_calls.filesystemmetadata['inodetable'][inode_num]['filename_to_inode_dict'].items():
-			
+
 			#we do not want to recursively call the function on the inode itself, its parent, or the root.
 			if not child_name == ".." and not child_name == "." and not child_num == 0:
 				
@@ -181,7 +181,7 @@ def main():
 	except IOError, e:
 		lind_fs_calls._blank_fs_init()
 	else:
-		
+				
 		loop_through_dir_tree_recursive(0, "", make_changes_flag)				
 		#check_paths_correctness()
 	
