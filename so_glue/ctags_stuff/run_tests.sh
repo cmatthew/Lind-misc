@@ -19,7 +19,7 @@ make all
 
 cd ../../network/output/
 ./uds_server &
-
+sleep 1
 cd ../../ctags_stuff/test/
 ./test
 killall uds_server

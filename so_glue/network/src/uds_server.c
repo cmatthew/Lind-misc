@@ -15,11 +15,20 @@ int MSG_SIZE = _MSG_SIZE;
 int connection_handler (int connection_fd) {
 	int nbytes = -1;
 	char * buffer = malloc(MSG_SIZE);
+
+	printf("in the CLIENT x: %d; y: %d\n", 1, 2);
 	/* message *andi; */
 	/* int rc = -1;  /\* return codes for system calls. *\/ */
 	nbytes = read (connection_fd, buffer, MSG_SIZE);
-	buffer = (char *) des(buffer);
-
+	buffer = (void *) des(buffer);
+	
+	message * reply = (message *) buffer;
+	
+	int rc = write(connection_fd, reply, MSG_SIZE);
+	memcpy(&nbytes, &(reply->data)[0], 4);
+	printf("return value in the SERVER: %d, %d\n", nbytes,*&(reply->data)[0]);
+	return nbytes;
+	
 	return 0;
 
 	/* andi = (message *) buffer; */

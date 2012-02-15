@@ -3,8 +3,8 @@
 
 int main () {
 	int x, y;
-	x = 128;
-	y = -20482048; 
+	x = 100;
+	y = 200; 
 //	printf("foo passing in %d, getting out %d\n", x, foo(x));
 	printf("foo passing in %d, %d and getting out %d\n", x,y, foo_add(x, y));
 	

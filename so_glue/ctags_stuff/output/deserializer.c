@@ -6,7 +6,7 @@
 
 
 int foo_add(int x, int y) {
-  printf("HelloWorld\n");
+  printf("HelloWorld %d\n", x+y);
   return x + y;
 }
 
@@ -36,20 +36,20 @@ message * deserialize_foo_add(message *msg) {
   int start;
 	start = 0;
 	A1_TYPE *x;
-	int *y;
+	A2_TYPE *y;
 
-	size_t offset = sizeof(size_t);
+	int offset = sizeof(int);
 
 	x = (A1_TYPE *) (msg->data + offset);
 	
 	offset += sizeof(A1_TYPE);
-	offset += sizeof(size_t);
+	offset += sizeof(int);
 	  
 
-	y = (A1_TYPE*) msg->data + offset;
+	y = (A2_TYPE *) (msg->data + offset) ;
 	
 	printf("this is x: %d\n", *x);
-	printf("this is y: %d\n", *y);
+	printf("this is y: %d and the offset %d\n", *y, offset);
 
 	/* make the real call: foo_add(x, y) and memcpy it into buffer */
 	int ret_val;
@@ -64,7 +64,10 @@ message * deserialize_foo_add(message *msg) {
 
 	reply->msg_size = sizeof(ret_val);
 	reply->num_of_args = 1;
-	memcpy(&(reply->data), &ret_val, sizeof(ret_val));; 
+	memcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));
+	int tmp;
+	memcpy(&tmp, &(reply->data)[0], 4);
+	printf("the value i WANT to return %d, %d, %d\n", ret_val, &(reply->data), tmp);
 	return reply;
 }
 

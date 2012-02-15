@@ -12,7 +12,7 @@
 
 int UNIX_PATH_MAX = PATH_MAX;
 
-int MSG_SIZE = 100;
+int MSG_SIZE = 4096;
 
 /* int cli_connect_buffer(char * buffer)
  * Receives a buffer of size 4096 and forwards it to the server
@@ -24,15 +24,12 @@ int MSG_SIZE = 100;
  *		specified somewhere in the buffer probably.
  */
 int cli_connect_buffer (void *buffer) {
-	/* debugging things for myself to see if buffer was filled correctly */
-	int s = -1;
-	memcpy (&s, buffer, sizeof(int));
-	printf ("this worked like this: %d\n", s);
 	
 	/* overlaying struct message over buffer */
 	message *andi;
 	andi = (message *) buffer;
 
+	printf ("this worked like this: x%d, y%d, %d, %d, %d\n", andi->data[0], andi->data[4], andi->data[8], andi->data[12], andi->data[16]);
 	/* preparing unix domain socket (uds) */
 	struct sockaddr_un address;
 	int socket_fd, nbytes;
@@ -67,15 +64,18 @@ int cli_connect_buffer (void *buffer) {
 	/* read the server's response */
 	nbytes = read (socket_fd, andi, MSG_SIZE);
 	assert(nbytes != -1);
-
 	
+	int tmp;
+	memcpy(&tmp, &(andi->data)[0], 4);
+	printf("the return value in the client is HERE: %d, %d\n", tmp, *(andi->data));
+
 	/* close the socket's filedescriptor handle */
 	close (socket_fd);
 
 	/* I should return a void pointer so the caller can figure out what to do
 	 * but this should come from the buffer somewhere
 	 */
-	return andi->call_num;
+	return tmp;
 
 }
 
