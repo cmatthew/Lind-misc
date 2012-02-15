@@ -9,8 +9,8 @@ import hashlib
 # add repy install path to script
 path = os.getenv("REPY_PATH")
 if path == None:
-    print "Error: REPY_PATH enviroment variable must be set."
-    sys.exit(1)
+    print "Error: REPY_PATH enviroment variable must be set, using default"
+    path = "~/tmp/lind/"
 sys.path.append(path)
 path = os.path.join(path, "repy")
 sys.path.append(path)
@@ -119,50 +119,50 @@ def cp_recursive(source, dest):
 #parses the args, calls the actual cp function
 def cp_cmd(input_list):
 
-	cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
-	
-	#create a new argument parser, with 2 argument options (source and destination)
-	parser = argparse.ArgumentParser(description='Copy source to dest')
-	parser.add_argument('source', metavar='SOURCE', type=str, help='The file that you would like to copy')
-	parser.add_argument('dest', metavar='DEST', type=str, help='The file you would like to copy into')
-	
-	#start off with an empty list
-	cp_cmd.args = []
-	
-	#try to parse the args
-	try:
-		cp_cmd.args = parser.parse_args(input_list)
-	except SystemExit, e:
-		pass
-	else:
-	
-		#the args were parsed correctly, call the actual cp function
-		cp_recursive(cp_cmd.args.source, cp_cmd.args.dest)
-	
-	#it is very likely that the current working directory will be changed, so go back to where the user was before the cp
-	try:
-		lind_fs_calls.chdir_syscall(cur_dir)
-	except lind_fs_calls.SyscallError, e:
-		print "In cp_cmd. Could not cd. Error: %s" % e
+    cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
+
+    #create a new argument parser, with 2 argument options (source and destination)
+    parser = argparse.ArgumentParser(description='Copy source to dest')
+    parser.add_argument('source', metavar='SOURCE', type=str, help='The file that you would like to copy')
+    parser.add_argument('dest', metavar='DEST', type=str, help='The file you would like to copy into')
+
+    #start off with an empty list
+    cp_cmd.args = []
+
+    #try to parse the args
+    try:
+        cp_cmd.args = parser.parse_args(input_list)
+    except SystemExit, e:
+        pass
+    else:
+
+        #the args were parsed correctly, call the actual cp function
+        cp_recursive(cp_cmd.args.source, cp_cmd.args.dest)
+
+    #it is very likely that the current working directory will be changed, so go back to where the user was before the cp
+    try:
+        lind_fs_calls.chdir_syscall(cur_dir)
+    except lind_fs_calls.SyscallError, e:
+        print "In cp_cmd. Could not cd. Error: %s" % e
 
 
 
 #if the user specifies the --copy flag when they run the program, the arguments are parsed
-#in the main method, so just pass those arguments here	
+#in the main method, so just pass those arguments here
 def cp_once(source, dest):
-	
-	cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
-	
-	cp_recursive(source, dest)
-		
-	#it is very likely that the current working directory will be changed, so go back to where the user was before the cp
-	try:
-		lind_fs_calls.chdir_syscall(cur_dir)
-	except lind_fs_calls.SyscallError, e:
-		print "In cp_cmd. Could not cd. Error: %s" % e
 
-	
-#this function is just for debugging. Copies a file (NON directory) back to disk so we can diff		
+    cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
+
+    cp_recursive(source, dest)
+
+    #it is very likely that the current working directory will be changed, so go back to where the user was before the cp
+    try:
+        lind_fs_calls.chdir_syscall(cur_dir)
+    except lind_fs_calls.SyscallError, e:
+        print "In cp_cmd. Could not cd. Error: %s" % e
+
+
+#this function is just for debugging. Copies a file (NON directory) back to disk so we can diff
 def cpout_cmd(source, dest):
 
     try:
@@ -266,7 +266,7 @@ def wipe_cmd(input_list):
     """wipe this file system"""
     lind_fs_calls._blank_fs_init()
     print "Filesystem wiped"
-    
+
 
 #prints the children of the current directory
 def ls_cmd(input_list):
@@ -347,7 +347,7 @@ def parse_input(input_string):
         cat_cmd(input_list[1:])
     elif(cmd == "wipe"):
         wipe_cmd(input_list[1:])
-        
+
     else:
         print "%s is not a recognized command" % cmd
 
@@ -355,45 +355,34 @@ def parse_input(input_string):
 #starts the loop that looks for user input
 def main():
 
-    #check if metadata exists. if it doesnt, call _blank_fs_init, if it DOES exist call persist_metadata
-    try:
-        f = open("lind.metadata", 'r')
+    lind_fs_calls.load_fs()
 
-        lind_fs_calls.restore_metadata("lind.metadata")
-        f.close()
-    except IOError, e:
-        lind_fs_calls._blank_fs_init()
-    except KeyError,e:
-        print "Error: I have failed to open the file system. The metadata is corrupt"
-        #TODO something better?
-        sys.exit(1)
+    #set up the arg parser to parse the args to the program
+    parser = argparse.ArgumentParser(
+        description='Allows the user to manage their lind file systems, and copy files in')
+    parser.add_argument('-i', action='store_true',
+                        help='If specified, the program runs in interactive mode')
+    parser.add_argument('--copy', metavar=('SOURCE', 'DEST'), type=str, nargs=2,
+                        help='if specified, the program copies the native file SOURCE\
+                        to the virtual filesystem at DEST')
+    args = parser.parse_args()
+    #the main argument is the '-'. If it is specified, the user would like to run in interactive mode
+    #if the --copy flag is set (and -i is not), then pass the source and dest to the cp_once function
+    if not args.i and args.copy:
+        cp_once(args.copy[0], args.copy[1])
 
-	#set up the arg parser to parse the args to the program
-	parser = argparse.ArgumentParser(description='Allows the user to manage their lind file systems, and copy files in')
-	parser.add_argument('-i', action='store_true', help='If specified, the program runs in interactive mode')
-	parser.add_argument('--copy', metavar=('SOURCE', 'DEST'), type=str, nargs=2, help='if specified, the program copies the native file SOURCE to the virtual filesystem at DEST')
+    elif not args.i and not args.copy:
+        parser.print_help()
+    else:
+        #request user input (the command they want to type)
+        input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
 
-	args = parser.parse_args()
-	
-	#the main argument is the '-'. If it is specified, the user would like to run in interactive mode
-	#if the --copy flag is set (and -i is not), then pass the source and dest to the cp_once function
-	#if neither are specified, print the help
-	if not args.i and args.copy:
-		cp_once(args.copy[0], args.copy[1])
-	
-	elif not args.i and not args.copy:
-		parser.print_help()
-	else:
-		#request user input (the command they want to type)
-		input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
-	
-		#loop until the user hits exit, prompting them to enter a command at each iteration
-		while((not input_value == "exit")):
-			parse_input(input_value)
-			input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
+        #loop until the user hits exit, prompting them to enter a command at each iteration
+        while((not input_value == "exit")):
+            parse_input(input_value)
+            input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
+    lind_fs_calls.persist_metadata("lind.metadata")
 
-	lind_fs_calls.persist_metadata("lind.metadata")	
-	
-	
+
 if __name__ == "__main__":
     main()
