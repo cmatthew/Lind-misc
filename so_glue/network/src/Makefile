@@ -11,7 +11,7 @@ CFLAGS = -c -std=gnu99 -Wall -Wextra -Wno-long-long -O2 -fomit-frame-pointer -Wa
 LDFLAGS = -m64
 
 
-SOURCES = uds_server.c ../../ctags_stuff/output/deserializer.c
+SOURCES = uds_server.c ../../ctags_stuff/output/deserializer.c ../../ctags_stuff/output/fake_implementation.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = ../output/uds_server
 

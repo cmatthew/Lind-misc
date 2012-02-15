@@ -332,7 +332,9 @@ def cp_middle_magic(sig) :
 			else :
 				tmp += (autogen_info[i])
 		tmp += ", " + str(CUR_CALL_NUM)
-		CALL_NUM_DICT[CUR_CALL_NUM] = str(autogen_info[0])
+		CALL_NUM_DICT[autogen_info[0]] =str(CUR_CALL_NUM)
+		
+		#CALL_NUM_DICT[CUR_CALL_NUM] = str(autogen_info[0])
 		CUR_CALL_NUM += 1
 		tmp += ");\n"
 
@@ -480,6 +482,81 @@ def cp_parse_ctags(filename):
 	return lol
 
 
+
+def cp_write_des(list_o_lists) :
+	""" cp_write_des
+	# generates deserializer.c automatically
+	# Arguments:
+	#	list_o_lists	ctags output one line per index
+	# Result:
+	#	sideeffect is that deserializer.c is written out to disk
+	"""
+	print "**********************\n**********************\START"
+	des_start = "void * des (void * buffer) {\n\tmessage *msg;\n"
+	des_start += "\tmsg = (message *) buffer;\n"
+	switch_stmt = "\tswitch  (msg->call_num) {\n"
+	incls = "#include <string.h>\n#include <stdio.h>\n#include <assert.h>\n"
+	incls += "#include \"deserializer.h\"\n"
+	incls += "#include \"../../network/src/uds_helper.h\"\n"
+	incls += "#include \"fake_implementation.h\"\n\n"
+	funcs = ""
+	des_end = "\tassert(0);\n\treturn NULL;\n}"
+
+	#write out the dynamic parts
+	for item in list_o_lists:
+		print item
+		func = ""
+		func_name = "deserialize_" + item[SYM_NAME]
+		args = item[SIGNATURE].split("(")[1].split(")")[0].split(",")
+	
+		print "\n\n"
+		print args
+		func += "message * " + func_name + "(message *msg) {\n"
+		
+		
+		func += "\tint start;\n\tstart = 0;\n"
+		for i in range(0, len(args)):
+			loc_type = ""
+			for j in range(0, len(args[i].split()[0:-1])):
+				loc_type += args[i].split()[0:-1][j] + " "
+			func += "\t"+ loc_type +" *" + args[i].split()[-1] + ";\n"
+		func += "\n\tint offset = sizeof(int);\n\n"
+		for i in range(0, len(args)):
+			func += "\t" + args[i].split()[-1] + " = (" + loc_type + " *) (msg->data + offset);\n\n"
+			func += "\toffset += sizeof(" + loc_type + " );\n\toffset += sizeof(int);\n\n"
+		func += "\tint ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
+		for i in range(0, len(args)):
+			func += "*" + args[i].split()[-1]
+			if i != len(args)-1 :
+				func += ","
+		func += ");\n"
+			
+		print CALL_NUM_DICT[item[SIGNATURE].split("(")[0]]
+		func += "\n\tmessage * reply = malloc (MSG_SIZE);\n"
+		func += "\tmemset(reply, 0, MSG_SIZE);\n"
+
+		func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
+		func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
+		func += "\treturn reply;\n}\n\n\n"
+		
+		funcs += func
+		switch_stmt += "\t\tcase " + CALL_NUM_DICT[item[SIGNATURE].split("(")[0]] + ":\n"
+		switch_stmt += "\t\t\t return (void *) " + func_name +"(msg);\n"
+		#print funcs
+		#print switch_stmt
+	
+	switch_stmt += "\t\t\tdefault : assert(0);\n\t\t}\n"
+	#write out the des() function and put in the switch_stmt
+	print "**********************\n**********************\nEND"
+	print incls + funcs + des_start + switch_stmt + des_end
+
+	des_impler =  incls + funcs + des_start + switch_stmt + des_end
+	
+	deser_c_file = _cp_my_open_file("../output/deserializer.c", "w+")
+	deser_c_file.write(des_impler)
+	_cp_my_close_file(deser_c_file)
+
+
 def main(filename, original_f) :
 	""" main
 	#	Controls the program execution
@@ -490,7 +567,7 @@ def main(filename, original_f) :
 	#	compilable C code for RPC client and RPC server
 	"""
 	target = _cp_my_open_file(MM_C_OUT, 'a')
-	target.write("#include \"../../network/src/uds_helper.h\"");
+	target.write("\n#include \"../../network/src/uds_helper.h\"");
 	_cp_my_close_file(target)
 	### lol (list of lists) contains each elemet I need to deal with 
 	lol = []
@@ -498,6 +575,7 @@ def main(filename, original_f) :
 	lol = cp_parse_ctags(filename)   
 	### writes out c code using each element in lol
 	cp_write_c(lol, filename, original_f)
+	cp_write_des(lol)
 
 
 ### standard main for python
