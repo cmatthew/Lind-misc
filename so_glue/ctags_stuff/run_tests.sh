@@ -2,10 +2,10 @@
 
 set -o errexit
 
-cd ~/andi/Lind-misc/so_glue/network/src/
+cd /home/lind/lind/misc/so_glue/network/src/
 make clean all
 
-cd ~/andi/Lind-misc/so_glue/ctags_stuff/
+cd /home/lind/lind/misc/so_glue/ctags_stuff/
 cd test
 make clean
 
