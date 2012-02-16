@@ -12,3 +12,7 @@ unsigned int foo_add(int x, int y) {
 return serialize_foo_add(2, sizeof(x), x, sizeof(y), y, 1);
 
 }
+char* one_line(char * string) {
+return serialize_one_line(1, strlen(string), string, 2);
+
+}

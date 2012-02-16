@@ -7,7 +7,7 @@ int main () {
 	y = 300; 
 	printf("\nfoo passing in %d, getting out %d\n\n", x, foo(x));
 	printf("\nfoo_add passing in %d, %d and getting out %d\n\n", x,y, foo_add(x, y));
-//	printf("\none_line: %s, %s\n", "hello\tworld", one_line("hello\tworld"));
+	printf("\none_line: %s,\n %s\n^^3 lines\n", "hello\nworld\0", one_line("hello\nworld\0"));
 
 	assert(x == foo(x));
 	printf("passed: int foo(int x)\n");

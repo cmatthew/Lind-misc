@@ -56,19 +56,25 @@ int cli_connect_buffer (void *buffer) {
 	/* just debugging stuff for me to experiment with and inspect the buffer */
 	printf ("message size: %u\n", (unsigned int) andi->msg_size);
 	printf ("call number: %u\n", (unsigned int) andi->call_num);
-  
+ 	
+	if (andi->call_num == 2) {
+		printf ("this is the STRING IN CLIENT: %s<<<\n", &andi->data[4]);
+	}
+
+
 	/* write to the socket and pass the buffer on to the server */
 	int rc = write (socket_fd, andi, MSG_SIZE);
 	assert(rc == MSG_SIZE);
 
 	/* read the server's response */
-	nbytes = read (socket_fd, andi, MSG_SIZE);
-	assert(nbytes != -1);
+	nbytes = read (socket_fd, buffer, MSG_SIZE);
 
+	assert(nbytes != -1);
+/*
 	int ret_size;
 	int ret_val;
 	memcpy(&ret_size, &buffer[0], 4);
-	memcpy(&ret_val, &buffer[20], ret_size);
+	memcpy(&ret_val, &buffer[20], ret_size);*/
 /*	memcpy(&ret_size, &(andi->msg_size), 4);
 	memcpy(&ret_val, &(andi->data)[0], ret_size);
 */
