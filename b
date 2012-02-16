@@ -106,6 +106,12 @@ function test_repy {
     done
 }
 
+function test_apps {
+    set +o errexit
+    cd ~/lind/misc/tests
+	./test.sh
+}
+
 function check_install_dir {
     #make sure repy path is set
     if [ -z "$REPY_PATH" ]; then
@@ -313,7 +319,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc sdk rpc"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc test_apps sdk rpc test"
 word=""
 if  test -z "$1" 
 then
@@ -372,6 +378,14 @@ do
     elif [ "$word" = "test_glibc" ]; then
 	print "Testing GLibC"
 	glibc_tester
+    elif [ "$word" = "test_apps" ]; then
+	print "Testing Applications"
+	test_apps
+    elif [ "$word" = "test" ]; then
+	print "Testing All"
+	test_repy
+	glibc_tester
+	test_apps
     elif [ "$word" = "rpc" ]; then
 	print "Building new RPC stubs"
 	genrpc
