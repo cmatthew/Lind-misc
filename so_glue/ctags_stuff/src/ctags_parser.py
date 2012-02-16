@@ -499,9 +499,14 @@ def cp_write_des(list_o_lists) :
 		for i in range(0, len(args)):
 			func += "\t" + args[i].split()[-1] + " = (" + loc_type + " *) (msg->data + offset);\n\n"
 			func += "\toffset += sizeof(" + loc_type + " );\n\toffset += sizeof(int);\n\n"
-		func += "\tint ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
+		#inspected the output, this works and shows up in deserializer correctly
+		#func += "printf(\"in des_oneline: %s\\n\",string);\n"
+		func += "\t" + loc_type + "ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
 		for i in range(0, len(args)):
-			func += "*" + args[i].split()[-1]
+			if "*" in args[i] and "char" in args[i]:
+				func += "" + args[i].split()[-1]
+			else :
+				func += "*" + args[i].split()[-1]
 			if i != len(args)-1 :
 				func += ","
 		func += ");\n"
@@ -510,8 +515,13 @@ def cp_write_des(list_o_lists) :
 		func += "\n\tmessage * reply = malloc (MSG_SIZE);\n"
 		func += "\tmemset(reply, 0, MSG_SIZE);\n"
 
-		func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
-		func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
+		if "*" in loc_type and "char" in loc_type:
+			func += "\nprintf(\"on the way back: %s\\n\",ret_val);\n\n" 		
+			func += "\n\treply->msg_size = strlen(ret_val);\n\treply->num_of_args = 1;\n"
+			func += "\tstrcpy(&reply[20], &ret_val);\n\n"
+		else :
+			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
+			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
 		func += "\treturn reply;\n}\n\n\n"
 		
 		funcs += func
