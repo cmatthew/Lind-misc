@@ -118,8 +118,10 @@ def cp_serialize(serialize_me) :
 	for i in range(1, len(tmp)-1) :
 		print "tmp[i]: " + tmp[i]
 		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
-			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i].replace('*', "") +\
-				', strlen('+str(tmp[i].replace('*', "")) +'));\n'
+			ser_code += '\tstrcpy(&buffer[nbytes], '+ tmp[i].replace('*', "") + ");\n"#\
+			ser_code += "printf(\"IN SERIALIZER>>>%s<<<\\n\", string);\n"
+			ser_code += "printf(\"%s\\n\", &buffer[24]);\n"
+		#		', strlen('+str(tmp[i].replace('*', "")) +')+1);\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
 		else :
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
@@ -138,7 +140,7 @@ def cp_serialize(serialize_me) :
 	ser_code += "ret_v;\n"
 	ser_code += "\tmemcpy(&ret_s, &buffer[0], sizeof(int));\n"
 	ser_code += "\tmemcpy(&ret_v, &buffer[20], ret_s);\n"
-	ser_code += "return ret_v;\n}"
+	ser_code += "return ret_v;\n}\n\n"
 	return ser_code 
 
 
