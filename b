@@ -93,8 +93,8 @@ function build_sdk {
     base="${REPY_PATH}"
     nacl_base=./native_client
     mkdir -p $base/sdk
-    cp -rf $nacl_base/toolchain/linux_x86 $base/sdk/
-    cp -rf ./sdk_examples $base/sdk/examples
+    cp -rfv $nacl_base/toolchain/linux_x86 $base/sdk/
+    cp -rfv ./sdk_examples $base/sdk/examples
 }
 
 function test_repy {
@@ -144,7 +144,7 @@ function build_repy {
     cp ${repy_loc}serialize.repy ${repy_loc}serialize.py
     print "Done building Repy in $repy_loc"
 	cd seattlelib
-	etags -l python *.mix *.repy
+	etags  --language-force=python *.mix *.repy
     cd $here
 }
 
@@ -292,6 +292,7 @@ function glibc_tester {
     cd ~/lind/misc/glibc_test/
     make clean all
     cd ..
+	rm -rfv lind.metadata linddata.*
     lind ~/lind/misc/glibc_test/glibc_tester.nexe
 }
 
