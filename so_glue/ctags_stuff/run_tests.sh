@@ -13,6 +13,8 @@ rm -rf ../output/*_mm*
 ./runme.sh ../resources/tmp.h
 cd ..
 cd test
+#rm ../output/tagstmp_mm.c
+#cp ../output/bla.c ../output/tagstmp_mm.c
 make all
 
 cd /home/lind/lind/misc/so_glue/network/src/
@@ -23,6 +25,8 @@ cd ../../network/output/
 sleep 1
 
 cd ../../ctags_stuff/test/
+
 ./test
+sleep 1
 killall uds_server
 

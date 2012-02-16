@@ -12,11 +12,3 @@ unsigned int foo_add(int x, int y) {
 return serialize_foo_add(2, sizeof(x), x, sizeof(y), y, 1);
 
 }
-void no_comments(char * string)  {
-return serialize_no_comments(1, sizeof(string), string, 2);
-
-}
-char* one_line(char * string) {
-return *serialize_one_line(1, sizeof(string), string, 3);
-
-}

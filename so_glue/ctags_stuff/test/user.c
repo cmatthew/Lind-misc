@@ -3,13 +3,18 @@
 #include <assert.h>
 int main () {
 	int x, y;
-	x = 100;
-	y = 200; 
+	x = 300;
+	y = 300; 
 	printf("\nfoo passing in %d, getting out %d\n\n", x, foo(x));
-	assert(x == foo(x));
-	printf("\nfoo add passing in %d, %d and getting out %d\n\n", x,y, foo_add(x, y));
-	assert(foo_add(x,y) == 300);
+	printf("\nfoo_add passing in %d, %d and getting out %d\n\n", x,y, foo_add(x, y));
+//	printf("\none_line: %s, %s\n", "hello\tworld", one_line("hello\tworld"));
 
+	assert(x == foo(x));
+	printf("passed: int foo(int x)\n");
+	assert(foo_add(x,y) == x+y);
+	printf("passed: int foo_add(int x, int y)\n");
+
+	
 //	printf("hmmm: %d\n", MD4_Init(test_MD4));
 	return 0;
 }

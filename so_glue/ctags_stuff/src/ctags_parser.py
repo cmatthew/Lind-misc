@@ -80,52 +80,6 @@ def cp_cleanup(strings) :
 	
 	return strings
 
-def cp_deserialize(deserialize_me) :
-	""" cp_serialize
-	# Produces code that seriailzed all parameters coming in
-	# Arguments:
-	#	serialize_me	function signature
-	# Result:
-	#	ser_code	C code for serialization
-	"""
-	_cp_my_debug(serialize_me)
-	tmp = serialize_me.split("(")[1].split(")")[0]
-	tmp = tmp.split(',')
-	tmp2 = []
-	for item in tmp:
-		if "void" in item:
-			tmp2.append("call_num /*FIX ME*/")
-		else:
-			tmp2.append(item.split()[-1])
-	tmp = tmp2
-	ser_code = ""
-	ser_code += "\tint nbytes;\n\tnbytes = 0;\n"
-	# msg_size
-	ser_code += '\tmemcpy(&buffer[nbytes], &my_s_size, sizeof(my_s_size));\n'
-	ser_code += '\tnbytes += sizeof(my_s_size);\n'
-	# call_num
-	ser_code += '\tmemcpy(&buffer[nbytes], &call_num, sizeof(call_num));\n'
-	ser_code += '\tnbytes += sizeof(call_num);\n'
-	# version_num ==> faked
-	ser_code += '\tnbytes += 4;\n '
-	# flags => faked
-	ser_code += '\tnbytes += 4;\n '
-	# num_of_args
-	ser_code += '\tmemcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
-	ser_code += '\tnbytes += sizeof(num_of_args);\n'
-	for i in range(1, len(tmp)-1) :
-		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
-			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i].replace('*', "") +\
-				', sizeof('+str(tmp[i]) +'));\n'
-			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
-		else :
-			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
-				str(tmp[i])+'));\n'
-			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
-	
-	return ser_code 
-
-
 def cp_serialize(serialize_me) :
 	""" cp_serialize
 	# Produces code that seriailzed all parameters coming in
@@ -141,6 +95,8 @@ def cp_serialize(serialize_me) :
 	for item in tmp:
 		if "void" in item:
 			tmp2.append("call_num /*FIXME*/")
+		elif "char" in item and "*" in item:
+			tmp2.append("*"+item.split()[-1])
 		else:
 			tmp2.append(item.split()[-1])
 	tmp = tmp2
@@ -160,15 +116,29 @@ def cp_serialize(serialize_me) :
 	ser_code += '\tmemcpy(&buffer[nbytes], &num_of_args, sizeof(num_of_args));\n'
 	ser_code += '\tnbytes += sizeof(num_of_args);\n'
 	for i in range(1, len(tmp)-1) :
+		print "tmp[i]: " + tmp[i]
 		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i].replace('*', "") +\
-				', sizeof('+str(tmp[i]) +'));\n'
+				', strlen('+str(tmp[i].replace('*', "")) +'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
 		else :
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
 				str(tmp[i])+'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
+	ser_code += "\n\tint rc = cli_connect_buffer(buffer);\n\n"
+	ser_code += "\tint ret_s;\n\t"
+	ret_c = serialize_me.split("(")[0].split()[0:-1]
+	print ret_c
+	for item in ret_c :
+		ser_code += (item + " ")
 	
+	#print ser_code
+	#print serialize_me
+	#sys.exit(1)
+	ser_code += "ret_v;\n"
+	ser_code += "\tmemcpy(&ret_s, &buffer[0], sizeof(int));\n"
+	ser_code += "\tmemcpy(&ret_v, &buffer[20], ret_s);\n"
+	ser_code += "return ret_v;\n}"
 	return ser_code 
 
 
@@ -190,7 +160,7 @@ def cp_write_mm_magic_c(value):
 	target.write('int my_s_size;\nmy_s_size = BUF_SIZE;\n')
 	# populate common fields
 	target.write(cp_serialize(value))
-	target.write("\treturn cli_connect_buffer(buffer);\n}\n\n")
+	
 	_cp_my_close_file(target)
 
 
@@ -307,13 +277,16 @@ def cp_middle_magic(sig) :
 		#populating the structure with information from the signature
 		#	num_of_args, {sizeof, arg}
 		for item in tmp:
-			autogen_info.append("sizeof("+str(item.split()[-1])+")")
+			if "char" in item and "*" in item:
+				autogen_info.append("strlen("+str(item.split()[-1])+")")
+			else:
+				autogen_info.append("sizeof("+str(item.split()[-1])+")")
 			autogen_info.append(str(item.split()[0:-1]))
 			autogen_info.append(str(item.split()[-1]))
 		# write stuff out into the main implementation output file
 		tmp = ""
 		if '*' in autogen_info[0]:
-			tmp += "*serialize_" + autogen_info[0].split()[-1].replace('*', "")+"("
+			tmp += "serialize_" + autogen_info[0].split()[-1].replace('*', "")+"("
 		else : 
 			tmp += "serialize_" + autogen_info[0].split()[-1]+"("
 		for i in range(0, len(autogen_info)):

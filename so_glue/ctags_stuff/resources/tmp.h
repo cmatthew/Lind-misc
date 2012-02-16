@@ -13,7 +13,7 @@ unsigned int foo_add(int x, int y);
 /* #include <openssl/md2.h> /\* works *\/ */
 
 
-void no_comments(char * string) ;
-char* one_line(char * string);
+//void no_comments(char * string) ;
+//char* one_line(char * string);
 
 

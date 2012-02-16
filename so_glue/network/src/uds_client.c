@@ -29,7 +29,6 @@ int cli_connect_buffer (void *buffer) {
 	message *andi;
 	andi = (message *) buffer;
 
-	printf ("this worked like this: x%d, y%d, %d, %d, %d\n", andi->data[0], andi->data[4], andi->data[8], andi->data[12], andi->data[16]);
 	/* preparing unix domain socket (uds) */
 	struct sockaddr_un address;
 	int socket_fd, nbytes;
@@ -56,6 +55,7 @@ int cli_connect_buffer (void *buffer) {
 
 	/* just debugging stuff for me to experiment with and inspect the buffer */
 	printf ("message size: %u\n", (unsigned int) andi->msg_size);
+	printf ("call number: %u\n", (unsigned int) andi->call_num);
   
 	/* write to the socket and pass the buffer on to the server */
 	int rc = write (socket_fd, andi, MSG_SIZE);
@@ -64,18 +64,22 @@ int cli_connect_buffer (void *buffer) {
 	/* read the server's response */
 	nbytes = read (socket_fd, andi, MSG_SIZE);
 	assert(nbytes != -1);
-	
-	int tmp;
-	memcpy(&tmp, &(andi->data)[0], 4);
-	printf("the return value in the client is HERE: %d, %d\n", tmp, *(andi->data));
 
+	int ret_size;
+	int ret_val;
+	memcpy(&ret_size, &buffer[0], 4);
+	memcpy(&ret_val, &buffer[20], ret_size);
+/*	memcpy(&ret_size, &(andi->msg_size), 4);
+	memcpy(&ret_val, &(andi->data)[0], ret_size);
+*/
 	/* close the socket's filedescriptor handle */
 	close (socket_fd);
 
 	/* I should return a void pointer so the caller can figure out what to do
 	 * but this should come from the buffer somewhere
 	 */
-	return tmp;
+	 return 1000;
+//	return ret_val;
 
 }
 
