@@ -22,9 +22,13 @@ int connection_handler (int connection_fd) {
 	buffer = (void *) des(buffer);
 	
 	message * reply = (message *) buffer;
-	
+
+//	if(&buffer[4] == 2) {
+		printf("this is it in the SERVER ON WAY OUT: %s\n", &reply[20]);
+//	}
+
 	int rc = write(connection_fd, reply, MSG_SIZE);
-	
+	assert(rc != -1);
 	return 0;
 
 	/* andi = (message *) buffer; */

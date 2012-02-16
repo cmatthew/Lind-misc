@@ -142,9 +142,10 @@ def cp_serialize(serialize_me) :
 	ser_code += "\tmemcpy(&ret_s, &buffer[0], sizeof(int));\n"
 	if "*" in return_type:
 		ser_code += "printf(\"%d\\n\", ret_s);\n"
-		ser_code += "int i = 0; while(i<12){printf(\"%c\", &buffer[20+i]);i++;}"
-		ser_code += "printf(\"ALL THE WAY OUT NOW: %s\\n\", &buffer[20]);\n"
-		ser_code += "\tstrcpy(ret_v, buffer[20]);\n"
+		ser_code += "int i = 0; while(i<12){printf(\"%c\",(int) &buffer[20+i]);i++;}"
+		ser_code += "printf(\"ALL THE WAY OUT NOW: >>>%s<<<\\n\", &buffer[20]);\n"
+		ser_code += "\tret_v = (char *) &buffer[20];\n"
+		ser_code += "\tprintf(\"made it >>>%s<<<\\n\", ret_v);\n"
 	else :
 		ser_code += "\tmemcpy(&ret_v, &buffer[20], ret_s);\n"
 	ser_code += "return ret_v;\n}\n\n"
@@ -520,13 +521,13 @@ def cp_write_des(list_o_lists) :
 			
 		print CALL_NUM_DICT[item[SIGNATURE].split("(")[0]]
 		func += "\n\tmessage * reply = malloc (MSG_SIZE);\n"
-		func += "\tmemset(reply, 0, MSG_SIZE);\n"
+		func += "\tmemset(reply, '\\0', MSG_SIZE);\n"
 
 		if "*" in loc_type and "char" in loc_type:
 			func += "\nprintf(\"on the way back: %s\\n\",ret_val);\n\n" 		
-			func += "\n\treply->msg_size = strlen(ret_val);\n\treply->num_of_args = 1;\n"
-			func += "\tstrcpy(&reply[20], ret_val);\n\n"
-			func += "\nprintf(\"on the way back2: %s\\n\",&reply[20]);\n\n" 		
+			func += "\n\treply->msg_size = strlen(ret_val) + 1;\n\treply->num_of_args = 1;\n"
+			func += "\tmemcpy(&reply->data[0], ret_val, reply->msg_size + 1);\n\n"
+			func += "\nprintf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
 		else :
 			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
