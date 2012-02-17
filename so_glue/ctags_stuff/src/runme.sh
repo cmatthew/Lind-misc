@@ -45,7 +45,7 @@ mv ../output/tagstmp2.h ../output/tagstmp.h
 
 #type -P pycallgraph &>/dev/null && pycallgraph --include-timing="*"
 #  || echo "PycallGraph Not Found. Skipping.";  
-./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
+pycallgraph ./ctags_parser.py ../output/tagstmp.h ../resources/tmp.h ../output/tagstmp_mm.c ../output/tagstmp_mm.h
 
 mv ../output/tagstmp.h.andi "../test/tmptest.c"
 cp ../output/tmp.h "../test/tmptest.h"

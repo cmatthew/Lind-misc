@@ -2,6 +2,8 @@
 
 set -o errexit
 
+#cp output/tagstmp_mm.c output/bla.c
+
 cd /home/lind/lind/misc/so_glue/ctags_stuff/
 cd test
 
@@ -13,8 +15,10 @@ rm -rf ../output/*_mm*
 ./runme.sh ../resources/tmp.h
 cd ..
 cd test
+
 #rm ../output/tagstmp_mm.c
 #cp ../output/bla.c ../output/tagstmp_mm.c
+
 make all
 
 cd /home/lind/lind/misc/so_glue/network/src/

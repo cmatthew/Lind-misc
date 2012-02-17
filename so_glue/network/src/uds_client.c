@@ -53,45 +53,23 @@ int cli_connect_buffer (void *buffer) {
 		return EXIT_FAILURE;	
 	}
 
-	/* just debugging stuff for me to experiment with and inspect the buffer */
-	printf ("message size: %u\n", (unsigned int) andi->msg_size);
-	printf ("call number: %u\n", (unsigned int) andi->call_num);
- 
- 	int bool = 2;
-	if (andi->call_num == 2) {
-		printf ("this is the STRING IN CLIENT going OUT: %s<<<\n", &andi->data[4]);
-		bool = 0;
-	}
-
-
+	
 	/* write to the socket and pass the buffer on to the server */
 	int rc = write (socket_fd, andi, MSG_SIZE);
-	assert(rc == MSG_SIZE);
+	assert(rc != -1);
 
 	/* read the server's response */
 	nbytes = read (socket_fd, buffer, MSG_SIZE);
-
-	message * xxx = (message *) buffer;	
-	if (bool == 0) {
-		printf ("this is the STRING IN CLIENT going BACK: %s<<<\n", xxx->data);
-	}
 	
 	assert(nbytes != -1);
-/*
-	int ret_size;
-	int ret_val;
-	memcpy(&ret_size, &buffer[0], 4);
-	memcpy(&ret_val, &buffer[20], ret_size);*/
-/*	memcpy(&ret_size, &(andi->msg_size), 4);
-	memcpy(&ret_val, &(andi->data)[0], ret_size);
-*/
+	
 	/* close the socket's filedescriptor handle */
 	close (socket_fd);
 
 	/* I should return a void pointer so the caller can figure out what to do
 	 * but this should come from the buffer somewhere
 	 */
-	 return 1000;
+	 return 0;
 //	return ret_val;
 
 }

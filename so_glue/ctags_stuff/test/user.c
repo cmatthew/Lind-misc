@@ -17,7 +17,7 @@ int main () {
 */	
 	
 	int num_of_tests = 0;
-	int num_of_tests_t = 8;
+	int num_of_tests_t = 9;
 	
 	assert(x == foo(x));
 	num_of_tests++;
@@ -50,10 +50,22 @@ int main () {
 	assert(foo_float( (float)2.33, y)==(float)2.33);
 	printf("passed float(float, int)\n");
 	num_of_tests++;
-	printf("double: %Lf\n",foo_double(x, (double)23.3F, (double)23.1223F));
 
+	_Bool bool;
+	bool = (_Bool)22;
+	printf("%d bool. %d\n", bool, foo_bool(bool));
+	assert(foo_bool(bool) == bool - (_Bool)1);
+	printf("passed foo_bool\n");
+	num_of_tests++;
 
+	double dx, dy;
+	dx = 2.2e+23l;
+	dy = 2.18e+23;
+	printf("double: %f\n",foo_double(x, (double)1/(double)3, dx));
 
+	assert(foo_double(x, dx,dy) == dx-dy);
+	printf("Passed double foo_double\n");
+	num_of_tests++;
 
 	printf("Passed %d / %d\n", num_of_tests, num_of_tests_t);
 //	printf("hmmm: %d\n", MD4_Init(test_MD4));

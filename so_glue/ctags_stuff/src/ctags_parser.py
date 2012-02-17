@@ -533,11 +533,11 @@ def cp_write_des(list_o_lists) :
 			func += "\nprintf(\"on the way back: %s\\n\",ret_val);\n\n" 		
 			func += "\n\treply->msg_size = strlen(ret_val) + 1;\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&reply->data[0], ret_val, reply->msg_size + 1);\n\n"
-			func += "\nprintf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
+			func += "\n//printf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
 		else :
 			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
-			func += 'printf("in deserializer %d %Lf, %LF\\n", ret_val, ret_val, &(reply->data)[0]);'
+			func += '//printf("in deserializer %d %Lf, %Lf\\n", ret_val, ret_val, &(reply->data)[0]);'
 		func += "\treturn reply;\n}\n\n\n"
 		
 		funcs += func

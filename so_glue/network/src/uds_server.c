@@ -19,12 +19,14 @@ int connection_handler (int connection_fd) {
 	/* message *andi; */
 	/* int rc = -1;  /\* return codes for system calls. *\/ */
 	nbytes = read (connection_fd, buffer, MSG_SIZE);
+	
+//	printf("\n\n\n\nthis is it in the SERVER ON WAY IN: %Lf\n", &buffer[24]);
 	buffer = (void *) des(buffer);
 	
 	message * reply = (message *) buffer;
 
-//	if(&buffer[4] == 2) {
-		printf("this is it in the SERVER ON WAY OUT: %s\n", &reply[20]);
+//	if(&buffer[4] == 7) {
+//		printf("\n\n\n\nthis is it in the SERVER ON WAY OUT: %Lf\n\n\n\n", &buffer[28]);
 //	}
 
 	int rc = write(connection_fd, reply, MSG_SIZE);
