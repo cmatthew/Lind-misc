@@ -127,6 +127,7 @@ def cp_serialize(serialize_me) :
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
 				str(tmp[i])+'));\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i]+');\n'
+
 	ser_code += "\n\tint rc = cli_connect_buffer(buffer);\n\n"
 	ser_code += "\tint ret_s;\n\t"
 	ret_c = serialize_me.split("(")[0].split()[0:-1]
@@ -148,6 +149,7 @@ def cp_serialize(serialize_me) :
 		ser_code += "\tprintf(\"made it >>>%s<<<\\n\", ret_v);\n"
 	else :
 		ser_code += "\tmemcpy(&ret_v, &buffer[20], ret_s);\n"
+		ser_code += '\tprintf("size in here %d, %d\\n", ret_s, sizeof(long));\n'
 	ser_code += "return ret_v;\n}\n\n"
 	return ser_code 
 
@@ -165,7 +167,7 @@ def cp_write_mm_magic_c(value):
 	target.write(value[0:-2])
 	target.write("{\n\t")
 	# initialize buffer
-	target.write('memset(buffer, \'\\0\', BUF_SIZE);\n')
+	target.write('memset(&buffer[0], \'\\0\', BUF_SIZE);\n')
 	# set up vars
 	target.write('int my_s_size;\nmy_s_size = BUF_SIZE;\n')
 	# populate common fields
@@ -182,12 +184,12 @@ def cp_write_mm_magic_h(value):
 	# Result:
 	#	sideeffects happen in the globablly specified file MM_H_OUT
 	"""
-
 	# open file for append 
 	target = _cp_my_open_file(MM_H_OUT, 'a')
 	# write out the target 
 	target.write(value)
 	_cp_my_close_file(target)
+
 
 def cp_write_headers(includes, target_file) :
 	""" cp_write_headers
@@ -199,7 +201,7 @@ def cp_write_headers(includes, target_file) :
 	#	side effects happen in the specified target_file
 	"""
 	target = _cp_my_open_file(target_file, 'a')
-	target.write(includes+"\n")
+	target.write("\n"+includes+"\n")
 	_cp_my_close_file(target)
 	### write include header to MM_C_OUT and MM_H_OUT
 
@@ -413,11 +415,11 @@ def cp_write_c(lol, filename, orig_c_file) :
 	c_code = ""
 	### include the same headers that the user prog included
 	c_code += cp_user_includes(orig_c_file)
-	cp_write_headers('#include "' + MM_H_OUT + '"\n', MM_C_OUT)
+	cp_write_headers('\n#include "' + MM_H_OUT + '"\n', MM_C_OUT)
 	cp_write_headers(c_code, MM_H_OUT)
 	cp_write_headers("#include <string.h>\n#include <stdio.h>\n\n", MM_C_OUT)
 	cp_write_headers("#define BUF_SIZE 4094\nchar buffer[BUF_SIZE];\n", MM_C_OUT)
-	c_code +=  '#include "'+ MM_H_OUT +'"\n'
+	c_code +=  '\n#include "'+ MM_H_OUT +'"\n'
 	### deals with typedefs that are not structs
 	#member = False """ do I need to look into this """
 	for i in range(len(lol)) :
@@ -505,11 +507,15 @@ def cp_write_des(list_o_lists) :
 			func += "\t"+ loc_type +" *" + args[i].split()[-1] + ";\n"
 		func += "\n\tint offset = sizeof(int);\n\n"
 		for i in range(0, len(args)):
+			loc_type = ""
+			for j in range(0, len(args[i].split()[0:-1])):
+				loc_type += args[i].split()[0:-1][j] + " "
 			func += "\t" + args[i].split()[-1] + " = (" + loc_type + " *) (msg->data + offset);\n\n"
 			func += "\toffset += sizeof(" + loc_type + " );\n\toffset += sizeof(int);\n\n"
 		#inspected the output, this works and shows up in deserializer correctly
 		#func += "printf(\"in des_oneline: %s\\n\",string);\n"
-		func += "\t" + loc_type + "ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
+		function_ret_type = item[SIGNATURE].split("(")[0].rsplit(None,1)[0]
+		func += "\t" + function_ret_type + " ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
 		for i in range(0, len(args)):
 			if "*" in args[i] and "char" in args[i]:
 				func += "" + args[i].split()[-1]
@@ -531,6 +537,7 @@ def cp_write_des(list_o_lists) :
 		else :
 			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
+			func += 'printf("in deserializer %d %Lf, %LF\\n", ret_val, ret_val, &(reply->data)[0]);'
 		func += "\treturn reply;\n}\n\n\n"
 		
 		funcs += func
@@ -561,7 +568,7 @@ def main(filename, original_f) :
 	#	compilable C code for RPC client and RPC server
 	"""
 	target = _cp_my_open_file(MM_C_OUT, 'a')
-	target.write("\n#include \"../../network/src/uds_helper.h\"");
+	target.write("\n#include \"../../network/src/uds_helper.h\"\n");
 	_cp_my_close_file(target)
 	### lol (list of lists) contains each elemet I need to deal with 
 	lol = []
