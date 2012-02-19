@@ -213,12 +213,13 @@ def cd_cmd(input_list):
 	else:
 		#if the args were correctly parsed, call the chdir_syscall.
 		try:
+			
 			#if there were no args passed in, cd to root, else cd to where the user wants to go
 			if cd_cmd.args.directory == None:
 				lind_fs_calls.chdir_syscall("/")
 			else:
-				print cd_cmd.args.directory
-				lind_fs_calls.chdir_syscall(cd_cmd.args.directory[0])
+			
+				lind_fs_calls.chdir_syscall(cd_cmd.args.directory)
 		except lind_fs_calls.SyscallError, e:
 			print "Could not cd. Error: %s" % e
 	
