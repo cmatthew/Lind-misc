@@ -531,13 +531,6 @@ syscall("bind", [("int", "sockfd"), ("socklen_t", "addrlen")],
 syscall("send", [("int", "sockfd"), ("size_t", "len"), ("int", "flags")],
                 [("const void *", "buf", "len")])
 
-emptysyscall("sendto", [("int", "sockfd"),
-                        ("size_t", "len"),
-                        ("int", "flags"),
-                        ("socklen_t", "addrlen")],
-                       [("__CONST_SOCKADDR_ARG", "dest_addr", "addrlen"),
-                        ("const void *", "buf", "len")])
-
 
 syscall("recv", [("int", "sockfd"),
                  ("size_t", "len"),
@@ -555,6 +548,14 @@ syscall("connect", [("int", "sockfd"),
                    [("__CONST_SOCKADDR_ARG", "src_addr", "addrlen")])
 
 syscall("listen", [("int", "sockfd"), ("int", "backlog")])
+
+
+emptysyscall("sendto", [("int", "sockfd"),
+                        ("size_t", "len"),
+                        ("int", "flags"),
+                        ("socklen_t", "addrlen")],
+                       [("__CONST_SOCKADDR_ARG", "dest_addr", "addrlen"),
+                        ("const void *", "buf", "len")])
 
 # # "accept":(40,),
 # #syscall("accept",[("int","sockfd"),("socklen_t","addrlen")],
