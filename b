@@ -149,8 +149,15 @@ function build_repy {
     python preparetest.py -t $repy_loc
     cp ${repy_loc}serialize.repy ${repy_loc}serialize.py
     print "Done building Repy in $repy_loc"
-	cd seattlelib
-	etags  --language-force=python *.mix *.repy
+    cd seattlelib
+    set -o errexit
+    for file in *.mix
+    do
+	~/lind/misc/check_inlcudes.sh $file
+	
+    done
+    set +o errexit
+    etags  --language-force=python *.mix *.repy
     cd $here
 }
 
