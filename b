@@ -102,8 +102,13 @@ function test_repy {
     cd $REPY_PATH/repy/
     for file in ut_lind_*; do 
 	echo $file 
-	python $file 2>&1 | grep  -vE "object has no attribute 'acquire'"
+	python $file  
     done
+
+    file=ut_seattlelibtests_teststruct.py
+    echo $file 
+    python $file  
+
 }
 
 function test_apps {
@@ -236,7 +241,7 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      #../sysdeps/nacl/nacl_stat.h:102: warning: its scope is only this definition or declaration, which is probably not what you want
-     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' | grep -e 'warning' -e 'error'
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
