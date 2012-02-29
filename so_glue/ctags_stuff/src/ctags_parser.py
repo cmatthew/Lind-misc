@@ -27,7 +27,8 @@ SOURCE_FILE = 3
 SIGNATURE = 4
 OUT_PATH = "../output/"
 MM_AUTOGEN = "" # "../output/mm_autogen.c"
-MM_CODE = ""
+
+#MM_CODE = ""
 
 MM_C_OUT = ""
 MM_H_OUT = ""
@@ -208,14 +209,15 @@ def cp_write_headers(includes, target_file) :
 
 def cp_fill_MM_CODE(info):
 	""" cp_fill_MM_CODE
-	# Generates the middle magic implementation of the serialization stubs
-	# 	Does some clean up and checking of the string to make sure it compiles
+	# Generates a function signature which is used to populate the *.h file
+	# This signature is then passed into the function that will parse it 
+	# to generate the *.c file
 	# Arguments:
 	#	info	parsed list of the function signature including arguments
 	# Result:
 	#	side effects are at the global variable MM_CODE
 	"""
-	global MM_CODE
+#	global MM_CODE
 	global CUR_CALL_NUM
 	
 	# get info needed to write out strings
@@ -250,11 +252,11 @@ def cp_fill_MM_CODE(info):
 	
 	mm_sig += ", int call_num" 
 	mm_sig += ");\n"
-	# write sig out into *.h and *.c then populate *.c
-	cp_write_mm_magic_c(mm_sig)
-	cp_write_mm_magic_h(mm_sig)
-	MM_CODE += mm_sig
+#	MM_CODE += mm_sig
 	
+	return mm_sig
+	
+
 
 def cp_middle_magic(sig) :
 	""" cp_middle_magic
@@ -325,35 +327,12 @@ def cp_middle_magic(sig) :
 
 		#write to contain serialize_foo() stub. middle_magic_<*.h> will
 		# be generated automatically
-		cp_fill_MM_CODE(autogen_info)
+		ret_v = cp_fill_MM_CODE(autogen_info)
 		
 		# return value will be appended to the local implementation of the 
 		# implementation.
-		ret_str += "return " + tmp 	
-	return ret_str
-
-
-def cp_function_middle(signature) :
-	""" cp_function_middle
-	# Deals with the middle of the function. A function should look like this:
-	#	<signature> {
-	#	[<connection magic>]
-	#	return <client-server-call()>;
-	#	}
-	#	This should also take care of the connection magic and make sure the 
-	#	serialization is happening correctly.
-	# Arguments:
-	#	signature	signature of the function as delivered by ctags
-	# Result:
-	#	body of the function, including the return statement (i.e the part
-	#	between the '{' '}'
-	"""
-	# kick this function out it doesn't need to be here since it does nothing,
-	# just call _cp_middle_magic(signature) directly
-	middle = ""
-	middle += cp_middle_magic(signature)
-	return middle
-
+		ret_str += "return " + tmp 
+	return ret_v, ret_str
 
 
 def cp_get_typedef(signature) :
@@ -376,8 +355,9 @@ def cp_get_fstring(signature) :
 	#	C code of the enture function, signature and body
 	"""
 	function = str(signature)+" {\n"
-	function += cp_function_middle(signature)
-	return function+"\n}\n"
+	mm_sig_code , function_tmp  = cp_middle_magic(signature)
+	function += function_tmp
+	return function+"\n}\n", mm_sig_code
 
 
 def cp_user_includes(original_c_file) :
@@ -425,21 +405,20 @@ def cp_write_c(lol, filename, orig_c_file) :
 	for i in range(len(lol)) :
 		if lol[i][TYPE] == "typedef" and lol[i-1][TYPE] != "member":
 			c_code += cp_get_typedef(lol[i][SIGNATURE])
-	### deals with structs => Probably wont need this anymore
-	#"""for i in range(len(lol)):
-	#	if lol[i][TYPE] == "struct":
-	#		c_code += cp_get_struct(lol, i)"""
-	### deals with prototypes
+	
 	for item in lol :
 		if item[TYPE] == "prototype":
-			c_code += cp_get_fstring(item[SIGNATURE])
+			c_code_tmp, mm_sig = cp_get_fstring(item[SIGNATURE])
+			c_code += c_code_tmp
+			cp_write_mm_magic_c(mm_sig)
+			cp_write_mm_magic_h(mm_sig)
 	os.system("touch "+OUT_PATH+filename+".andi")
 	f_out = _cp_my_open_file(OUT_PATH+filename+".andi", "w+")
 	_cp_my_debug(c_code)
 	f_out.write(c_code)
 	_cp_my_close_file(f_out)
 	_cp_my_debug("$$$$$$$$$$$$$$$$$$$$$$$$")
-	_cp_my_debug(MM_CODE)
+#	_cp_my_debug(MM_CODE)
 
 
 def cp_parse_ctags(filename):
@@ -510,12 +489,15 @@ def cp_write_des(list_o_lists) :
 			loc_type = ""
 			for j in range(0, len(args[i].split()[0:-1])):
 				loc_type += args[i].split()[0:-1][j] + " "
-			func += "\t" + args[i].split()[-1] + " = (" + loc_type + " *) (msg->data + offset);\n\n"
-			func += "\toffset += sizeof(" + loc_type + " );\n\toffset += sizeof(int);\n\n"
+			func += "\t" + args[i].split()[-1] + " = (" + loc_type + \
+				" *) (msg->data + offset);\n\n"
+			func += "\toffset += sizeof(" + loc_type + \
+				" );\n\toffset += sizeof(int);\n\n"
 		#inspected the output, this works and shows up in deserializer correctly
 		#func += "printf(\"in des_oneline: %s\\n\",string);\n"
 		function_ret_type = item[SIGNATURE].split("(")[0].rsplit(None,1)[0]
-		func += "\t" + function_ret_type + " ret_val;\n\n\tret_val = " + item[SYM_NAME] + "("
+		func += "\t" + function_ret_type + " ret_val;\n\n\tret_val = " + \
+			item[SYM_NAME] + "("
 		for i in range(0, len(args)):
 			if "*" in args[i] and "char" in args[i]:
 				func += "" + args[i].split()[-1]
@@ -531,17 +513,20 @@ def cp_write_des(list_o_lists) :
 
 		if "*" in loc_type and "char" in loc_type:
 			func += "\nprintf(\"on the way back: %s\\n\",ret_val);\n\n" 		
-			func += "\n\treply->msg_size = strlen(ret_val) + 1;\n\treply->num_of_args = 1;\n"
+			func += "\n\treply->msg_size = strlen(ret_val)" + \
+				" + 1;\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&reply->data[0], ret_val, reply->msg_size + 1);\n\n"
 			func += "\n//printf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
 		else :
 			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
-			func += '//printf("in deserializer %d %Lf, %Lf\\n", ret_val, ret_val, &(reply->data)[0]);'
+			func += '//printf("in deserializer %d %Lf, %Lf\\n",' + \
+				' ret_val, ret_val, &(reply->data)[0]);'
 		func += "\treturn reply;\n}\n\n\n"
 		
 		funcs += func
-		switch_stmt += "\t\tcase " + CALL_NUM_DICT[item[SIGNATURE].split("(")[0]] + ":\n"
+		switch_stmt += "\t\tcase " + \
+			CALL_NUM_DICT[item[SIGNATURE].split("(")[0]] + ":\n"
 		switch_stmt += "\t\t\t return (void *) " + func_name +"(msg);\n"
 		#print funcs
 		#print switch_stmt
