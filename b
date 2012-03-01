@@ -404,6 +404,9 @@ do
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
+    else 
+	echo "Error: Did not find a build target named $word. Exiting..."
+	exit 1
     fi
 done
 
