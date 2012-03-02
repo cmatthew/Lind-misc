@@ -13,16 +13,23 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#define perror(x) fprintf(stderr, x);
-
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <assert.h>
+#include <errno.h>
+#include "common.h"
 
 int main()
 {
+
     int clientSocket,
         remotePort,
         status = 0;
     struct hostent *hostPtr = NULL;
     struct sockaddr_in serverName;
+
+    make_files();
+
 
     memset(&serverName, 0, sizeof(serverName));
     char buffer[256] = "";
@@ -32,6 +39,8 @@ int main()
     remoteHost = "localhost";
     remotePort = atoi("22001");
 
+
+    debug("[client] make client socket");
     clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (-1 == clientSocket) {
         perror("socket()");
@@ -41,9 +50,11 @@ int main()
     /*
      * need to resolve the remote server name or
      * IP address */
+    debug("[client] gethostbyname");
     hostPtr = gethostbyname(remoteHost);
     if (NULL == hostPtr)
     {
+      debug("[client] gethostbyaddr");
         hostPtr = gethostbyaddr(remoteHost, strlen(remoteHost), AF_INET);
         if (NULL == hostPtr)
         {
@@ -53,9 +64,14 @@ int main()
     }
 
     serverName.sin_family = AF_INET;
-    serverName.sin_port = htons(remotePort);
-    (void) memcpy(&serverName.sin_addr, hostPtr->h_addr, hostPtr->h_length);
+    serverName.sin_port = htons(PORT);
+    
+    if(!inet_pton(AF_INET, "127.0.0.1", &serverName.sin_addr)){
+      debug("[client] inetpton failed");
+    } 
 
+
+    debug("[client]connect");
     status = connect(clientSocket, (struct sockaddr*) &serverName, sizeof(serverName));
     if (-1 == status)
     {
@@ -68,18 +84,20 @@ int main()
      *
      * e.g. receive messages from server, respond,
      * etc. */
-    while (0 < (status = read(clientSocket,
-        buffer, sizeof(buffer) - 1)))
-    {
-        printf("%d: %s", status, buffer);
-    }
+    debug("[client] recving");
+    status = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+    
+    assert (status > 0);
+    assert (strcmp(buffer, MESSAGE) == 0);
+    
+    debug("[client] done recving");
 
     if (-1 == status)
     {
         perror("read()");
     }
 
-    close(clientSocket);
+    /* close(clientSocket); */
 
     return 0;
 }

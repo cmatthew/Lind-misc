@@ -15,8 +15,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>  /* fork(), write(), close() */
+#include "common.h"
 
-#define perror(x) fprintf(stderr, x);
 /*
  * prototypes
  */
@@ -25,22 +25,16 @@ int _GetHostName(char *buffer, int length);
 /*
  * constants
  */
-const char MESSAGE[] = "Hello, World!\n";
 const int BACK_LOG = 5;
 
 int main() {
   int serverSocket = 0,
     on = 0,
-    port = 0,
-    status = 0,
-    childPid = 0;
-  struct hostent *hostPtr = NULL;
+    status = 0;
   char hostname[80] = "localhost";
   struct sockaddr_in serverName;
 
   memset(&serverName, 0, sizeof(serverName));
-
-  port = 22001;
 
   serverSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -68,6 +62,7 @@ int main() {
   }
 
   /*
+
    * when connection is closed, there is a need
    * to linger to ensure all data is
    * transmitted, so turn this on also
@@ -91,95 +86,92 @@ int main() {
   /*
    * find out who I am
    */
-
+  debug("[server] gethostname");
   status = _GetHostName(hostname, sizeof(hostname));
   if (-1 == status) {
       perror("_GetHostName()");
       exit(1);
   }
 
-  hostPtr = gethostbyname(hostname);
-  if (NULL == hostPtr) {
-      perror("gethostbyname()");
-      exit(1);
-  }
+  debug("[server] skipping gethostbyname");
+  /* hostPtr = gethostbyname(hostname); */
+  /* if (NULL == hostPtr) { */
+  /*     perror("gethostbyname()"); */
+  /*     exit(1); */
+  /* } */
 
   (void) memset(&serverName, 0, sizeof(serverName));
-  (void) memcpy(&serverName.sin_addr, hostPtr->h_addr, hostPtr->h_length);
 
+  if(!inet_pton(AF_INET, "127.0.0.1", &serverName.sin_addr)){
+    debug("inetpton failed");
+  } 
+  
+ 
   /*
    * to allow server be contactable on any of
    * its IP addresses, uncomment the following
    * line of code:
    */
-  serverName.sin_addr.s_addr=htonl(INADDR_ANY);
+  /* serverName.sin_addr.s_addr=htonl(INADDR_ANY); */
 
   serverName.sin_family = AF_INET;
   /* network-order */
-  serverName.sin_port = htons(port);
-
+  serverName.sin_port = htons(PORT);
+  
+  debug("[server] calling bind");
   status = bind(serverSocket, (struct sockaddr *) &serverName, sizeof(serverName));
   if (-1 == status) {
       perror("bind()");
       exit(1);
   }
-
+  debug("[server] calling listen");
   status = listen(serverSocket, BACK_LOG);
   if (-1 == status) {
       perror("listen()");
       exit(1);
   }
 
-  for (;;) {
-      struct sockaddr_in clientName;
-      memset(&clientName, 0, sizeof(clientName));
+  struct sockaddr_in clientName;
+  memset(&clientName, 0, sizeof(clientName));
 
-      socklen_t clientLength = sizeof(clientName);
+  socklen_t clientLength = sizeof(clientName);
 
-      (void) memset(&clientName, 0, sizeof(clientName));
+  (void) memset(&clientName, 0, sizeof(clientName));
 
-      int sock_fd = accept(serverSocket, (struct sockaddr *) &clientName, &clientLength);
+  debug("[server] calling accept");
 
-      if (-1 == sock_fd) {
-	  perror("accept()");
-	  exit(1);
-        }
+  int sock_fd = accept(serverSocket, (struct sockaddr *) &clientName, &clientLength);
 
-      childPid = fork();
+  if (-1 == sock_fd) {
+    perror("accept()");
+    exit(1);
+  }
 
-      switch (childPid)
-        {
-        case -1: /* ERROR */
-	  perror("fork()");
-	  exit(1);
+      
+  debug("[server] calling getpeername");
+  if (-1 == getpeername(sock_fd, (struct sockaddr *) &clientName, &clientLength))
+  	{
+  	  perror("getpeername()");
+  	}
+  else
+  	{
+  	  printf("Connection request from %s\n", inet_ntoa(clientName.sin_addr));
+  	}
 
-        case 0: /* child process */
+  /*
+   * Server application specific code
+   * goes here, e.g. perform some
+   * action, respond to client etc.
+   */
+  printf("[server]server is writing size %d of: %s\n", strlen(MESSAGE), MESSAGE);
+  debug("[server] calling send");
 
-	  close(serverSocket);
+  int rc = send(sock_fd, MESSAGE, strlen(MESSAGE) + 1, 0);
+  close(sock_fd);
 
-	  if (-1 == getpeername(sock_fd, (struct sockaddr *) &clientName, &clientLength))
-            {
-	      perror("getpeername()");
-            }
-	  else
-            {
-	      printf("Connection request from %s\n", inet_ntoa(clientName.sin_addr));
-            }
-
-	  /*
-	   * Server application specific code
-	   * goes here, e.g. perform some
-	   * action, respond to client etc.
-	   */
-	  int rc = write(sock_fd, MESSAGE, strlen(MESSAGE));
-	  assert(strlen(MESSAGE)==rc);
-	  close(sock_fd);
-	  exit(0);
-
-        default: /* parent process */
-	  close(sock_fd);
-        }
-    }
+  assert(rc >= 0);
+  printf("[server] sent %d bytes\n", rc);
+  assert((unsigned int)rc == strlen(MESSAGE) + 1);
 
   return 0;
 }
@@ -189,15 +181,6 @@ int main() {
  * portability */
 int _GetHostName(char *buffer, int length)
 {
-  struct utsname sysname;
-  memset(&sysname, 0, sizeof(sysname));
-
-  int status = 0;
-
-  status = uname(&sysname);
-  if (-1 != status) {
-      strncpy(buffer, sysname.nodename, length);
-  }
-
-  return (status);
+      strncpy(buffer,"foo" , length);
+      return 0;
 }

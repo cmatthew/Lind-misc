@@ -14,7 +14,7 @@ ifeq ($(type),c)
 endif
 
 
-SOURCES = server.c client.c
+SOURCES = server.c client.c common.c
 OBJECTS = $(SOURCES:.c=.o)
 SERVER = nettest-server
 CLIENT = nettest-client
@@ -22,10 +22,10 @@ CLIENT = nettest-client
 all: $(SERVER) $(CLIENT)
 	
 
-$(SERVER): server.o
+$(SERVER): server.o common.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-$(CLIENT): client.o
+$(CLIENT): client.o common.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
 .c.o:
