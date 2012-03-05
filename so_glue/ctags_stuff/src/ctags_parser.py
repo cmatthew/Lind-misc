@@ -530,7 +530,9 @@ def cp_write_des(list_o_lists, original_file) :
 		func += "\t" + function_ret_type + " ret_val;\n\n\tret_val = " + \
 			item[SYM_NAME] + "("
 		for i in range(0, len(args)):
-			if "*" in args[i] and "char" in args[i]:
+			if "*" in args[i] and "char" in args[i] or "*" in function_ret_type:
+				func += "" + args[i].split()[-1].replace("*","")
+			elif "*" in args[i] and not "char" in args[i]:
 				func += "" + args[i].split()[-1].replace("*","")
 			else :
 				func += "*" + args[i].split()[-1]
@@ -542,7 +544,7 @@ def cp_write_des(list_o_lists, original_file) :
 		func += "\n\tmessage * reply = malloc (MSG_SIZE);\n"
 		func += "\tmemset(reply, '\\0', MSG_SIZE);\n"
 
-		if "*" in loc_type and "char" in loc_type or "*" in function_ret_type:
+		if "*" in loc_type  and "char" in loc_type or "*" in function_ret_type:
 			func += "\nprintf(\"on the way back1: %s\\n\",ret_val);\n\n" 		
 			func += "\n\treply->msg_size = strlen(ret_val)" + \
 				" + 1;\n\treply->num_of_args = 1;\n"

@@ -17,7 +17,7 @@ int main () {
 */	
 	
 	int num_of_tests = 0;
-	int num_of_tests_t = 10;
+	int num_of_tests_t = 11;
 	
 	//assert(9876 = foo_empty());
 	//num_of_tests++;
@@ -25,10 +25,11 @@ int main () {
 	
 	const char * one = "hello";
 	const char * two = "world";
-	printf ("we are here in the user.c line 28");
-	printf("%s\n", crypt(one, two));
-//assert(strcmp("woglQSsVNh3SM", crypt(one, two)));
-	
+	printf ("we are here in the user.c line 28\n");
+	printf("\n>>>>%s<<<<<\n", crypt(one, two));
+assert(strcmp("woglQSsVNh3SM", crypt(one, two)) == 0);
+	num_of_tests++;
+
 	assert(x == foo(x));
 	num_of_tests++;
 	printf("passed: int foo(int x)\n");
@@ -78,8 +79,20 @@ int main () {
 	num_of_tests++;
 
 	assert(strcmp("helloworld", two_strings(one,two)) == 0);
+	printf("Passed char * two_strings\n");
 	num_of_tests++;
-	printf("<<<%s>>>\n", two_strings(one, two));
+	
+	MD5_CTX c;
+	unsigned char digest[16];
+	char *out = (char *) malloc(33);
+	MD5_Update(&c, "hello", 5);
+	int rc = MD5_Final(digest, &c);
+	printf("return code: %d\n", rc);
+	int n;
+	for (n = 0; n < 16; ++n) {
+		snprintf(&(out[n*2]), 16*2, "%02x", (unsigned int) digest[n]);
+	}
+	printf ("md5 output: %s\n", out);
 	printf("Passed %d / %d\n", num_of_tests, num_of_tests_t);
 	
 	return 0;

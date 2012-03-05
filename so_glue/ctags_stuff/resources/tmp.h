@@ -30,7 +30,7 @@ struct my_struct{
 #include <features.h>
 #include <crypt.h>
 //#include <openssl/rsa.h>
-//#include <openssl/md5.h>  
+#include <openssl/md5.h>  
 /* #include <openssl/md4.h> /\* works *\/ */
 /* #include <openssl/md2.h> /\* works *\/ */
 
