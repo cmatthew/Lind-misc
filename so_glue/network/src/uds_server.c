@@ -20,14 +20,16 @@ int connection_handler (int connection_fd) {
 	/* int rc = -1;  /\* return codes for system calls. *\/ */
 	nbytes = read (connection_fd, buffer, MSG_SIZE);
 	
-//	printf("\n\n\n\nthis is it in the SERVER ON WAY IN: %Lf\n", &buffer[24]);
 	buffer = (void *) des(buffer);
 	
+	/*	
+	printf("back out in the server: %d\n", buffer[4]);	
+	if(buffer[4] == 0) {
+		printf("\n\n\n\nthis is it in the SERVER ON WAY OUT: %s\n\n\n\n", &buffer[20]);
+	} 
+	*/
 	message * reply = (message *) buffer;
 
-//	if(&buffer[4] == 7) {
-//		printf("\n\n\n\nthis is it in the SERVER ON WAY OUT: %Lf\n\n\n\n", &buffer[28]);
-//	}
 
 	int rc = write(connection_fd, reply, MSG_SIZE);
 	assert(rc != -1);

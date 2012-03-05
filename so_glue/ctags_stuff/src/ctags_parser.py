@@ -118,10 +118,10 @@ def cp_serialize(serialize_me) :
 	ser_code += '\tnbytes += sizeof(num_of_args);\n'
 	for i in range(1, len(tmp)-1) :
 		print "tmp[i]: " + tmp[i]
-		if "*" in tmp[i] and not "FIX" in tmp[i] and not "__" in tmp[i]:
+		if "*" in tmp[i] and not "FIX" in tmp[i] : #and not "__" in tmp[i]:
 			ser_code += '\tstrcpy(&buffer[nbytes], '+ tmp[i].replace('*', "") + ");\n"#\
-			ser_code += "printf(\"IN SERIALIZER>>>%s<<<\\n\", string);\n"
-			ser_code += "printf(\"%s\\n\", &buffer[24]);\n"
+#			ser_code += "printf(\"IN SERIALIZER>>>%s<<<\\n\", string);\n"
+	#		ser_code += "printf(\"%s\\n\", &buffer[24]);\n"
 		#		', strlen('+str(tmp[i].replace('*', "")) +')+1);\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
 		else :
@@ -136,21 +136,23 @@ def cp_serialize(serialize_me) :
 	return_type = ""
 	for item in ret_c :
 		return_type += (item + " ")
-	
+	#deals with char *foo(... function signatures
+	if "*" in serialize_me.split("(")[0].split()[-1]:
+		return_type += "* "
 	#print ser_code
 	#print serialize_me
 	#sys.exit(1)
 	ser_code += return_type + "ret_v;\n"
 	ser_code += "\tmemcpy(&ret_s, &buffer[0], sizeof(int));\n"
 	if "*" in return_type:
-		ser_code += "printf(\"%d\\n\", ret_s);\n"
+	#	ser_code += "printf(\"%d\\n\", ret_s);\n"
 		ser_code += "int i = 0; while(i<12){printf(\"%c\",(int) &buffer[20+i]);i++;}"
-		ser_code += "printf(\"ALL THE WAY OUT NOW: >>>%s<<<\\n\", &buffer[20]);\n"
+	#	ser_code += "printf(\"ALL THE WAY OUT NOW: >>>%s<<<\\n\", &buffer[20]);\n"
 		ser_code += "\tret_v = (char *) &buffer[20];\n"
-		ser_code += "\tprintf(\"made it >>>%s<<<\\n\", ret_v);\n"
+	#	ser_code += "\tprintf(\"made it >>>%s<<<\\n\", ret_v);\n"
 	else :
 		ser_code += "\tmemcpy(&ret_v, &buffer[20], ret_s);\n"
-		ser_code += '\tprintf("size in here %d, %d\\n", ret_s, sizeof(long));\n'
+	#	ser_code += '\tprintf("size in here %d, %d\\n", ret_s, sizeof(long));\n'
 	ser_code += "return ret_v;\n}\n\n"
 	return ser_code 
 
@@ -167,10 +169,15 @@ def cp_write_mm_magic_c(value):
 	target = _cp_my_open_file(MM_C_OUT, 'a')
 	target.write(value[0:-2])
 	target.write("{\n\t")
+	#detect if return type is void
+	if "void" in value.split()[0]:
+		target.write('return;\n}')
+		_cp_my_close_file(target)
+		return
 	# initialize buffer
 	target.write('memset(&buffer[0], \'\\0\', BUF_SIZE);\n')
 	# set up vars
-	target.write('int my_s_size;\nmy_s_size = BUF_SIZE;\n')
+	target.write('\tint my_s_size;\n\tmy_s_size = BUF_SIZE;\n')
 	# populate common fields
 	target.write(cp_serialize(value))
 	
@@ -258,8 +265,8 @@ def cp_fill_MM_CODE(info):
 	
 
 
-def cp_middle_magic(sig) :
-	""" cp_middle_magic
+def cp_local_impl_middle(sig) :
+	""" cp_local_impl_middle
 	# Generates the code/function to connect client and server.
 	# Constructs a function with the arguments that need to be send
 	# Arguments:
@@ -346,8 +353,8 @@ def cp_get_typedef(signature) :
 	return signature +";\n"
 	
 
-def cp_get_fstring(signature) :
-	""" cp_get_fstring
+def cp_local_impl(signature) :
+	""" cp_local_impl
 	# Complete function is returned
 	# Arguments:
 	#	signature	string from SIGNATURE colum of ctags output
@@ -355,7 +362,7 @@ def cp_get_fstring(signature) :
 	#	C code of the enture function, signature and body
 	"""
 	function = str(signature)+" {\n"
-	mm_sig_code , function_tmp  = cp_middle_magic(signature)
+	mm_sig_code , function_tmp  = cp_local_impl_middle(signature)
 	function += function_tmp
 	return function+"\n}\n", mm_sig_code
 
@@ -377,10 +384,9 @@ def cp_user_includes(original_c_file) :
 	for line in user_code:
 		if "#include" in line:
 			ret_s += line 
-
-
 	_cp_my_close_file(user_code)
 	return ret_s
+
 
 def cp_write_c(lol, filename, orig_c_file) :
 	""" cp_write_c
@@ -405,10 +411,10 @@ def cp_write_c(lol, filename, orig_c_file) :
 	for i in range(len(lol)) :
 		if lol[i][TYPE] == "typedef" and lol[i-1][TYPE] != "member":
 			c_code += cp_get_typedef(lol[i][SIGNATURE])
-	
+
 	for item in lol :
 		if item[TYPE] == "prototype":
-			c_code_tmp, mm_sig = cp_get_fstring(item[SIGNATURE])
+			c_code_tmp, mm_sig = cp_local_impl(item[SIGNATURE])
 			c_code += c_code_tmp
 			cp_write_mm_magic_c(mm_sig)
 			cp_write_mm_magic_h(mm_sig)
@@ -447,7 +453,7 @@ def cp_parse_ctags(filename):
 
 
 
-def cp_write_des(list_o_lists) :
+def cp_write_des(list_o_lists, original_file) :
 	""" cp_write_des
 	# generates deserializer.c automatically
 	# Arguments:
@@ -463,21 +469,31 @@ def cp_write_des(list_o_lists) :
 	incls += "#include \"deserializer.h\"\n"
 	incls += "#include \"../../network/src/uds_helper.h\"\n"
 	incls += "#include \"fake_implementation.h\"\n\n"
+	incls += cp_user_includes(original_file)
 	funcs = ""
 	des_end = "\tassert(0);\n\treturn NULL;\n}"
 
 	#write out the dynamic parts
 	for item in list_o_lists:
+		if item[TYPE] != "prototype" :
+			continue
+
+		#detects if the return type is void - currently isn't handled March 4th 2012
+		if "void" in item[SIGNATURE].split("(")[0].rsplit(None,1)[0] :
+			continue
 		print item
 		func = ""
 		func_name = "deserialize_" + item[SYM_NAME]
-		args = item[SIGNATURE].split("(")[1].split(")")[0].split(",")
-	
+		try : 
+			args = item[SIGNATURE].split("(")[1].split(")")[0].split(",")
+		except:
+			print item[SIGNATURE]
+			sys.exit(1)
 		print "\n\n"
 		print args
 		func += "message * " + func_name + "(message *msg) {\n"
 		
-		
+
 		func += "\tint start;\n\tstart = 0;\n"
 		for i in range(0, len(args)):
 			loc_type = ""
@@ -489,18 +505,33 @@ def cp_write_des(list_o_lists) :
 			loc_type = ""
 			for j in range(0, len(args[i].split()[0:-1])):
 				loc_type += args[i].split()[0:-1][j] + " "
-			func += "\t" + args[i].split()[-1] + " = (" + loc_type + \
+			if "*" in args[i].split()[-1]:
+				print loc_type
+				loc_type += "*"
+			func += "\t" + args[i].split()[-1].replace("*","") + " = (" + loc_type + \
 				" *) (msg->data + offset);\n\n"
 			func += "\toffset += sizeof(" + loc_type + \
 				" );\n\toffset += sizeof(int);\n\n"
 		#inspected the output, this works and shows up in deserializer correctly
 		#func += "printf(\"in des_oneline: %s\\n\",string);\n"
 		function_ret_type = item[SIGNATURE].split("(")[0].rsplit(None,1)[0]
+		try:
+			tmp_func_ret = function_ret_type.split()[-1]
+			function_ret_type = tmp_func_ret
+		except:
+			print "should work"
+
+		if "*" in item[SIGNATURE].split("(")[0].split()[-1]:
+			function_ret_type += "*"
+#		if "cry" in item[SIGNATURE] :
+#			print item[SIGNATURE]
+#			print function_ret_type
+#			sys.exit(1)
 		func += "\t" + function_ret_type + " ret_val;\n\n\tret_val = " + \
 			item[SYM_NAME] + "("
 		for i in range(0, len(args)):
 			if "*" in args[i] and "char" in args[i]:
-				func += "" + args[i].split()[-1]
+				func += "" + args[i].split()[-1].replace("*","")
 			else :
 				func += "*" + args[i].split()[-1]
 			if i != len(args)-1 :
@@ -511,18 +542,18 @@ def cp_write_des(list_o_lists) :
 		func += "\n\tmessage * reply = malloc (MSG_SIZE);\n"
 		func += "\tmemset(reply, '\\0', MSG_SIZE);\n"
 
-		if "*" in loc_type and "char" in loc_type:
-			func += "\nprintf(\"on the way back: %s\\n\",ret_val);\n\n" 		
+		if "*" in loc_type and "char" in loc_type or "*" in function_ret_type:
+			func += "\nprintf(\"on the way back1: %s\\n\",ret_val);\n\n" 		
 			func += "\n\treply->msg_size = strlen(ret_val)" + \
 				" + 1;\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&reply->data[0], ret_val, reply->msg_size + 1);\n\n"
-			func += "\n//printf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
+			func += "\nprintf(\"on the way back2: %s\\n\",&reply->data[0]);\n\n" 		
 		else :
 			func += "\n\treply->msg_size = sizeof(ret_val);\n\treply->num_of_args = 1;\n"
 			func += "\tmemcpy(&(reply->data)[0], &ret_val, sizeof(ret_val));\n\n"
 			func += '//printf("in deserializer %d %Lf, %Lf\\n",' + \
 				' ret_val, ret_val, &(reply->data)[0]);'
-		func += "\treturn reply;\n}\n\n\n"
+		func += "\n\treturn reply;\n}\n\n\n"
 		
 		funcs += func
 		switch_stmt += "\t\tcase " + \
@@ -561,7 +592,7 @@ def main(filename, original_f) :
 	lol = cp_parse_ctags(filename)   
 	### writes out c code using each element in lol
 	cp_write_c(lol, filename, original_f)
-	cp_write_des(lol)
+	cp_write_des(lol, original_f)
 
 
 ### standard main for python

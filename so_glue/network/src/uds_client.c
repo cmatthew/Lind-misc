@@ -60,10 +60,14 @@ int cli_connect_buffer (void *buffer) {
 
 	/* read the server's response */
 	nbytes = read (socket_fd, buffer, MSG_SIZE);
-	
+		
 	assert(nbytes != -1);
-	
-	/* close the socket's filedescriptor handle */
+
+	/* 
+	close the socket's filedescriptor handle 
+	? do we need to do this on unix domain sockets, didn't I read that 
+	  one didn't even need to close them ?
+	*/
 	close (socket_fd);
 
 	/* I should return a void pointer so the caller can figure out what to do

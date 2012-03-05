@@ -17,7 +17,17 @@ int main () {
 */	
 	
 	int num_of_tests = 0;
-	int num_of_tests_t = 9;
+	int num_of_tests_t = 10;
+	
+	//assert(9876 = foo_empty());
+	//num_of_tests++;
+	//printf("passed: int foo()\n");
+	
+	const char * one = "hello";
+	const char * two = "world";
+	printf ("we are here in the user.c line 28");
+	printf("%s\n", crypt(one, two));
+//assert(strcmp("woglQSsVNh3SM", crypt(one, two)));
 	
 	assert(x == foo(x));
 	num_of_tests++;
@@ -40,10 +50,10 @@ int main () {
 	num_of_tests++;
 	
 	long xx, yy;
-	xx = 400l;
+	xx = 100l;
 	yy = 500l;
 	printf(">%ld<, %ld\n", foo_long(xx,yy,x), xx-yy);
-	assert(foo_long(xx, yy, x)==(long)(-100));
+	assert(foo_long(xx, yy, x)==(long)(xx-yy));
 	num_of_tests++; 
 	
 	printf("printing float %f\n", foo_float((float) 2.33, y));
@@ -67,8 +77,11 @@ int main () {
 	printf("Passed double foo_double\n");
 	num_of_tests++;
 
+	assert(strcmp("helloworld", two_strings(one,two)) == 0);
+	num_of_tests++;
+	printf("<<<%s>>>\n", two_strings(one, two));
 	printf("Passed %d / %d\n", num_of_tests, num_of_tests_t);
-//	printf("hmmm: %d\n", MD4_Init(test_MD4));
+	
 	return 0;
 }
 

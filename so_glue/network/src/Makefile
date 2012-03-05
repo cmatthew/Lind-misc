@@ -18,7 +18,7 @@ EXECUTABLE = ../output/uds_server
 all: $(SOURCES) $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ -lcrypt
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@
