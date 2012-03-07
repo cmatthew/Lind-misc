@@ -31,8 +31,8 @@ struct my_struct{
 #include <crypt.h>
 //#include <openssl/rsa.h>
 #include <openssl/md5.h>  
-/* #include <openssl/md4.h> /\* works *\/ */
-/* #include <openssl/md2.h> /\* works *\/ */
+ #include <openssl/md4.h>
+// #include <openssl/md2.h>
 
 //void no_comments(char * string) ;
 

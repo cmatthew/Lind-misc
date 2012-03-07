@@ -72,9 +72,8 @@ def cp_cleanup(strings) :
 	#	strings	each line of ctags output is parsed and split into columns
 	#		strings ['SYM_NAME','TYPE','LINE_NUM','SOURCE_FILE','SIGNATURE']
 	# Results:
-	#	Cleaned up data structure, containing only the columns we need
+	#	Cleaned up data structure, trailing newline is removed
 	"""
-#	del strings[2]
 	strings[-1] = strings[-1].split(";")[0]
 	if strings[-1][-1] == '\n':
 		strings[-1] = strings[-1][:-1]
@@ -94,7 +93,7 @@ def cp_serialize(serialize_me) :
 	tmp = tmp.split(',')
 	tmp2 = []
 	for item in tmp:
-		if "void" in item:
+		if "void" in item: #currently faked and not dealt with yet
 			tmp2.append("call_num /*FIXME*/")
 		elif "char" in item and "*" in item:
 			tmp2.append("*"+item.split()[-1])
@@ -121,8 +120,8 @@ def cp_serialize(serialize_me) :
 		if "*" in tmp[i] and not "FIX" in tmp[i] : #and not "__" in tmp[i]:
 			ser_code += '\tstrcpy(&buffer[nbytes], '+ tmp[i].replace('*', "") + ");\n"#\
 #			ser_code += "printf(\"IN SERIALIZER>>>%s<<<\\n\", string);\n"
-	#		ser_code += "printf(\"%s\\n\", &buffer[24]);\n"
-		#		', strlen('+str(tmp[i].replace('*', "")) +')+1);\n'
+#			ser_code += "printf(\"%s\\n\", &buffer[24]);\n"
+#				', strlen('+str(tmp[i].replace('*', "")) +')+1);\n'
 			ser_code += '\tnbytes += sizeof('+tmp[i].replace('*', "") +');\n'
 		else :
 			ser_code += '\tmemcpy(&buffer[nbytes], &'+ tmp[i]+', sizeof('+\
