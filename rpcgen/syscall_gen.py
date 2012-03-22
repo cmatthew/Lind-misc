@@ -364,7 +364,7 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
             output.append("assert( CONTENTS_SIZ(reply_buffer) <= " +
                           out_args[0][2] + ");")
         # copy from the RPC payload to the target pointer
-        output.append("void *restrict ptr = " + out_args[0][1] +
+        output.append("void * ptr = " + out_args[0][1] +
                       ";\n" +
                       "memcpy(ptr, &(reply_buffer->contents), \
                       CONTENTS_SIZ(reply_buffer));")
@@ -558,8 +558,8 @@ emptysyscall("sendto", [("int", "sockfd"),
                         ("const void *", "buf", "len")])
 
 # # "accept":(40,),
-# #syscall("accept",[("int","sockfd"),("socklen_t","addrlen")],
-# [],[("__CONST_SOCKADDR_ARG","addr","addrlen")])
+syscall("accept",[("int","sockfd"),("socklen_t","addrlen")],
+ [],[])#[("__CONST_SOCKADDR_ARG","addr_out","addrlen")])
 # # need to modify argument to be in and out!
 
 emptysyscall("getpeername",
@@ -573,7 +573,7 @@ emptysyscall("getpeername",
 # # getpeername needs in out type too!
 # # "getsockname"
 # "getsockopt",
-emptysyscall("setsockopt", [("int", "sockfd"),
+syscall("setsockopt", [("int", "sockfd"),
                             ("int", "level"),
                             ("int", "optname"),
                             ("socklen_t", "optlen")],
