@@ -94,7 +94,7 @@ function run_grep {
 
 setup_filesystem
 run_grep "--text Hi" "10.txt.utf8"
-
+	
 #run_grep "He" "10.txt.utf8"
 #run_grep "He" "10609.txt.utf8 10.txt.utf8 11.txt.utf8 1342.txt.utf8 1400.txt.utf8 1661.txt.utf8 2591.txt.utf8 30601.txt.utf8 38840.txt.utf8 4300.txt.utf8 5200.txt.utf8 76.txt.utf8 98.txt.utf8" 
 
