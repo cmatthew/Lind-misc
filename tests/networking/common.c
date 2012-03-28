@@ -11,10 +11,14 @@
 #include <sys/types.h>
 #include <assert.h>
 #include <errno.h>
+
 #define perror(x) fprintf(stderr, x);
 #define debug(x) printf(x);fflush(stdout);
 
+/* The name lookup subsystem needs files to direct it on how to do DNS and hostnames.
+This function writes some fake files into root, which then program can then read.
 
+*/
 void make_files(void) {
 
   const char * dns = "nameserver 142.104.71.64\nnameserver 142.104.96.2\nnameserver 142.104.6.1\ndomain cs.uvic.ca\nsearch cs.uvic.c";

@@ -50,11 +50,15 @@ int main()
     /*
      * need to resolve the remote server name or
      * IP address */
-    debug("[client] gethostbyname");
+    debug("[client] gethostbyname\n");
     hostPtr = gethostbyname(remoteHost);
+    const char * ip = inet_ntop(AF_INET, hostPtr->h_addr, malloc(100), 100);
+    printf("hostname %s is: %s\n", remoteHost, ip );
+    assert(strcmp(ip,"127.0.0.1")==0);
+
     if (NULL == hostPtr)
     {
-      debug("[client] gethostbyaddr");
+      debug("[client] gethostbyaddr\n");
         hostPtr = gethostbyaddr(remoteHost, strlen(remoteHost), AF_INET);
         if (NULL == hostPtr)
         {
