@@ -9,15 +9,21 @@ import hashlib
 # add repy install path to script
 path = os.getenv("REPY_PATH")
 if path == None:
-    print "Error: REPY_PATH enviroment variable must be set."
-    sys.exit(1)
-sys.path.append(path)
-path = os.path.join(path, "repy")
+    print "Error: REPY_PATH enviroment variable must be set, using default"
+    path = "/home/lind/tmp/lind/"
+
+
+print type(path), path
+
+path = os.path.join(path, "repy/")
 sys.path.append(path)
 
-from lind_fs_constants import *
-
-import wrapped_lind_fs_calls as lind_fs_calls
+# change dir so the execfile in test server works
+cur = os.getcwd()
+os.chdir(path)
+import lind_test_server
+# and now back to where we started.
+os.chdir(cur)
 
 # Just a few things to note:
 #
@@ -41,26 +47,26 @@ def copy_file(source, path, new_name):
     try:
         mode = stat.S_IMODE(os.stat(source).st_mode)
         #print "in copy " + source+ "..." + str(mode) + "..." + str(stat.S_IRWXU)
-        lindfd = lind_fs_calls.open_syscall(path + "/" + new_name, O_CREAT | O_RDWR, mode)
+        lindfd = lind_test_server.open_syscall(path + "/" + new_name, O_CREAT | O_RDWR, mode)
 
-    except lind_fs_calls.SyscallError, e:
+    except lind_test_server.SyscallError, e:
         print "Could not open the local file. Error: %s" % e
         return -1
 
     #try to write the file content to the newly file
     try:
-        lind_fs_calls.write_syscall(lindfd, filedata.read())
-    except lind_fs_calls.SyscallError, e:
+        lind_test_server.write_syscall(lindfd, filedata.read())
+    except lind_test_server.SyscallError, e:
         print "Could not write file. Error: %s" % e
         return -1
 
 
-    lind_fs_calls.close_syscall(lindfd)
+    lind_test_server.close_syscall(lindfd)
 
 #pass in a path, check if it exists in the virtual fs. if it doesnt, it creates the path
 def check_path_exists(path):
     path_list = path.split("/")[0:-1]#get each directory in the path, excluding the new file's name
-    lind_fs_calls.chdir_syscall("/")#start at root
+    lind_test_server.chdir_syscall("/")#start at root
     path_str = "/"#this string will hold the whole path of the destination file (excluding the filename itself)
 
     #loop through each dir in the path
@@ -70,16 +76,16 @@ def check_path_exists(path):
         path_str += (p + "/")#concat the dir to the full path string
         #try to chdir (if it fails, means the directory doesnt exist)
         try:
-            lind_fs_calls.chdir_syscall(p)
+            lind_test_server.chdir_syscall(p)
         #if (when) the exception is caught, create a new dir and chdir to it
-        except lind_fs_calls.SyscallError as e:
+        except lind_test_server.SyscallError as e:
 
             mode = stat.S_IMODE(os.stat(path_str + p).st_mode)
 
             #print "in check: " + path + p + "..." + str(mode) + "..." + str(S_IRWXU)
 
-            lind_fs_calls.mkdir_syscall(p, mode)
-            lind_fs_calls.chdir_syscall(p)
+            lind_test_server.mkdir_syscall(p, mode)
+            lind_test_server.chdir_syscall(p)
     return path_str
 
 
@@ -98,16 +104,16 @@ def cp_recursive(source, dest):
     else:
         #if it IS a dir we need to do a little more work.
         path_str = check_path_exists(dest)#add the path up to the directory
-        lind_fs_calls.chdir_syscall(path_str)#chdir to the end of that new path
+        lind_test_server.chdir_syscall(path_str)#chdir to the end of that new path
 
         mode = stat.S_IMODE(os.stat(source).st_mode)
 
         #print "in cp " +  source + "/" + new_file_name + "..." + str(mode) + "..." + str(S_IRWXU)
         try:
-            lind_fs_calls.chdir_syscall(new_file_name)#chdir to that new directory
-        except lind_fs_calls.SyscallError:
-            lind_fs_calls.mkdir_syscall(new_file_name, mode)#make a directory for the new directory
-            lind_fs_calls.chdir_syscall(new_file_name)#chdir to that new directory
+            lind_test_server.chdir_syscall(new_file_name)#chdir to that new directory
+        except lind_test_server.SyscallError:
+            lind_test_server.mkdir_syscall(new_file_name, mode)#make a directory for the new directory
+            lind_test_server.chdir_syscall(new_file_name)#chdir to that new directory
 
         #then we loop through each of the subfiles of the directory, and recursively call the cp function
         #keeping track of both the native file location as well as the virtual file location!
@@ -119,55 +125,55 @@ def cp_recursive(source, dest):
 #parses the args, calls the actual cp function
 def cp_cmd(input_list):
 
-	cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
-	
-	#create a new argument parser, with 2 argument options (source and destination)
-	parser = argparse.ArgumentParser(description='Copy source to dest')
-	parser.add_argument('source', metavar='SOURCE', type=str, help='The file that you would like to copy')
-	parser.add_argument('dest', metavar='DEST', type=str, help='The file you would like to copy into')
-	
-	#start off with an empty list
-	cp_cmd.args = []
-	
-	#try to parse the args
-	try:
-		cp_cmd.args = parser.parse_args(input_list)
-	except SystemExit, e:
-		pass
-	else:
-	
-		#the args were parsed correctly, call the actual cp function
-		cp_recursive(cp_cmd.args.source, cp_cmd.args.dest)
-	
-	#it is very likely that the current working directory will be changed, so go back to where the user was before the cp
-	try:
-		lind_fs_calls.chdir_syscall(cur_dir)
-	except lind_fs_calls.SyscallError, e:
-		print "In cp_cmd. Could not cd. Error: %s" % e
+    cur_dir = lind_test_server.fs_calls_context['currentworkingdirectory']#save the current directory
+
+    #create a new argument parser, with 2 argument options (source and destination)
+    parser = argparse.ArgumentParser(description='Copy source to dest')
+    parser.add_argument('source', metavar='SOURCE', type=str, help='The file that you would like to copy')
+    parser.add_argument('dest', metavar='DEST', type=str, help='The file you would like to copy into')
+
+    #start off with an empty list
+    cp_cmd.args = []
+
+    #try to parse the args
+    try:
+        cp_cmd.args = parser.parse_args(input_list)
+    except SystemExit, e:
+        pass
+    else:
+
+        #the args were parsed correctly, call the actual cp function
+        cp_recursive(cp_cmd.args.source, cp_cmd.args.dest)
+
+    #it is very likely that the current working directory will be changed, so go back to where the user was before the cp
+    try:
+        lind_test_server.chdir_syscall(cur_dir)
+    except lind_test_server.SyscallError, e:
+        print "In cp_cmd. Could not cd. Error: %s" % e
 
 
 
 #if the user specifies the --copy flag when they run the program, the arguments are parsed
-#in the main method, so just pass those arguments here	
+#in the main method, so just pass those arguments here
 def cp_once(source, dest):
-	
-	cur_dir = lind_fs_calls.fs_calls_context['currentworkingdirectory']#save the current directory
-	
-	cp_recursive(source, dest)
-		
-	#it is very likely that the current working directory will be changed, so go back to where the user was before the cp
-	try:
-		lind_fs_calls.chdir_syscall(cur_dir)
-	except lind_fs_calls.SyscallError, e:
-		print "In cp_cmd. Could not cd. Error: %s" % e
 
-	
-#this function is just for debugging. Copies a file (NON directory) back to disk so we can diff		
+    cur_dir = lind_test_server.fs_calls_context['currentworkingdirectory']#save the current directory
+
+    cp_recursive(source, dest)
+
+    #it is very likely that the current working directory will be changed, so go back to where the user was before the cp
+    try:
+        lind_test_server.chdir_syscall(cur_dir)
+    except lind_test_server.SyscallError, e:
+        print "In cp_cmd. Could not cd. Error: %s" % e
+
+
+#this function is just for debugging. Copies a file (NON directory) back to disk so we can diff
 def cpout_cmd(source, dest):
 
     try:
-        lindfd = lind_fs_calls.open_syscall(source, O_RDWR, 0)
-    except lind_fs_calls.SyscallError, e:
+        lindfd = lind_test_server.open_syscall(source, O_RDWR, 0)
+    except lind_test_server.SyscallError, e:
         print "Couldnt open local file. Error: %s" %e
         return -1
 
@@ -178,12 +184,12 @@ def cpout_cmd(source, dest):
         return -1
 
     try:
-        newfd.write(lind_fs_calls.read_syscall(lindfd, 1000000))
+        newfd.write(lind_test_server.read_syscall(lindfd, 1000000))
     except IOError, e:
         print "Failed to write to disk. Error: %s" % e
         return -1
 
-    lind_fs_calls.close_syscall(lindfd)
+    lind_test_server.close_syscall(lindfd)
 
 #create a new directory
 def mkdir_cmd(input_list):
@@ -204,8 +210,8 @@ def mkdir_cmd(input_list):
         #if they were correctly parsed, try to create a new directory for each name the user specified
         try:
             for new_dir_name in mkdir_cmd.args.directory:
-                retval = lind_fs_calls.mkdir_syscall(new_dir_name, S_IRWXU)
-        except lind_fs_calls.SyscallError, e:
+                retval = lind_test_server.mkdir_syscall(new_dir_name, S_IRWXU)
+        except lind_test_server.SyscallError, e:
             print "Could not mkdir. Error: %s" % e
 
 
@@ -229,11 +235,11 @@ def cd_cmd(input_list):
         try:
             #if there were no args passed in, cd to root, else cd to where the user wants to go
             if cd_cmd.args.directory == None:
-                lind_fs_calls.chdir_syscall("/")
+                lind_test_server.chdir_syscall("/")
             else:
                 print cd_cmd.args.directory
-                lind_fs_calls.chdir_syscall(cd_cmd.args.directory[0])
-        except lind_fs_calls.SyscallError, e:
+                lind_test_server.chdir_syscall(cd_cmd.args.directory[0])
+        except lind_test_server.SyscallError, e:
             print "Could not cd. Error: %s" % e
 
 
@@ -243,9 +249,9 @@ def md5_cmd(input_list):
     """print the md5 digest of all the files"""
     for filename in input_list:
         m = hashlib.md5()
-        lindfd = lind_fs_calls.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        lindfd = lind_test_server.open_syscall( filename, O_CREAT | O_RDWR, 0)
         while True:
-            s = lind_fs_calls.read_syscall(lindfd,4096)
+            s = lind_test_server.read_syscall(lindfd,4096)
             m.update(s)
             if len(s) == 0:
                 break
@@ -255,18 +261,18 @@ def md5_cmd(input_list):
 def cat_cmd(input_list):
     """print the contents of all the files"""
     for filename in input_list:
-        lindfd = lind_fs_calls.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        lindfd = lind_test_server.open_syscall( filename, O_CREAT | O_RDWR, 0)
         while True:
-            s = lind_fs_calls.read_syscall(lindfd,4096)
+            s = lind_test_server.read_syscall(lindfd,4096)
             print s
             if len(s) == 0:
                 break
 
 def wipe_cmd(input_list):
     """wipe this file system"""
-    lind_fs_calls._blank_fs_init()
+    lind_test_server._blank_fs_init()
     print "Filesystem wiped"
-    
+
 
 #prints the children of the current directory
 def ls_cmd(input_list):
@@ -287,10 +293,10 @@ def ls_cmd(input_list):
         try:
             #if no arg was passed in, just ls the current dir, else the dir specified. We need to open a file first so we can getdents
             if ls_cmd.args.directory == None:
-                lindfd = lind_fs_calls.open_syscall(lind_fs_calls.fs_calls_context['currentworkingdirectory'],O_RDONLY, S_IRWXU)#first open the file
+                lindfd = lind_test_server.open_syscall(lind_test_server.fs_calls_context['currentworkingdirectory'],O_RDONLY, S_IRWXU)#first open the file
             else:
-                lindfd = lind_fs_calls.open_syscall(ls_cmd.args.directory[0],O_RDONLY, S_IRWXU)#first open the file
-        except lind_fs_calls.SyscallError, e:
+                lindfd = lind_test_server.open_syscall(ls_cmd.args.directory[0],O_RDONLY, S_IRWXU)#first open the file
+        except lind_test_server.SyscallError, e:
             print "Could not open the local file. Error: %s" % e
             return -1
 
@@ -303,9 +309,9 @@ def ls_cmd(input_list):
         #while there are still files to look at, add them to the list. Once the list size is the same for 2 iterations in a row, we know there is nothing left to look at!
         while not len(ls_list) == prev_ls_list_count:
             try:
-                ls_list.extend(lind_fs_calls.getdents_syscall(lindfd, getdents_size))#add the current group of <getdents_size> files to the list of all files
+                ls_list.extend(lind_test_server.getdents_syscall(lindfd, getdents_size))#add the current group of <getdents_size> files to the list of all files
                 prev_ls_list_count = len(ls_list)#update the count
-            except lind_fs_calls.SyscallError, e:
+            except lind_test_server.SyscallError, e:
                 print "getdents failed. Error: %s" % e
 
         #loop through all the items added to the list
@@ -317,7 +323,7 @@ def ls_cmd(input_list):
         if(not ls_list == []):
             print ""#add a new line to the end
 
-        lind_fs_calls.close_syscall(lindfd)
+        lind_test_server.close_syscall(lindfd)
 
 
 
@@ -347,7 +353,7 @@ def parse_input(input_string):
         cat_cmd(input_list[1:])
     elif(cmd == "wipe"):
         wipe_cmd(input_list[1:])
-        
+
     else:
         print "%s is not a recognized command" % cmd
 
@@ -355,45 +361,34 @@ def parse_input(input_string):
 #starts the loop that looks for user input
 def main():
 
-    #check if metadata exists. if it doesnt, call _blank_fs_init, if it DOES exist call persist_metadata
-    try:
-        f = open("lind.metadata", 'r')
+    lind_test_server.load_fs()
 
-        lind_fs_calls.restore_metadata("lind.metadata")
-        f.close()
-    except IOError, e:
-        lind_fs_calls._blank_fs_init()
-    except KeyError,e:
-        print "Error: I have failed to open the file system. The metadata is corrupt"
-        #TODO something better?
-        sys.exit(1)
+    #set up the arg parser to parse the args to the program
+    parser = argparse.ArgumentParser(
+        description='Allows the user to manage their lind file systems, and copy files in')
+    parser.add_argument('-i', action='store_true',
+                        help='If specified, the program runs in interactive mode')
+    parser.add_argument('--copy', metavar=('SOURCE', 'DEST'), type=str, nargs=2,
+                        help='if specified, the program copies the native file SOURCE\
+                        to the virtual filesystem at DEST')
+    args = parser.parse_args()
+    #the main argument is the '-'. If it is specified, the user would like to run in interactive mode
+    #if the --copy flag is set (and -i is not), then pass the source and dest to the cp_once function
+    if not args.i and args.copy:
+        cp_once(args.copy[0], args.copy[1])
 
-	#set up the arg parser to parse the args to the program
-	parser = argparse.ArgumentParser(description='Allows the user to manage their lind file systems, and copy files in')
-	parser.add_argument('-i', action='store_true', help='If specified, the program runs in interactive mode')
-	parser.add_argument('--copy', metavar=('SOURCE', 'DEST'), type=str, nargs=2, help='if specified, the program copies the native file SOURCE to the virtual filesystem at DEST')
+    elif not args.i and not args.copy:
+        parser.print_help()
+    else:
+        #request user input (the command they want to type)
+        input_value = raw_input(lind_test_server.fs_calls_context['currentworkingdirectory'] +": ")
 
-	args = parser.parse_args()
-	
-	#the main argument is the '-'. If it is specified, the user would like to run in interactive mode
-	#if the --copy flag is set (and -i is not), then pass the source and dest to the cp_once function
-	#if neither are specified, print the help
-	if not args.i and args.copy:
-		cp_once(args.copy[0], args.copy[1])
-	
-	elif not args.i and not args.copy:
-		parser.print_help()
-	else:
-		#request user input (the command they want to type)
-		input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
-	
-		#loop until the user hits exit, prompting them to enter a command at each iteration
-		while((not input_value == "exit")):
-			parse_input(input_value)
-			input_value = raw_input(lind_fs_calls.fs_calls_context['currentworkingdirectory'] +": ")
+        #loop until the user hits exit, prompting them to enter a command at each iteration
+        while((not input_value == "exit")):
+            parse_input(input_value)
+            input_value = raw_input(lind_test_server.fs_calls_context['currentworkingdirectory'] +": ")
+    lind_test_server.persist_metadata("lind.metadata")
 
-	lind_fs_calls.persist_metadata("lind.metadata")	
-	
-	
+
 if __name__ == "__main__":
     main()

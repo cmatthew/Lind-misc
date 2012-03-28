@@ -93,8 +93,8 @@ function build_sdk {
     base="${REPY_PATH}"
     nacl_base=./native_client
     mkdir -p $base/sdk
-    cp -rf $nacl_base/toolchain/linux_x86 $base/sdk/
-    cp -rf ./sdk_examples $base/sdk/examples
+    cp -rfv $nacl_base/toolchain/linux_x86 $base/sdk/
+    cp -rfv ./sdk_examples $base/sdk/examples
 }
 
 function test_repy {
@@ -102,8 +102,19 @@ function test_repy {
     cd $REPY_PATH/repy/
     for file in ut_lind_*; do 
 	echo $file 
-	python $file 2>&1 | grep  -vE "object has no attribute 'acquire'"
+	python $file  
     done
+
+    file=ut_seattlelibtests_teststruct.py
+    echo $file 
+    python $file  
+
+}
+
+function test_apps {
+    set +o errexit
+    cd ~/lind/misc/tests
+	./test.sh
 }
 
 function check_install_dir {
@@ -143,8 +154,15 @@ function build_repy {
     python preparetest.py -t $repy_loc
     cp ${repy_loc}serialize.repy ${repy_loc}serialize.py
     print "Done building Repy in $repy_loc"
-	cd seattlelib
-	etags -l python *.mix *.repy
+    cd seattlelib
+    set -o errexit
+    for file in *.mix
+    do
+	~/lind/misc/check_inlcudes.sh $file
+	
+    done
+    set +o errexit
+    etags  --language-force=python *.mix *.repy
     cd $here
 }
 
@@ -223,7 +241,7 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      #../sysdeps/nacl/nacl_stat.h:102: warning: its scope is only this definition or declaration, which is probably not what you want
-     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' | grep -e 'warning' -e 'error'
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
@@ -292,6 +310,7 @@ function glibc_tester {
     cd ~/lind/misc/glibc_test/
     make clean all
     cd ..
+	rm -rfv lind.metadata linddata.*
     lind ~/lind/misc/glibc_test/glibc_tester.nexe
 }
 
@@ -312,7 +331,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc sdk rpc"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc test_apps sdk rpc test"
 word=""
 if  test -z "$1" 
 then
@@ -371,12 +390,23 @@ do
     elif [ "$word" = "test_glibc" ]; then
 	print "Testing GLibC"
 	glibc_tester
+    elif [ "$word" = "test_apps" ]; then
+	print "Testing Applications"
+	test_apps
+    elif [ "$word" = "test" ]; then
+	print "Testing All"
+	test_repy
+	glibc_tester
+	test_apps
     elif [ "$word" = "rpc" ]; then
 	print "Building new RPC stubs"
 	genrpc
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
+    else 
+	echo "Error: Did not find a build target named $word. Exiting..."
+	exit 1
     fi
 done
 

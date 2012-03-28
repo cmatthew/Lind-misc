@@ -1,0 +1,37 @@
+Opening file system...  done.
+Starting watchdog
+./10609.txt.utf8:to Professor William Lyon Phelps for the use of his literary map of
+./1661.txt.utf8:"No. 31 Lyon Place, Camberwell."
+./38840.txt.utf8:proceed at once to Fort Lyon, Colorado, and there to fit out for the
+./38840.txt.utf8:Lyon in the latter part of the month without special incident, and at
+./38840.txt.utf8:to Fort Lyon. General Carr concluded, from what they could tell him, that
+./38840.txt.utf8:company of the Seventh Cavalry to Fort Lyon for supplies; but no word had
+./38840.txt.utf8:Lyon for fresh supplies. He then picked out five hundred of the best men
+./38840.txt.utf8:our wagon train came in from Fort Lyon with a fresh load of provisions. At
+./38840.txt.utf8:return, we returned to Fort Lyon, arriving there in March, 1869, where the
+./4300.txt.utf8:you call him Bantam Lyons. Just down there in Conway's we were.
+./4300.txt.utf8:Doran Lyons in Conway's. She raised a gloved hand to her hair. In came
+./4300.txt.utf8:At his armpit Bantam Lyons' voice and hand said:
+./4300.txt.utf8:Bantam Lyons's yellow blacknailed fingers unrolled the baton. Wants a
+./4300.txt.utf8:Lyons said. Where the bugger is it?
+./4300.txt.utf8:--Ascot. Gold cup. Wait, Bantam Lyons muttered. Half a mo. Maximum the
+./4300.txt.utf8:Bantam Lyons raised his eyes suddenly and leered weakly.
+./4300.txt.utf8:Bantam Lyons doubted an instant, leering: then thrust the outspread
+./4300.txt.utf8:Paddy Leonard and Bantam Lyons came in. Tom Rochford followed frowning,
+./4300.txt.utf8:--I'll take a stone ginger, Bantam Lyons said.
+./4300.txt.utf8:--Say nothing! Bantam Lyons winked. I'm going to plunge five bob on my
+./4300.txt.utf8:--That's the man now that gave it to me, Bantam Lyons whispered.
+./4300.txt.utf8:--Even money, Lenehan said returning. I knocked against Bantam Lyons
+./4300.txt.utf8:Alderman Cowley and Councillor Abraham Lyon ascending.
+./4300.txt.utf8:used to be stravaging about the landings Bantam Lyons told me that was
+./4300.txt.utf8:Huguenot poplin that we have since Jacquard de Lyon and our woven silk
+./4300.txt.utf8:--That's where he's gone, says Lenehan. I met Bantam Lyons going to back
+./4300.txt.utf8:Mistaken identity. The Lyons mail. Lesurques and Dubosc. You remember
+./4300.txt.utf8:Row postmistress, C. P. M'Coy, friend of Lyons, Hoppy Holohan,
+./4300.txt.utf8:3000 in specie. Also ran: J de Bremond's (French horse Bantam Lyons was
+./4300.txt.utf8:that halfbaked Lyons ran off at a tangent in his impetuosity to get
+./4300.txt.utf8:M. (Bantam) Lyons had rapidly and successively requested, perused and
+Persisting metadata...
+NaCl process return with: 0
+Done.
+

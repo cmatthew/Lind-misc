@@ -250,20 +250,16 @@ void check_double_open(void) {
 
 
 void check_two_open(void) {
-  printf("Check Two Open\n");
   char * a = "hello\n";
   int f = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY|O_CREAT|O_TRUNC, 0666);
+  assert(f != -1);
   write(f, a, strlen(a)+1);
-  printf("close1\n");
-  fflush(stdout);
 
   close(f);
 
   /* check double opens work */
   int f2 = open(DOUBLE_OPEN_FILE_NAME, O_WRONLY,0);
-  printf("Close 2\n");
-  fflush(stdout);
-
+  assert(f2 != -1);
   close(f2);
  
   
@@ -443,7 +439,9 @@ void print_sizes(void)
 
 
 int main() {
-  print_sizes();
+  
+  
+  /* print_sizes(); */
   /* test_inet_ops(); */
   check_two_open();
 
