@@ -1,0 +1,122 @@
+glthread/lock.o: glthread/lock.c ../src/config.h glthread/lock.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/errno.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/features.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/cdefs.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/wordsize.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs-64.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/errno.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/linux/errno.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm/errno.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm-generic/errno.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm-generic/errno-base.h \
+ stdlib.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/stdlib.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/waitflags.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/waitstatus.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/endian.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/endian.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/byteswap.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/xlocale.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/types.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/types.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/typesizes.h \
+ time.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/time.h \
+ sys/select.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/select.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/select.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/sigset.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/time.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/sysmacros.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/pthreadtypes.h \
+ alloca.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/pthread.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sched.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/sched.h \
+ signal.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/signal.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/setjmp.h
+
+../src/config.h:
+
+glthread/lock.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/errno.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/features.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/cdefs.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/wordsize.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs-64.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/errno.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/linux/errno.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm/errno.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm-generic/errno.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/asm-generic/errno-base.h:
+
+stdlib.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/stdlib.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/waitflags.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/waitstatus.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/endian.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/endian.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/byteswap.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/xlocale.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/types.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/types.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/typesizes.h:
+
+time.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/time.h:
+
+sys/select.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/select.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/select.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/sigset.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/time.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/sysmacros.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/pthreadtypes.h:
+
+alloca.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/pthread.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sched.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/sched.h:
+
+signal.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/signal.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/setjmp.h:

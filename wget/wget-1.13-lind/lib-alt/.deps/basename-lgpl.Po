@@ -1,0 +1,64 @@
+basename-lgpl.o: basename-lgpl.c ../src/config.h dirname.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h \
+ dosname.h string.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/string.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/features.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/cdefs.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/wordsize.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs-64.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/xlocale.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/string.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/string2.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/endian.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/endian.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/byteswap.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/types.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/typesizes.h \
+ stdlib.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/stdlib.h
+
+../src/config.h:
+
+dirname.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h:
+
+dosname.h:
+
+string.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/string.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/features.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/sys/cdefs.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/wordsize.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/gnu/stubs-64.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/xlocale.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/string.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/string2.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/endian.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/endian.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/byteswap.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/types.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/bits/typesizes.h:
+
+stdlib.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/../../../../nacl64/include/stdlib.h:

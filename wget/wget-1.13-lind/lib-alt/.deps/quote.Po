@@ -1,0 +1,11 @@
+quote.o: quote.c ../src/config.h quotearg.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h \
+ quote.h
+
+../src/config.h:
+
+quotearg.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h:
+
+quote.h:

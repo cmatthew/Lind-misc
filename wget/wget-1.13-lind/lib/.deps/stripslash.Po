@@ -1,0 +1,14 @@
+stripslash.o: stripslash.c ../src/config.h dirname.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h \
+ dosname.h
+
+../src/config.h:
+
+dirname.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stddef.h:
+
+dosname.h:

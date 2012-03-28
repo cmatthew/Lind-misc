@@ -1,0 +1,8 @@
+c-ctype.o: c-ctype.c ../src/config.h c-ctype.h \
+ /home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h
+
+../src/config.h:
+
+c-ctype.h:
+
+/home/lind/tmp/lind/sdk/linux_x86/bin/../lib/gcc/nacl64/4.4.3/include/stdbool.h:

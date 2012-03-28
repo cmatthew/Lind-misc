@@ -1,0 +1,1 @@
+libunittest_a-version.o: version.c
