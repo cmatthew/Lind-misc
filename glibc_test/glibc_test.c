@@ -20,6 +20,13 @@
 #include <dirent.h> 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+
+#define db(x)  { fprintf(stderr, x); fflush(stderr); }
+
 
 #define FILE_NAME  "3f23f9a0c6771d4e79fe0ea7"
 #define FILE_NAME2 "SbdcO1HjzjFxn7qhtrhjyfvv"
@@ -334,24 +341,82 @@ void check_fcntl(void) {
 }
 /* function control currently returns zeros, but check it works anyhow.*/
 void check_socket(void) {
-
+  puts("Doing Socket Test\n");
+  fflush(stdout);
   int fd = socket(AF_INET, SOCK_STREAM, 0);
-  assert(fd != -1);
+  if (fd == -1) {
+    perror("Socket:");
+  } else {
+    db("socket okay");
+  }
 
   struct sockaddr_in ip4addr;
-
-
+  memset(&ip4addr, 0, sizeof(ip4addr));
   ip4addr.sin_family = AF_INET;
-  ip4addr.sin_port = htons(3490);
-  inet_pton(AF_INET, "10.0.0.1", &ip4addr.sin_addr);
+  ip4addr.sin_port = htons(10001);
+  inet_pton(AF_INET, "127.0.0.1", &ip4addr.sin_addr);
+
+  int on = 1;
+  int status = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on));
+  assert(status == -1); // this is not implemented, it should fail
 
   int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
-
   assert(rc == 0);
-  shutdown(fd, SHUT_RD);
+
+  status = listen(fd, 5);
+  assert(status == 0);
+  
+  struct sockaddr_in clientName;
+  memset(&clientName, 0, sizeof(clientName));
+
+  
+
+  (void) memset(&clientName, 0, sizeof(clientName));
+
+  /* int sock_fd = accept(fd, (struct sockaddr *) &clientName, &clientLength); */
+
+  /* if (-1 == sock_fd) { */
+  /*   perror("accept()"); */
+  /*   exit(1); */
+  /* } else { */
+  /*   printf("socket is %d\n", sock_fd); */
+  /* } */
+
+  
+  int clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  if (-1 == clientSocket) {
+    perror("socket()");
+    exit(1);
+  }
+  const char * host = "127.0.0.1";
+    struct sockaddr_in serverName;
+
+    memset(&serverName, 0, sizeof(serverName));
+
+
+    serverName.sin_family = AF_INET;
+    serverName.sin_port = htons(10001);
+    (void) memcpy(&serverName.sin_addr, host , strlen(host));
+    printf("Trying Connect\n");
+    status = connect(clientSocket, (struct sockaddr*) &serverName, sizeof(serverName));
+    if (-1 == status)
+    {
+        perror("connect()");
+        exit(1);
+    } else {
+      printf("Connect got %d\n", clientSocket);
+    }
+    close(clientSocket);
+
+  close(fd);
+  puts("Done Socket Test\n");
+  fflush(stdout);
+
 }
 
+
 #define INT_FN "ints"
+
 void screaming_files_test(void) {
   int limit = 2072576; 
 
@@ -439,6 +504,8 @@ void print_sizes(void)
 
 
 int main() {
+  fprintf(stderr, "\n");
+  fprintf(stdout, "\n");
   
   
   /* print_sizes(); */
@@ -464,11 +531,12 @@ int main() {
   check_unlink();
   check_chdir();
   check_rmdir();
-  /* check_socket(); */
+
+  check_socket();
   /* check_ioctl(); */
   check_readdir();
 
-  check_two_open();
+  /* check_two_open(); */
   screaming_files_test();
   printf("All tests ran sucessfully!\n");
   return EXIT_SUCCESS;
