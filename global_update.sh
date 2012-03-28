@@ -10,11 +10,11 @@ svn update
 
 echo "updating nacl-glibc"
 cd ~/lind/nacl-glibc/
-git pull
+git pull github lind
 
 echo "updating lind components"
 cd ~/lind/misc
-git pull
+git pull 
 cd ..
 
 #link the build script to it's old location
@@ -24,3 +24,4 @@ ln -s ./misc/b
 #link the loader sctipt to it's old location
 rm -f ./lind.sh
 ln -s ./misc/lind.sh
+./b rpc glibc sdk install repy
