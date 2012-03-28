@@ -27,11 +27,41 @@
 
 #define db(x)  { fprintf(stderr, x); fflush(stderr); }
 
+#define PORT 10001
 
 #define FILE_NAME  "3f23f9a0c6771d4e79fe0ea7"
 #define FILE_NAME2 "SbdcO1HjzjFxn7qhtrhjyfvv"
 #define FILE_NAME3 "asdfpomasaetgedkkfelesfm"
 #define FILE_NAME_FSTAT "nghjuuiblkbjgzfasdasdnjk"
+
+void make_files(void) {
+
+  const char * dns = "nameserver 142.104.71.64\nnameserver 142.104.96.2\nnameserver 142.104.6.1\ndomain cs.uvic.ca\nsearch cs.uvic.c";
+  mkdir("/etc/", 0);
+
+  FILE* f = fopen("/etc/resolv.conf", "w");
+  assert(f != NULL);
+  fwrite(dns, strlen(dns), 1, f);
+  fclose(f);
+
+  const char * nss = "# /etc/nsswitch.conf\n passwd:         compat\n group:          compat\n shadow:         compat\n hosts:          files\n networks:       files\n protocols:      db files\n services:       db files\n ethers:         db files\n rpc:            db files\n netgroup:       nis\n";
+  f = fopen("/etc/nsswitch.conf", "w");
+  assert(f != NULL);
+  fwrite(nss, strlen(nss), 1, f);
+  fclose(f);
+
+
+  const char * hosts = "127.0.0.1\tlocalhost\n";
+  f = fopen("/etc/hosts", "w");
+  assert(f != NULL);
+  fwrite(hosts, strlen(hosts), 1, f);
+  fclose(f);
+
+
+
+}
+
+
 
 void check_fstat(void) {
   int file=0;
@@ -382,35 +412,57 @@ void check_socket(void) {
   /*   printf("socket is %d\n", sock_fd); */
   /* } */
 
-  
-  int clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if (-1 == clientSocket) {
-    perror("socket()");
-    exit(1);
-  }
-  const char * host = "127.0.0.1";
+
+    int clientSocket,
+        remotePort;
+
+    status = 0;
+    struct hostent *hostPtr = NULL;
     struct sockaddr_in serverName;
 
-    memset(&serverName, 0, sizeof(serverName));
+    make_files();
 
+    memset(&serverName, 0, sizeof(serverName));
+    char *remoteHost = NULL;
+
+
+    remoteHost = "localhost";
+    remotePort = atoi("22001");
+
+
+    clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (-1 == clientSocket) {
+        perror("socket()");
+        exit(1);
+    }
+
+    /*
+     * need to resolve the remote server name or
+     * IP address */
+    hostPtr = gethostbyname(remoteHost);
+    const char * ip = inet_ntop(AF_INET, hostPtr->h_addr, malloc(100), 100);
+    assert(strcmp(ip,"127.0.0.1")==0);
+
+    if (NULL == hostPtr)
+    {
+      
+        hostPtr = gethostbyaddr(remoteHost, strlen(remoteHost), AF_INET);
+        if (NULL == hostPtr)
+        {
+        perror("Error resolving server address");
+        exit(1);
+        }
+    }
 
     serverName.sin_family = AF_INET;
-    serverName.sin_port = htons(10001);
-    (void) memcpy(&serverName.sin_addr, host , strlen(host));
-    printf("Trying Connect\n");
-    status = connect(clientSocket, (struct sockaddr*) &serverName, sizeof(serverName));
-    if (-1 == status)
-    {
-        perror("connect()");
-        exit(1);
-    } else {
-      printf("Connect got %d\n", clientSocket);
-    }
-    close(clientSocket);
+    serverName.sin_port = htons(PORT);
+    
+    assert(inet_pton(AF_INET, "127.0.0.1", &serverName.sin_addr) == 1);
 
-  close(fd);
-  puts("Done Socket Test\n");
-  fflush(stdout);
+
+    status = connect(clientSocket, (struct sockaddr*) &serverName, sizeof(serverName));
+    assert(status != -1);
+  
 
 }
 
@@ -542,3 +594,4 @@ int main() {
   return EXIT_SUCCESS;
 
 }
+
