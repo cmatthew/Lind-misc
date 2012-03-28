@@ -2,11 +2,13 @@
 #include <features.h>
 #include <crypt.h>
 //#include <openssl/rsa.h>
-//#include <openssl/md5.h>  
-/* #include <openssl/md4.h> /\* works *\/ */
-/* #include <openssl/md2.h> /\* works *\/ */
+#include <openssl/md5.h>  
+ #include <openssl/md4.h>
+// #include <openssl/md2.h>
 
 #include "../output/tagstmp_mm.h"
+typedef long int ptrdiff_t;
+typedef long unsigned int size_t;
 int foo(int x) {
 return serialize_foo(1, sizeof(x), x, 0);
 
@@ -57,5 +59,45 @@ return serialize_setkey(1, strlen(__key), __key, 11);
 }
 extern void encrypt (char *__block, int __edflag)  {
 return serialize_encrypt(2, strlen(__block), __block, sizeof(__edflag), __edflag, 12);
+
+}
+int MD5_Init(MD5_CTX *c) {
+return serialize_MD5_Init(1, sizeof(c), c, 13);
+
+}
+int MD5_Update(MD5_CTX *c, const void *data, size_t len) {
+return serialize_MD5_Update(3, sizeof(c), c, sizeof(data), data, sizeof(len), len, 14);
+
+}
+int MD5_Final(unsigned char *md, MD5_CTX *c) {
+return serialize_MD5_Final(2, strlen(md), md, sizeof(c), c, 15);
+
+}
+unsigned char *MD5(const unsigned char *d, size_t n, unsigned char *md) {
+return serialize_MD5(3, strlen(d), d, sizeof(n), n, strlen(md), md, 16);
+
+}
+void MD5_Transform(MD5_CTX *c, const unsigned char *b) {
+return serialize_MD5_Transform(2, sizeof(c), c, strlen(b), b, 17);
+
+}
+int MD4_Init(MD4_CTX *c) {
+return serialize_MD4_Init(1, sizeof(c), c, 18);
+
+}
+int MD4_Update(MD4_CTX *c, const void *data, size_t len) {
+return serialize_MD4_Update(3, sizeof(c), c, sizeof(data), data, sizeof(len), len, 19);
+
+}
+int MD4_Final(unsigned char *md, MD4_CTX *c) {
+return serialize_MD4_Final(2, strlen(md), md, sizeof(c), c, 20);
+
+}
+unsigned char *MD4(const unsigned char *d, size_t n, unsigned char *md) {
+return serialize_MD4(3, strlen(d), d, sizeof(n), n, strlen(md), md, 21);
+
+}
+void MD4_Transform(MD4_CTX *c, const unsigned char *b) {
+return serialize_MD4_Transform(2, sizeof(c), c, strlen(b), b, 22);
 
 }

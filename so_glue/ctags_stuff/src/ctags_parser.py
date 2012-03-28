@@ -221,10 +221,10 @@ def cp_fill_MM_CODE(info):
 	# Arguments:
 	#	info	parsed list of the function signature including arguments
 	# Result:
-	#	side effects are at the global variable MM_CODE
+	#	mm_sig	function signature which can be put into an *.h file	
 	"""
 #	global MM_CODE
-	global CUR_CALL_NUM
+#	global CUR_CALL_NUM
 	
 	# get info needed to write out strings
 	ret_type = info[0].split()[0:-1]
@@ -486,6 +486,7 @@ def cp_write_des(list_o_lists, original_file) :
 		try : 
 			args = item[SIGNATURE].split("(")[1].split(")")[0].split(",")
 		except:
+			# just for debugging, clearly something went wrong
 			print item[SIGNATURE]
 			sys.exit(1)
 		print "\n\n"

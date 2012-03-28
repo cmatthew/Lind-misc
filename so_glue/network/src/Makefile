@@ -15,7 +15,7 @@ SOURCES = uds_server.c ../../ctags_stuff/output/deserializer.c ../../ctags_stuff
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = ../output/uds_server
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(EXECUTABLE)
 	
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@ -lcrypt -lssl
