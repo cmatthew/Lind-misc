@@ -1461,3 +1461,25 @@
 [3885,3792140032:10:22:42.075344] NaClHostDescOpen: open returned -1, errno 2
 [3885,3792140032:10:22:44.082326] NaClHostDescOpen: open returned -1, errno 2
 [3885,3792140032:10:22:44.085887] NaClHostDescOpen: open returned -1, errno 2
+[11978,941299456:10:38:20.368015] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[11978,941299456:10:38:20.377139] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[11999,222287616:10:38:38.032408] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[11999,222287616:10:38:38.033273] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21231,2336081664:16:01:24.354441] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21231,2336081664:16:01:24.359420] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21252,503297792:16:01:32.984556] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21252,503297792:16:01:32.984877] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21455,1291941632:16:03:46.607250] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[21455,1291941632:16:03:46.607838] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[5413,2788038400:16:34:55.193367] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[5413,2788038400:16:34:55.199016] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[14022,2412852992:16:52:23.332997] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[14022,2412852992:16:52:23.333719] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[1479,2055694080:17:17:31.690973] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[1479,2055694080:17:17:31.691438] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[1500,575293184:17:17:40.080412] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[1500,575293184:17:17:40.080820] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[15096,97249024:10:15:12.342699] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[15096,97249024:10:15:12.351872] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[15930,2724890368:10:16:12.682760] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[15930,2724890368:10:16:12.683651] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
