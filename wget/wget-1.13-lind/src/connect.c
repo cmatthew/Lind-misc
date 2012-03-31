@@ -880,12 +880,12 @@ fd_read (int fd, char *buf, int bufsize, double timeout)
 {
   struct transport_info *info;
   LAZY_RETRIEVE_INFO (info);
-  if (!poll_internal (fd, info, WAIT_FOR_READ, timeout))
-    return -1;
-  if (info && info->imp->reader)
-    return info->imp->reader (fd, buf, bufsize, info->ctx);
-  else
-    return sock_read (fd, buf, bufsize);
+  /* if (!poll_internal (fd, info, WAIT_FOR_READ, timeout)) */
+  /*   return -1; */
+  if (info && info->imp->reader) {
+      return info->imp->reader (fd, buf, bufsize, info->ctx); }
+  else {
+      return sock_read (fd, buf, bufsize); }
 }
 
 /* Like fd_read, except it provides a "preview" of the data that will
@@ -905,8 +905,8 @@ fd_peek (int fd, char *buf, int bufsize, double timeout)
 {
   struct transport_info *info;
   LAZY_RETRIEVE_INFO (info);
-  if (!poll_internal (fd, info, WAIT_FOR_READ, timeout))
-    return -1;
+  /* if (!poll_internal (fd, info, WAIT_FOR_READ, timeout)) */
+  /*   return -1; */
   if (info && info->imp->peeker)
     return info->imp->peeker (fd, buf, bufsize, info->ctx);
   else
@@ -924,14 +924,14 @@ fd_write (int fd, char *buf, int bufsize, double timeout)
   int res;
   struct transport_info *info;
   LAZY_RETRIEVE_INFO (info);
-
   /* `write' may write less than LEN bytes, thus the loop keeps trying
      it until all was written, or an error occurred.  */
   res = 0;
   while (bufsize > 0)
     {
-      if (!poll_internal (fd, info, WAIT_FOR_WRITE, timeout))
-        return -1;
+        /* if (!poll_internal (fd, info, WAIT_FOR_WRITE, timeout)) { */
+        /* return -1; */
+        /* } */
       if (info && info->imp->writer)
         res = info->imp->writer (fd, buf, bufsize, info->ctx);
       else
