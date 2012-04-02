@@ -881,10 +881,10 @@ main (int argc, char **argv)
 {
   int rc;
   rc = 0;
-  struct timespec tv_start;
-  struct timespec tv_end;
+  struct timeval tv_start;
+  struct timeval tv_end;
   
-  clock_gettime(CLOCK_REALTIME, &tv_start);
+  gettimeofday( &tv_start, NULL);
   
   char **url, **t;
   int i, ret, longindex;
@@ -1456,11 +1456,14 @@ outputting to a regular file.\n"));
   cleanup ();
 
 
-  clock_gettime(CLOCK_REALTIME, &tv_end);
+    gettimeofday(&tv_end, NULL);
   
-  printf("\n\n\ntime: %ld, %ld, %ld\n\n\n", (long int) tv_end.tv_nsec-tv_start.tv_nsec, \
+printf("time: %ld.%06ld, %ld.%06ld\n",(long int)tv_start.tv_sec, (long int) tv_start.tv_usec, (long int) tv_end.tv_sec, (long int)tv_end.tv_usec);
+
+ // printf("\n\n\ntime: %ld, %ld, %ld\n\n\n", (long int) tv_end.tv_nsec-(long int) tv_start.tv_nsec, \
     (long int) tv_start.tv_nsec, (long int) tv_end.tv_nsec);
-  printf("%ld", tv_end.tv_nsec);
+ 
+ printf("epic fail\n"); 
 
   return get_exit_status ();
 }

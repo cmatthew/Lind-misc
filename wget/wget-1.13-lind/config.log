@@ -104,7 +104,7 @@ configure:4463: checking whether we are cross compiling
 configure:4471: nacl64-gcc -o conftest -O3   conftest.c  >&5
 configure:4475: $? = 0
 configure:4482: ./conftest
-./configure: line 4484: 24147 Segmentation fault      ./conftest$ac_cv_exeext
+./configure: line 4484: 26950 Segmentation fault      ./conftest$ac_cv_exeext
 configure:4486: $? = 139
 configure:4501: result: yes
 configure:4506: checking for suffix of object files
@@ -4418,7 +4418,7 @@ configure:10858: $? = 0
 configure:10858: result: yes
 configure:10858: checking for nanotime
 configure:10858: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/cccEn9lr.o: In function `main':
+/tmp/ccOQTuRs.o: In function `main':
 conftest.c:(.text+0x1c): undefined reference to `nanotime'
 collect2: ld returned 1 exit status
 configure:10858: $? = 1
@@ -4967,7 +4967,7 @@ configure:10858: $? = 0
 configure:10858: result: yes
 configure:10858: checking for vasnprintf
 configure:10858: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/ccYWGsAt.o: In function `main':
+/tmp/cck82R5E.o: In function `main':
 conftest.c:(.text+0x1c): undefined reference to `vasnprintf'
 collect2: ld returned 1 exit status
 configure:10858: $? = 1
@@ -5620,7 +5620,7 @@ configure:12797: result: yes
 configure:12797: checking for pthread.h
 configure:12797: result: yes
 configure:12825: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/ccnGDfx2.o: In function `main':
+/tmp/ccBNePMW.o: In function `main':
 conftest.c:(.text+0x3c): undefined reference to `pthread_mutexattr_init'
 collect2: ld returned 1 exit status
 configure:12825: $? = 1
@@ -6417,7 +6417,7 @@ configure:15302: $? = 0
 configure:15310: result: yes
 configure:15397: checking for library containing setsockopt
 configure:15419: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/ccqfzgfk.o: In function `main':
+/tmp/cc0t6r4h.o: In function `main':
 conftest.c:(.text+0x1c): warning: warning: setsockopt is not implemented and will always fail
 configure:15419: $? = 0
 configure:15500: result: none needed
@@ -14419,7 +14419,7 @@ configure:18149: $? = 0
 configure:18157: result: yes
 configure:18211: checking for library containing clock_gettime
 configure:18242: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/ccgcALl8.o: In function `main':
+/tmp/cc3A5SU1.o: In function `main':
 conftest.c:(.text+0x1c): undefined reference to `clock_gettime'
 collect2: ld returned 1 exit status
 configure:18242: $? = 1
@@ -16178,7 +16178,7 @@ configure:20375: checking for sys/timeb.h
 configure:20375: result: yes
 configure:20387: checking for _ftime
 configure:20387: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/cciIMVtP.o: In function `main':
+/tmp/ccyOofdK.o: In function `main':
 conftest.c:(.text+0x1c): undefined reference to `_ftime'
 collect2: ld returned 1 exit status
 configure:20387: $? = 1
@@ -25484,7 +25484,7 @@ configure:27682: $? = 0
 configure:27682: result: yes
 configure:27682: checking for sigsetjmp
 configure:27682: nacl64-gcc -o conftest -O3   conftest.c  >&5
-/tmp/ccehPBZG.o: In function `main':
+/tmp/cck3XPxy.o: In function `main':
 conftest.c:(.text+0x1c): undefined reference to `sigsetjmp'
 collect2: ld returned 1 exit status
 configure:27682: $? = 1
