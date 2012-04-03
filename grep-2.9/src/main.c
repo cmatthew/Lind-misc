@@ -21,16 +21,18 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined HAVE_SETRLIMIT
+
 # include <sys/time.h>
 # include <sys/resource.h>
-#endif
+#include <unistd.h>
+
 #include "mbsupport.h"
 #include <wchar.h>
 #include <wctype.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include "system.h"
+#include <stdlib.h>
 
 #include "argmatch.h"
 #include "c-ctype.h"
@@ -58,6 +60,8 @@
 #define AUTHORS \
   proper_name ("Mike Haertel"), \
   _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
+
+#define ITTER 1000
 
 struct stats
 {
@@ -1750,6 +1754,7 @@ parse_grep_colors (void)
 int
 main (int argc, char **argv)
 {
+  
   char *keys;
   size_t keycc, oldcc, keyalloc;
   int with_filenames;
@@ -1757,6 +1762,9 @@ main (int argc, char **argv)
   int default_context;
   FILE *fp;
 
+  struct timeval start,stop;
+  
+  gettimeofday(&start,NULL);
   exit_failure = EXIT_TROUBLE;
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -2186,6 +2194,9 @@ main (int argc, char **argv)
     status = grepfile ((char *) NULL, &stats_base);
 
   /* We register via atexit() to test stdout.  */
+  
+  gettimeofday(&stop,NULL);
+  printf(">> %ld.%06ld, %ld.%06ld\n",(long int)start.tv_sec, (long int)start.tv_usec, (long int)stop.tv_sec, (long int)stop.tv_usec);
   exit (errseen ? EXIT_TROUBLE : status);
 }
 /* vim:set shiftwidth=2: */

@@ -1,5 +1,9 @@
 #! /bin/bash
 
+#***NOTE*** this script is called gre_p_test because when I run performance tests, I run this 
+#shell scipt, and I want to grep for 'grep', and NOT get this shell script's name appearing in the results.
+
+ 
 # Test lind Grep.  Make a file system, grep a file, and make sure the same file pops back out
 
 start_times=()
@@ -12,7 +16,7 @@ export PATH=$PATH:~/tmp/lind/sdk/linux_x86/bin/
 
 grep_folder=/home/lind/lind/misc/grep-2.9
 
-ITTER=10
+ITTER=1000
 
 # first make a metadata filesystem
 function setup_filesystem {
@@ -67,14 +71,14 @@ function run_grep {
 	args=$1
 	#run the command
 
-	for((i = 0; i < 10; i++))
+	for((i = 0; i < 100000; i++))
 	do
 		
 		out=output.lind.$$
 		~/tmp/lind/bin/lind $path/grep.nexe $args $2 | grep ">>" | cut -f2,3 -d \  >> $out
 				
-		s=$(date +%s)
-		n=$(date +%N)		
+		#s=$(date +%s)
+		#n=$(date +%N)		
 
 		real=output.real.$$
 		$path/grep $args $2 | grep ">>" | cut -f2,3 -d \  >> $real
