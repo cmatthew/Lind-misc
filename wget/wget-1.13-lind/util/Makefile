@@ -44,7 +44,7 @@
 # as that of the covered work.
 
 #
-# Version: 1.13
+# Version: 
 #
 
 pkgdatadir = $(datadir)/wget
@@ -790,10 +790,10 @@ OBJEXT = o
 PACKAGE = wget
 PACKAGE_BUGREPORT = bug-wget@gnu.org
 PACKAGE_NAME = wget
-PACKAGE_STRING = wget 1.13
+PACKAGE_STRING = wget 
 PACKAGE_TARNAME = wget
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.13
+PACKAGE_VERSION = 
 PATH_SEPARATOR = :
 PERL = /usr/bin/perl
 POD2MAN = /usr/bin/pod2man
@@ -947,7 +947,7 @@ UNDEFINE_STRTOK_R = 0
 UNISTD_H_HAVE_WINSOCK2_H = 0
 UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS = 0
 USE_NLS = yes
-VERSION = 1.13
+VERSION = 
 WCHAR_T_SUFFIX = l
 WINT_T_SUFFIX = u
 XGETTEXT = /usr/bin/xgettext

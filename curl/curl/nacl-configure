@@ -1,0 +1,14 @@
+#!/bin/bash
+SEL_LDR=lind
+
+./configure EMULATOR_FOR_BUILD=$SEL_LDR \
+  --enable-static --disable-shared --without-ssl --host=nacl64-unknown-none \
+  CFLAGS="-O3" --prefix=/home/lind/tmp/lind/sdk/linux_x86/ \
+   --disable-silent-rules      
+ 
+ 
+ 
+ 
+ 
+ 
+ 
