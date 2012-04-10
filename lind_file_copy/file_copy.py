@@ -13,8 +13,6 @@ if path == None:
     print "Error: REPY_PATH enviroment variable must be set, using default"
     path = "/home/lind/tmp/lind/"
 
-
-
 path = os.path.join(path, "repy/")
 sys.path.append(path)
 
@@ -78,7 +76,7 @@ def check_path_exists(path):
         try:
             lind_test_server.chdir_syscall(p)
         #if (when) the exception is caught, create a new dir and chdir to it
-        except lind_test_server.SyscallError as e:
+        except lind_test_server.SyscallError:
 
             mode = stat.S_IMODE(os.stat(path_str + p).st_mode)
 
@@ -210,7 +208,7 @@ def mkdir_cmd(input_list):
         #if they were correctly parsed, try to create a new directory for each name the user specified
         try:
             for new_dir_name in mkdir_cmd.args.directory:
-                retval = lind_test_server.mkdir_syscall(new_dir_name, lind_test_server.S_IRWXU)
+                lind_test_server.mkdir_syscall(new_dir_name, lind_test_server.S_IRWXU)
         except lind_test_server.SyscallError, e:
             print "Could not mkdir. Error: %s" % e
 
@@ -293,15 +291,16 @@ def ls_cmd(input_list):
         try:
             #if no arg was passed in, just ls the current dir, else the dir specified. We need to open a file first so we can getdents
             if ls_cmd.args.directory == None:
-                lindfd = lind_test_server.open_syscall(lind_test_server.fs_calls_context['currentworkingdirectory'],O_RDONLY, S_IRWXU)#first open the file
+                lindfd = lind_test_server.open_syscall(
+                    lind_test_server.fs_calls_context['currentworkingdirectory'],
+                    lind_test_server.O_RDONLY,
+                    lind_test_server.S_IRWXU) #first open the file
             else:
-                lindfd = lind_test_server.open_syscall(ls_cmd.args.directory[0],lind_test_server.O_RDONLY, lind_test_server.S_IRWXU) #first open the file
+                lindfd = lind_test_server.open_syscall(ls_cmd.args.directory[0], lind_test_server.O_RDONLY, lind_test_server.S_IRWXU) #first open the file
         except lind_test_server.SyscallError, e:
             print "Could not open the local file. Error: %s" % e
             return -1
-
-
-        at_end = False #this will keep track of when we have visited all the nodes
+        
         getdents_size = 20 #the number of nodes to check per getdents
         ls_list = [] #the list that will hold all the subfiles
         prev_ls_list_count = -1#keeps track of the list count during the previous iteration
