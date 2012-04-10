@@ -6,6 +6,7 @@ import stat
 import argparse
 import hashlib
 
+
 # add repy install path to script
 path = os.getenv("REPY_PATH")
 if path == None:
@@ -13,7 +14,6 @@ if path == None:
     path = "/home/lind/tmp/lind/"
 
 
-print type(path), path
 
 path = os.path.join(path, "repy/")
 sys.path.append(path)
@@ -47,7 +47,7 @@ def copy_file(source, path, new_name):
     try:
         mode = stat.S_IMODE(os.stat(source).st_mode)
         #print "in copy " + source+ "..." + str(mode) + "..." + str(stat.S_IRWXU)
-        lindfd = lind_test_server.open_syscall(path + "/" + new_name, O_CREAT | O_RDWR, mode)
+        lindfd = lind_test_server.open_syscall(path + "/" + new_name, lind_test_server.O_CREAT | lind_test_server.O_RDWR, mode)
 
     except lind_test_server.SyscallError, e:
         print "Could not open the local file. Error: %s" % e
@@ -172,7 +172,7 @@ def cp_once(source, dest):
 def cpout_cmd(source, dest):
 
     try:
-        lindfd = lind_test_server.open_syscall(source, O_RDWR, 0)
+        lindfd = lind_test_server.open_syscall(source, lind_test_server.O_RDWR, 0)
     except lind_test_server.SyscallError, e:
         print "Couldnt open local file. Error: %s" %e
         return -1
@@ -210,7 +210,7 @@ def mkdir_cmd(input_list):
         #if they were correctly parsed, try to create a new directory for each name the user specified
         try:
             for new_dir_name in mkdir_cmd.args.directory:
-                retval = lind_test_server.mkdir_syscall(new_dir_name, S_IRWXU)
+                retval = lind_test_server.mkdir_syscall(new_dir_name, lind_test_server.S_IRWXU)
         except lind_test_server.SyscallError, e:
             print "Could not mkdir. Error: %s" % e
 
@@ -249,7 +249,7 @@ def md5_cmd(input_list):
     """print the md5 digest of all the files"""
     for filename in input_list:
         m = hashlib.md5()
-        lindfd = lind_test_server.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        lindfd = lind_test_server.open_syscall( filename, lind_test_server.O_CREAT | lind_test_server.O_RDWR, 0)
         while True:
             s = lind_test_server.read_syscall(lindfd,4096)
             m.update(s)
@@ -261,9 +261,9 @@ def md5_cmd(input_list):
 def cat_cmd(input_list):
     """print the contents of all the files"""
     for filename in input_list:
-        lindfd = lind_test_server.open_syscall( filename, O_CREAT | O_RDWR, 0)
+        lindfd = lind_test_server.open_syscall( filename, lind_test_server.O_CREAT | lind_test_server.O_RDWR, 0)
         while True:
-            s = lind_test_server.read_syscall(lindfd,4096)
+            s = lind_test_server.read_syscall(lindfd, 4096)
             print s
             if len(s) == 0:
                 break
@@ -295,15 +295,15 @@ def ls_cmd(input_list):
             if ls_cmd.args.directory == None:
                 lindfd = lind_test_server.open_syscall(lind_test_server.fs_calls_context['currentworkingdirectory'],O_RDONLY, S_IRWXU)#first open the file
             else:
-                lindfd = lind_test_server.open_syscall(ls_cmd.args.directory[0],O_RDONLY, S_IRWXU)#first open the file
+                lindfd = lind_test_server.open_syscall(ls_cmd.args.directory[0],lind_test_server.O_RDONLY, lind_test_server.S_IRWXU) #first open the file
         except lind_test_server.SyscallError, e:
             print "Could not open the local file. Error: %s" % e
             return -1
 
 
-        at_end = False#this will keep track of when we have visited all the nodes
-        getdents_size = 20#the number of nodes to check per getdents
-        ls_list = []#the list that will hold all the subfiles
+        at_end = False #this will keep track of when we have visited all the nodes
+        getdents_size = 20 #the number of nodes to check per getdents
+        ls_list = [] #the list that will hold all the subfiles
         prev_ls_list_count = -1#keeps track of the list count during the previous iteration
 
         #while there are still files to look at, add them to the list. Once the list size is the same for 2 iterations in a row, we know there is nothing left to look at!
