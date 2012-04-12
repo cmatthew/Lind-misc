@@ -1,0 +1,80 @@
+[12601,1381971712:15:39:44.581572] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12601,1381971712:15:39:44.581618] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12601,1381971712:15:39:45.522159] munmap: rounded length to 0x10000
+[12601,1381971712:15:39:45.522182] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:45.522201] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:45.526693] NaClHostDescOpen: open returned -1, errno 2
+[12601,1381971712:15:39:45.536936] munmap: rounded length to 0x10000
+[12601,1381971712:15:39:45.536985] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:45.537033] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:45.568587] munmap: rounded length to 0x10000
+[12601,1381971712:15:39:45.568611] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:45.568627] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.142508] munmap: rounded length to 0x1b0000
+[12601,1381971712:15:39:46.142579] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.142603] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.148424] munmap: rounded length to 0x10000
+[12601,1381971712:15:39:46.148447] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.148464] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.498283] munmap: rounded length to 0xf0000
+[12601,1381971712:15:39:46.498334] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.498357] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.600579] munmap: rounded length to 0x50000
+[12601,1381971712:15:39:46.600606] invalid mmap flags 04022, ignoring extraneous bits
+[12601,1381971712:15:39:46.600625] invalid mmap flags 04022, ignoring extraneous bits
+[12622,3732526848:15:40:04.660177] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12622,3732526848:15:40:04.660254] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12643,2607806208:15:40:15.680157] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12643,2607806208:15:40:15.680239] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12643,2607806208:15:40:16.626599] munmap: rounded length to 0x10000
+[12643,2607806208:15:40:16.626626] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:16.626647] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:16.630885] NaClHostDescOpen: open returned -1, errno 2
+[12643,2607806208:15:40:16.641073] munmap: rounded length to 0x10000
+[12643,2607806208:15:40:16.641125] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:16.641222] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:16.673099] munmap: rounded length to 0x10000
+[12643,2607806208:15:40:16.673122] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:16.673139] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.247733] munmap: rounded length to 0x1b0000
+[12643,2607806208:15:40:17.247802] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.247825] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.253277] munmap: rounded length to 0x10000
+[12643,2607806208:15:40:17.253299] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.253315] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.596247] munmap: rounded length to 0xf0000
+[12643,2607806208:15:40:17.596298] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.596321] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.698710] munmap: rounded length to 0x50000
+[12643,2607806208:15:40:17.698739] invalid mmap flags 04022, ignoring extraneous bits
+[12643,2607806208:15:40:17.698762] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:33.664753] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12664,4106807040:15:40:33.664839] AcceptConn method is not implemented for object of type NACL_DESC_IMC_SOCKET
+[12664,4106807040:15:40:34.998080] munmap: rounded length to 0x140000
+[12664,4106807040:15:40:34.998179] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:34.998205] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.003063] NaClHostDescOpen: open returned -1, errno 2
+[12664,4106807040:15:40:35.010426] munmap: rounded length to 0x10000
+[12664,4106807040:15:40:35.010447] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.010464] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.033194] munmap: rounded length to 0x10000
+[12664,4106807040:15:40:35.033218] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.033234] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.602676] munmap: rounded length to 0x1b0000
+[12664,4106807040:15:40:35.602747] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.602770] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.608329] munmap: rounded length to 0x10000
+[12664,4106807040:15:40:35.608352] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.608370] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.951277] munmap: rounded length to 0xf0000
+[12664,4106807040:15:40:35.951329] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:35.951362] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:36.055541] munmap: rounded length to 0x50000
+[12664,4106807040:15:40:36.055571] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:36.055599] invalid mmap flags 04022, ignoring extraneous bits
+[12664,4106807040:15:40:36.060867] Invalid open flags 04400, ignoring extraneous bits
+[12664,4106807040:15:40:36.060904] NaClHostDescOpen: file type 0x21b6, not regular
+[12664,4106807040:15:40:36.063566] Invalid open flags 04400, ignoring extraneous bits
+[12664,4106807040:15:40:36.063586] NaClHostDescOpen: file type 0x21b6, not regular
+[12664,4106807040:15:40:36.064525] Invalid open flags 04400, ignoring extraneous bits
+[12664,4106807040:15:40:36.064544] NaClHostDescOpen: open returned -1, errno 2
