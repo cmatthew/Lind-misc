@@ -1,0 +1,9 @@
+#! /bin/bash
+
+MACHINE=linux-x86_64
+CC=nacl64-gcc
+AR=/home/lind/tmp/lind/sdk/linux_x86/bin/nacl-ar
+RANLIB=/home/lind/tmp/lind/sdk/linux_x86/bin/nacl-ranlib
+
+./config --prefix=/home/lind/tmp/lind/sdk/linux_x86/ no-asm no-hw no-krb5 -D_GNU_SOURCE
+
