@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/553/trunk/src/build_tools/bots
+END
+bot_common.sh
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/426/trunk/src/build_tools/bots/bot_common.sh
+END
+pnacl_bots.sh
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/553/trunk/src/build_tools/bots/pnacl_bots.sh
+END
