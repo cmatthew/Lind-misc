@@ -5,19 +5,23 @@ CFLAGS = -c -std=gnu99 -std=gnu99 -Wall -Wextra -Wno-long-long -O2 -fomit-frame-
 INCLUDE = -I /home/lind/tmp/repy/lind/sdk/linux_x86/nacl64/include/
 LDFLAGS = -melf64_nacl -m64 -o libc.a
 
-#CC = gcc
-#CFLAGS = -c -std=gnu99 -std=gnu99 -Wall -Wextra -Wno-long-long -O2 -fomit-frame-pointer -Wall -fdiagnostics-show-option -pedantic -Werror -m64 -D_GNU_SOURCE=1 -D__STDC_FORMAT_MACROS=1 -D_BSD_SOURCE=1 -D_POSIX_C_SOURCE=199506 -D_XOPEN_SOURCE=600
-#LDFLAGS = -m64
+# CC = gcc
+# CFLAGS = -c -std=gnu99 -std=gnu99 -Wall -Wextra -Wno-long-long -O2 -fomit-frame-pointer -Wall -fdiagnostics-show-option -pedantic -Werror -m64 -D_GNU_SOURCE=1 -D__STDC_FORMAT_MACROS=1 -D_BSD_SOURCE=1 -D_POSIX_C_SOURCE=199506 -D_XOPEN_SOURCE=600
+# LDFLAGS = -m64
 
 
-SOURCES = ~/lind/misc/benchmark/benchmark.c
+SOURCES = ~/lind/misc/benchmark/benchmark.c ~/lind/misc/benchmark/pi.c
 OBJECTS = $(SOURCES:.c=.o)
 EXECUTABLE = benchmark.nexe
 
-all: $(SOURCES) $(EXECUTABLE)
+all: $(EXECUTABLE) pi.nexe
 	
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+$(EXECUTABLE): benchmark.o
+	$(CC) $(LDFLAGS) benchmark.o -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) $< -o $@
+pi.nexe: pi.o
+	$(CC) $(LDFLAGS) pi.o -o $@
+clean:
+	rm -rf *.o pi benchmark.nexe
