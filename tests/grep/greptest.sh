@@ -22,23 +22,23 @@ function setup_filesystem {
 
 	if [ ! -e grep.nexe ]; then
 
-		cd ../../grep-2.9
+		cd ../../foreign/grep-2.9
 		make distclean
 		./nacl-configure > /dev/null
 		make clean all > /dev/null
 		cd $path
- 		cp ../../grep-2.9/src/grep ./grep.nexe
+ 		cp ../../foreign/grep-2.9/src/grep ./grep.nexe
 	fi
 
 	if [ ! -e grep ]; then
 
-		cd ../../grep-2.9
+		cd ../../foreign/grep-2.9
 		make distclean
 		./configure
 		make all
 		cd $path
 
-		cp ../../grep-2.9/src/grep ./grep
+		cp ../../foreign/grep-2.9/src/grep ./grep
 	
 	fi
 
@@ -95,39 +95,4 @@ run_grep "He" "10609.txt.utf8 10.txt.utf8 11.txt.utf8 1342.txt.utf8 1400.txt.utf
 # We need this include because local grep starts to read
 # the output files and gets in a nasty loop
 run_grep "-r --include=*.utf8 Lyon" "."
-
-# #! /bin/bash
-
-# set -o errexit
-# set -o xtrace
-# export REPY_PATH=~/tmp/lind/
-
-# # first make a metadata filesystem with 
-# function setup_filesystem {
-# 	# remove the old stuff
-
-# 	rm -rf lind.metadata
-# 	rm -rf linddata.*
-
-# 	# now make the new filesystem
-#  	for f in *.utf8; do 
-# 		file_copy.py --copy $f $f > /dev/null
-# 	done
-
-
-
-# 	cp ../../grep-2.9/src/grep .
-	
-
-# 	}
-
-# function run_grep {
-	
-# 	~/tmp/lind/bin/lind ~/lind/misc/grep-2.9/src/grep
-
-# }
-
-
-# setup_filesystem
-# run_grep
 
