@@ -1,16 +1,38 @@
 #!/bin/bash
-SEL_LDR=lind
 
-./configure \
-  --enable-static --disable-shared --host=nacl64-unknown-none \
-#./configure EMULATOR_FOR_BUILD=$SEL_LDR \
-#  --enable-static --disable-shared --without-ssl --host=nacl64 \
-  CFLAGS="-O3" --prefix=/home/lind/tmp/lind/sdk/linux_x86/ \
-   --disable-silent-rules      
+ ./configure \
+    --cross-prefix=nacl64- \
+    --target-os=linux \
+    --arch=nacl64 \
+    --sysroot=/home/lind/tmp/lind/sdk/linux_x86/ \
+    --enable-gpl \
+    --enable-static \
+    --enable-cross-compile \
+    --disable-shared \
+    --disable-ssse3 \
+    --disable-mmx \
+    --disable-mmx2 \
+    --disable-amd3dnow \
+    --disable-amd3dnowext \
+    --disable-indevs \
+    --disable-protocols \
+    --disable-network \
+    --enable-protocol=file \
+    --disable-ffmpeg \
+    --disable-ffplay \
+    --disable-ffserver \
+    --disable-demuxer=rtsp \
+    --disable-demuxer=image2 \
+    --prefix=~/tmp/lind/sdk/linux_x86/ \
+    --libdir=/home/lind/tmp/lind/sdk/linux_x86/nacl64/lib/
+
  
  
  
  
  
+#     --target-arch=nacl64 \
+#     --enable-libvorbis \
+#    --enable-libtheora \
  
  
