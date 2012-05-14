@@ -12,6 +12,14 @@ them to output files at the end.
 """
 
 import sys
+import string
+
+
+def uniqueify(seq):
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in seq if x not in seen and not seen_add(x)]
+
 
 # this is for things which go in the header file (lind_rpc_gen.h)
 _header_file = []
@@ -27,6 +35,7 @@ headers = ["#include <stddef.h>",
            "#include <assert.h>",
            "#include <sys/types.h>",
            "#include <sys/socket.h>",
+           "#include <sys/select.h>",
            "#include \"lind_rpc.h\"",
            "#include \"lind_syscalls.h\"",
            "#include \"strace.h\"",
@@ -169,7 +178,6 @@ def build_format_string(in_args, ref_args):
             # strings do have size, so build them with strlen
             if is_string(args[0]):
                 name = args[1]
-
                 #build format string number from strlen result
                 pre.append("size_t " + name + "_len = strlen(" + name + ");")
                 pre.append("size_t " + name + "_size = " + name + "_len;")
@@ -197,18 +205,23 @@ def build_format_string(in_args, ref_args):
                            str(args[1]))
                     print msg
                     sys.exit(1)
+                # sometimes our names have non-alpha characters in them
+                # get rid of those!
+                full_name = name
+                name = str(filter(lambda x: x.isalnum(), name))
+                
                 pre.append("const char * " + name +
-                           "_len_str = nacl_itoa(" + name + ");")
+                           "_len_str = nacl_itoa(" + full_name + ");")
                 post.append("free((void*)" + name + "_len_str);")
 
                 send_args.append(args[1])
-                send_args.append(name)
+                send_args.append(full_name)
 
                 fmt.append(name + "_len_str")
                 fmt.append("\"s\"")
         # dynamically combine reference args using string join
         fmt = ["combine(", str(len(fmt)), ", ", ', '.join(fmt), ")"]
-    return pre, ''.join(fmt), post, send_args
+    return uniqueify(pre), ''.join(fmt), uniqueify(post), send_args
 
 
 def is_string(type_arg):
@@ -451,6 +464,7 @@ syscall_table = {
     "getsockname": (42,),
     "getsockopt": (43,),
     "setsockopt": (44,),
+    "select": (46,),
     "shutdown": (45,)}
 
 
@@ -578,7 +592,25 @@ syscall("setsockopt", [("int", "sockfd"),
                             ("int", "optname"),
                             ("socklen_t", "optlen")],
                            [("const void *", "optval", "optlen")])
+
+syscall("getsockopt", [("int", "sockfd"),
+                            ("int", "level"),
+                            ("int", "optname"),
+                            ("socklen_t", "optlen")],[],
+                           [("void *", "optval", "optlen")])
+
+
 syscall("shutdown", [("int", "sockfd"), ("int", "how")])
+
+
+# Use have_* to deal with case when they are null.  When not null, make the have_* = to sizeof(fd_set)
+syscall("select", [("int", "nfds"),("int", "have_read"), ("int", "have_write"),("int", "have_except") ],
+                  [("fd_set *", "readfds", "have_read"),
+                   ("fd_set *", "writefds", "have_write"),
+                   ("fd_set *", "exceptfds", "have_except"),
+                   ("struct timeval *", "timeout", "sizeof(struct timeval)"), ],
+                  [("struct select_results *", "result", "sizeof(struct select_results)"),]
+        )
 
 
 # Now write out the system calls to the screen the src files to be compiled.
