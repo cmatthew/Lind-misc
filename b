@@ -14,6 +14,8 @@
 # exec 3>&2 2> bashstart.$$.log
 # set -x
 
+mode=opt-linux
+
 #call this instead of echo, then we can do things like log and print to notifier
 function print {
     echo $1
@@ -25,7 +27,6 @@ function print {
 function clean_toolchain {
      cd ~/lind/native_client/
      rm -rf out
-     python tools/modular-build/build.py -b
 }
 
 # install many of the packages this project needs
@@ -50,7 +51,7 @@ function build_liblind {
 
 
 # copy the toolchain files into the repy subdir
-function inject_libs_into_repy {
+function install_to_path {
     set -o errexit
 
         #make sure repy path is set
@@ -72,7 +73,8 @@ function inject_libs_into_repy {
     mkdir -p $base/glibc
     mkdir -p $base/libs
     mkdir -p $base/include
-    cp -rf ${nacl_base}/scons-out/dbg-linux-x86-64/staging/* $bin/
+    echo "Fast!"
+    cp -rf ${nacl_base}/scons-out/${mode}-x86-64/staging/* $bin/
 
     #install script
     cp -f lind.sh $bin/lind
@@ -128,6 +130,13 @@ function check_install_dir {
 	mkdir -p $REPY_PATH
     fi
 
+}
+
+function build_toolchain {
+    cd ~/lind/native_client
+    set +o errexit # the whole build always fails in the nacl tests
+    python tools/modular-build/build.py -b
+    set -o errexit
 }
 
 # install repy into $REPY_PATH with the prepare_tests script
@@ -189,13 +198,54 @@ function build_repy {
 # -I/home/lind/tmp/repy/include 
 # tests/lind/glibc_test.c
 
+function freakout {
+    echo $@
+}
+
+# Update, build and test everything. If there is a problem, freak out.
+function nightly_build {
+    set -o errexit
+    # Clean
+    clean_install
+    clean_nacl
+    clean_toolchain
+
+    # Update
+    ~/lind/misc/global_update.sh
+
+    # build
+    build_toolchain
+    build_rpc
+    build_glibc
+    build_nacl
+    build_repy
+    build_sdk
+
+	install_to_path
+
+    # test repy
+    test_repy
+
+    # test glibc
+    test_glibc
+
+    # test applications
+    test_apps
+
+}
+
+function clean_install {
+    rm -rf $REPY_PATH
+    touch $REPY_PATH
+}
 
 # Run the NaCl build
 function build_nacl {
      print "Building NaCl"
      cd ~/lind/native_client/
-     
-     ./scons --verbose --mode=dbg-linux,nacl platform=x86-64 --nacl_glibc -j16 
+     ./scons --verbose --mode=${mode},nacl platform=x86-64 -j16 -k
+
+     ./scons --verbose --mode=${mode},nacl platform=x86-64 --nacl_glibc -j16 -k
      rc=$?
      if [ "$rc" -ne "0" ]; then
 	 print "NaCl Build Failed($rc)"
@@ -203,13 +253,13 @@ function build_nacl {
 	 exit $rc
      fi
      print "Done building NaCl $rc"
-     inject_libs_into_repy
+     install_to_path
 }
 
 # Run clean on nacl build
 function clean_nacl {
      cd ~/lind/native_client/
-     ./scons --mode=dbg-linux,nacl platform=x86-64 --nacl_glibc -c
+     ./scons --mode=${mode},nacl platform=x86-64 --nacl_glibc -c
      print "Done Cleaning NaCl"
 }
 
@@ -241,7 +291,7 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      #../sysdeps/nacl/nacl_stat.h:102: warning: its scope is only this definition or declaration, which is probably not what you want
-     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' | grep -e 'warning' -e 'error'
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' -e '^../misc/' -e '^../inet/' | grep -e 'warning' -e 'error'
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
@@ -273,7 +323,7 @@ function build_glibc_gcc {
     fi
     python tools/modular-build/build.py
     print "Done building GLibC"
-    inject_libs_into_repy
+    install_to_path
 
     print "Done Build"
 }
@@ -314,7 +364,7 @@ function glibc_tester {
     lind ~/lind/misc/glibc_test/glibc_tester.nexe
 }
 
-function genrpc {
+function build_rpc {
     set -o errexit
     cd ~/lind/misc/rpcgen/
     python syscall_gen.py | indent 
@@ -331,7 +381,7 @@ function watch {
 
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc test_apps sdk rpc test"
+list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc test_apps sdk rpc test nightly"
 word=""
 if  test -z "$1" 
 then
@@ -376,7 +426,7 @@ do
 	inplace
     elif [ "$word" = "install" ]; then
 	print "Installing libs into install dir"
-	inject_libs_into_repy
+	install_to_path
 
     elif [ "$word" = "cleannacl" ]; then
 	print "Cleaning NaCl"
@@ -400,7 +450,10 @@ do
 	test_apps
     elif [ "$word" = "rpc" ]; then
 	print "Building new RPC stubs"
-	genrpc
+	build_rpc
+    elif [ "$word" = "nightly" ]; then
+	print "Nightly Build"
+	nightly_build
     elif [ "$word" = "install_deps" ]; then
 	print "Installing Dependicies"
 	install_deps
