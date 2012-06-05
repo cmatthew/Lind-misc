@@ -16,12 +16,17 @@
 
 mode=opt-linux
 
+
+# 
+#
 #call this instead of echo, then we can do things like log and print to notifier
 function print {
     echo $1
     #notify-send --icon=/usr/share/icons/gnome/256x256/apps/utilities-terminal.png "Build Script" "$1" >& /dev/null
 }
 
+
+#
 # wipe the entire modular build toolchain build tree, then rebuild it
 # Warning: this can take a while!
 function clean_toolchain {
@@ -29,7 +34,10 @@ function clean_toolchain {
      rm -rf out
 }
 
-# install many of the packages this project needs
+
+# install many of the packages this project needs.
+# Uses apt-get to setup the system.
+# 
 function install_deps {
     set -o errexit
     sudo aptitude install build-essential git-core subversion python2.6 python-dev python2.6-dev texinfo texlive gcc-multilib g++-multilib libsdl1.2-dev texinfo libcrypto++-dev libssl-dev lib32ncurses5-dev m4
@@ -40,7 +48,10 @@ function install_deps {
  
 }
 
-# compile liblind and the compoent programs
+
+# Compile liblind and the compoent programs.
+# 
+# 
 function build_liblind {
     echo -ne "Building liblind... "
     cd ~/lind/misc/liblind
@@ -49,21 +60,26 @@ function build_liblind {
 
 }
 
+cp="rsync -ra"
 
-# copy the toolchain files into the repy subdir
+
+# Copy the toolchain files into the repy subdir.
+#
+# 
 function install_to_path {
+    # nothing should fail here.
     set -o errexit
 
-        #make sure repy path is set
+    #make sure repy path is set
     if [ -z "$REPY_PATH" ]; then
        echo "Need to set REPY_PATH"
        exit 1
     fi 
 
-
     echo "Injecting Libs into RePy install"
     cd ~/lind/
-    nacl_base=./native_client
+    nacl_base=/home/lind/lind/native_client
+
     print "Sendning NaCl stuff to $REPY_PATH"
     base="${REPY_PATH}/lib"
     echo "Base is $base"
@@ -73,73 +89,97 @@ function install_to_path {
     mkdir -p $base/glibc
     mkdir -p $base/libs
     mkdir -p $base/include
-    echo "Fast!"
-    cp -rf ${nacl_base}/scons-out/${mode}-x86-64/staging/* $bin/
+
+    $cp ${nacl_base}/scons-out/${mode}-x86-64/staging/ $bin/
 
     #install script
     cp -f lind.sh $bin/lind
     chmod +x $bin/lind
 
-    cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/* $base/glibc/
-    cp -rf $nacl_base/out/install/glibc_64/nacl64/include/ $base/include
-    cp -rf $nacl_base/out/install/full-gcc-glibc/nacl64/lib64/*  $base/libs/
-    cp -rf $nacl_base/out/install/glibc_64/nacl64/lib/*  $base/libs/
-    cp -rf $nacl_base/out/install/nacl_libs_glibc_64/nacl64/lib/*  $base/libs/
+    $cp $nacl_base/out/install/glibc_64/nacl64/lib/ $base/glibc/
+    $cp $nacl_base/out/install/glibc_64/nacl64/include/ $base/include
+    $cp $nacl_base/out/install/full-gcc-glibc/nacl64/lib64/  $base/libs/
+    $cp $nacl_base/out/install/glibc_64/nacl64/lib/  $base/libs/
+    $cp $nacl_base/out/install/nacl_libs_glibc_64/nacl64/lib/  $base/libs/
 
 }
 
-# buidl then copy the SDK specific parts of the toolchain
+
+# Build then copy the SDK specific parts of the toolchain.
+#
+# 
 function build_sdk {
     build_glibc_gcc
     echo "Copying SDK"
     base="${REPY_PATH}"
-    nacl_base=./native_client
+    nacl_base=/home/lind/lind/native_client
     mkdir -p $base/sdk
-    cp -rfv $nacl_base/toolchain/linux_x86 $base/sdk/
-    cp -rfv ./sdk_examples $base/sdk/examples
+    $cp $nacl_base/toolchain/linux_x86 $base/sdk/
+    $cp /home/lind/lind/sdk_examples/ $base/sdk/examples
 }
 
+
+# Run the RePy unit tests.
+#
+#
 function test_repy {
-    set +o errexit
     cd $REPY_PATH/repy/
+    set +o errexit  # some of our unit tests fail
     for file in ut_lind_*; do 
-	echo $file 
-	python $file  
+	    echo $file 
+	    python $file  
     done
 
+    # run the struct test
     file=ut_seattlelibtests_teststruct.py
     echo $file 
     python $file  
 
 }
 
+
+# Run the applications test stuites.
+#
+#
 function test_apps {
     set +o errexit
     cd ~/lind/misc/tests
 	./test.sh
 }
 
+# Check the REPY_PATH location to make sure it is safe to be installing stuff there.
+#
+#
 function check_install_dir {
     #make sure repy path is set
     if [ -z "$REPY_PATH" ]; then
        echo "Need to set REPY_PATH"
        exit 1
     fi 
-
+    
+    # and if it does not exit, make it.
     if [ ! -d "$REPY_PATH" ]; then
 	mkdir -p $REPY_PATH
     fi
 
 }
 
+
+# Trigger the build of the glibc toolchain.
+#
+#
 function build_toolchain {
     cd ~/lind/native_client
-    set +o errexit # the whole build always fails in the nacl tests
+    # the whole build always fails in the nacl tests
+    set +o errexit 
     python tools/modular-build/build.py -b
     set -o errexit
 }
 
-# install repy into $REPY_PATH with the prepare_tests script
+
+# Install repy into $REPY_PATH with the prepare_tests script.
+#
+#
 function build_repy {
     check_install_dir
 
@@ -175,53 +215,28 @@ function build_repy {
     cd $here
 }
 
-# How NaCl compiles a program for 
-# /home/lind/lind/native_client/toolchain/linux_x86/bin/nacl64-gcc 
-# -o scons-out/nacl-x86-64-glibc/obj/tests/lind/glibc_test.o 
-# -c 
-# -std=gnu99 
-# -Wall 
-# -Wextra 
-# -O2 
-# -fomit-frame-pointer 
-# -Wall 
-# -fdiagnostics-show-option 
-# -pedantic 
-# -Werror 
-# -m64 
-# -D_GNU_SOURCE=1 
-# -D__STDC_FORMAT_MACROS=1 
-# -D_BSD_SOURCE=1 
-# -D_POSIX_C_SOURCE=199506 
-# -D_XOPEN_SOURCE=600 
-# -I/home/lind/lind 
-# -I/home/lind/tmp/repy/include 
-# tests/lind/glibc_test.c
-
-function freakout {
-    echo $@
-}
 
 # Update, build and test everything. If there is a problem, freak out.
+#
+#
 function nightly_build {
     set -o errexit
     # Clean
-    clean_install
-    clean_nacl
-    clean_toolchain
-
+    # clean_install
+    # clean_nacl
+    # clean_toolchain
+    # check_install_dir
     # Update
     ~/lind/misc/global_update.sh
 
     # build
-    build_toolchain
-    build_rpc
-    build_glibc
-    build_nacl
-    build_repy
-    build_sdk
-
-	install_to_path
+    # build_toolchain
+    # build_rpc
+    # build_glibc
+    # build_nacl
+    # build_repy
+    # build_sdk
+	# install_to_path
 
     # test repy
     test_repy
@@ -239,24 +254,41 @@ function clean_install {
     touch $REPY_PATH
 }
 
-# Run the NaCl build
+
+# Run the NaCl build.
+#
+#
 function build_nacl {
      print "Building NaCl"
      cd ~/lind/native_client/
+     # first build standard NaCl
      ./scons --verbose --mode=${mode},nacl platform=x86-64 -j16 -k
-
-     ./scons --verbose --mode=${mode},nacl platform=x86-64 --nacl_glibc -j16 -k
+     # and check
      rc=$?
      if [ "$rc" -ne "0" ]; then
-	 print "NaCl Build Failed($rc)"
-	 echo -e "\a"
-	 exit $rc
+	     print "NaCl Build Failed($rc)"
+	     echo -e "\a"
+	     exit $rc
      fi
+
+     # and now the glibc version
+     ./scons --verbose --mode=${mode},nacl platform=x86-64 --nacl_glibc -j16 -k
+     # and check
+     rc=$?
+     if [ "$rc" -ne "0" ]; then
+	     print "NaCl Build Failed($rc)"
+	     echo -e "\a"
+	     exit $rc
+     fi
+
      print "Done building NaCl $rc"
      install_to_path
 }
 
-# Run clean on nacl build
+
+# Run clean on nacl build.
+#
+#
 function clean_nacl {
      cd ~/lind/native_client/
      ./scons --mode=${mode},nacl platform=x86-64 --nacl_glibc -c
@@ -264,6 +296,8 @@ function clean_nacl {
 }
 
 
+# Build glibc from source
+#
 #
 function build_glibc {
      # the build is long and borning, so execute this first if it exists
@@ -272,9 +306,9 @@ function build_glibc {
      echo -ne "Copy component.h header to glibc: "
      cd ~/lind/misc/liblind
      cp -f component.h ~/lind/nacl-glibc/sysdeps/nacl/
-     print "done."
+     echo "done."
 
-     print "Building glibc"
+     echo "Building glibc"
 
      # if extra files (like editor temp files) are in the subdir glibc tries to compile them too.
      # move them here so they dont cause a problem
@@ -291,7 +325,7 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      #../sysdeps/nacl/nacl_stat.h:102: warning: its scope is only this definition or declaration, which is probably not what you want
-     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' -e '^../misc/' -e '^../inet/' | grep -e 'warning' -e 'error'
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' -e '^../misc/' -e '^../inet/' -e '^ifreq.c' -e 'ifaddrs.c' | grep -e 'warning' -e 'error'
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
@@ -307,6 +341,10 @@ function build_glibc {
      print "Done partial build."
 } 
 
+
+# Build the GCC toolchain
+#
+#
 function build_glibc_gcc {
     cd ~/lind/native_client
 
@@ -329,31 +367,9 @@ function build_glibc_gcc {
 }
 
 
-function inplace {
-    cd ~/lind/
-    rsync -rlEtv  ./nacl-glibc ~/lind/native_client/out/build/glibc_64
-    cd ~/lind/native_client/out/build/glibc_64
-    make 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep '^../sysdeps/nacl/' | grep -e 'warning' -e 'error'
-     rc=${PIPESTATUS[0]}
-     sync
-     if [ "$rc" -ne "0" ]; then
-	 cat build.stderr.log |  grep -vE "warning: ignoring old commands for target|warning: overriding commands for target" | tail -n 200
-	 print "Glibc Build failed"
-	 echo -e "\a"
-	 exit $rc
-     else
-	 print "Building glibc_64 Succeeded."
-     fi
-    cd ../../..
-}
-
-
-function run_lind {
-    print "Running lind."
-    python2.6 $REPY_PATH/repy.py --safebinary $REPY_PATH/restrictions.lind $REPY_PATH/lind_server.py /home/lind/lind/native_client/scons-out/nacl-x86-64-glibc/staging/glibc_test.nexe
-    print "Done Running."
-}
-
+# Run the glibc tester
+#
+#
 function glibc_tester {
     set -o errexit
 
@@ -364,24 +380,20 @@ function glibc_tester {
     lind ~/lind/misc/glibc_test/glibc_tester.nexe
 }
 
+
+# Run the RPC generator
+#
+#
 function build_rpc {
     set -o errexit
     cd ~/lind/misc/rpcgen/
     python syscall_gen.py | indent 
     type -P indent &>/dev/null && indent lind_rpc_gen.c -o lind_rpc_gen.c || echo "Indent Not Found. Skipping reformatting rpc code." 
     mv -v lind_rpc_gen.* ~/lind/nacl-glibc/sysdeps/nacl/
-
 }
-
-function watch {
-    print "Watch for what?"
-    read what
-    grep $what ~/lind/native_client/tools/modular-build/build.log    
-}
-
 
 PS3="build what: " 
-list="repy nacl glibc run cleantoolchain cleannacl inplace install install_deps liblind test_repy test_glibc test_apps sdk rpc test nightly"
+list="all repy nacl glibc cleantoolchain cleannacl install install_deps liblind test_repy test_glibc test_apps sdk rpc test nightly"
 word=""
 if  test -z "$1" 
 then
@@ -404,62 +416,58 @@ for  (( i=0;i<$ELEMENTS;i++));
 do
     word=${args[${i}]}
     if [ "$word" = "repy" ]; then
-	build_repy
+	    build_repy
     elif [ "$word" = "nacl" ]; then
-	build_nacl
+	    build_nacl
     elif [ "$word" = "glibc" ]; then
-	build_glibc
+	    build_glibc
     elif [ "$word" = "sdk" ]; then
-	build_sdk
+	    build_sdk
     elif [ "$word" = "all" ]; then
-	build_glibc
-	build_nacl
-	build_repy
-	run_lind
-    elif [ "$word" = "run" ]; then
-	run_lind
+        build_rpc
+	    build_glibc
+	    build_nacl
+	    build_repy
+	    install_to_path
+        test_glibc
     elif [ "$word" = "cleantoolchain" ]; then
-	print "Cleaning Toolchain"
-	clean_toolchain
-    elif [ "$word" = "inplace" ]; then
-	print "Inplace Build"
-	inplace
+	    print "Cleaning Toolchain"
+	    clean_toolchain
     elif [ "$word" = "install" ]; then
-	print "Installing libs into install dir"
-	install_to_path
-
+	    print "Installing libs into install dir"
+	    install_to_path
     elif [ "$word" = "cleannacl" ]; then
-	print "Cleaning NaCl"
-	clean_nacl
+	    print "Cleaning NaCl"
+	    clean_nacl
     elif [ "$word" = "liblind" ]; then
-	print "Building LibLind"
-	build_liblind
+	    print "Building LibLind"
+	    build_liblind
     elif [ "$word" = "test_repy" ]; then
-	print "Testing Repy"
-	test_repy
+	    print "Testing Repy"
+	    test_repy
     elif [ "$word" = "test_glibc" ]; then
-	print "Testing GLibC"
-	glibc_tester
+	    print "Testing GLibC"
+	    glibc_tester
     elif [ "$word" = "test_apps" ]; then
-	print "Testing Applications"
-	test_apps
+	    print "Testing Applications"
+	    test_apps
     elif [ "$word" = "test" ]; then
-	print "Testing All"
-	test_repy
-	glibc_tester
-	test_apps
+	    print "Testing All"
+	    test_repy
+	    glibc_tester
+	    test_apps
     elif [ "$word" = "rpc" ]; then
-	print "Building new RPC stubs"
-	build_rpc
+	    print "Building new RPC stubs"
+	    build_rpc
     elif [ "$word" = "nightly" ]; then
-	print "Nightly Build"
-	nightly_build
+	    print "Nightly Build"
+	    nightly_build
     elif [ "$word" = "install_deps" ]; then
-	print "Installing Dependicies"
-	install_deps
+	    print "Installing Dependicies"
+	    install_deps
     else 
-	echo "Error: Did not find a build target named $word. Exiting..."
-	exit 1
+	    echo "Error: Did not find a build target named $word. Exiting..."
+	    exit 1
     fi
 done
 
