@@ -385,11 +385,16 @@ void check_socket(void) {
   memset(&ip4addr, 0, sizeof(ip4addr));
   ip4addr.sin_family = AF_INET;
   ip4addr.sin_port = htons(10001);
-  inet_pton(AF_INET, "127.0.0.1", &ip4addr.sin_addr);
+  inet_pton(AF_INET, "0.0.0.0", &ip4addr.sin_addr);
 
   int on = 1;
   int status = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on));
   assert(status == -1); // this is not implemented, it should fail
+
+  int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
+  assert(rc == 0);
+  ip4addr.sin_port = htons(10002);
+
 
   int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
   assert(rc == 0);
@@ -643,6 +648,7 @@ int main() {
   fprintf(stderr, "\n");
   fprintf(stdout, "\n");
   
+  check_socket();
   
   print_sizes();
   check_two_open();
