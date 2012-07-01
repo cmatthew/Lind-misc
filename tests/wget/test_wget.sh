@@ -37,11 +37,14 @@ if diff real_file.html linddata.2; then
 else
   echo "WGet test failed"
 fi
-echo "Lind HTML:"
+echo "<Lind HTML:>"
 cat linddata.2
+echo "</Lind HTML:>"
 
 kill -9 $server
-
+killall python2.6
+killall sel_ldr
 ls
 
-rm -rf index2.html tmp lind.log lind.metadata linddata.*
+rm -rf etc tmp lind.log lind.metadata linddata.* *.html
+
