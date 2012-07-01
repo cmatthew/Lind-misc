@@ -3,7 +3,7 @@
 # Test lind Grep.  Make a file system, grep a file, and make sure the same file pops back out
 
 set -o errexit
-# set -o xtrace
+set -o xtrace
 export REPY_PATH=~/tmp/lind/
 export PATH=$PATH:~/tmp/lind/sdk/linux_x86/bin/
 
@@ -20,6 +20,11 @@ function setup_filesystem {
 		file_copy.py --copy $f $f > /dev/null
 	done
 
+    mkdir -p dev
+    touch ./dev/null
+    file_copy.py --copy ./dev/null /
+
+    
 	if [ ! -e grep.nexe ]; then
 
 		cd ../../foreign/grep-2.9
@@ -53,46 +58,44 @@ function run_grep {
 	# run sort on the output so that the order is not an issue.
 
 	# get rid of any old output
-	rm -rfv *.out.txt
-	rm -rfv output.*
+	rm -rf *.out.txt
+	rm -rf output.*
 	args=$1
+
+    echo "Grep test: grep $args $2"
+
 	#run the command
 	out=output.lind.$$
-	~/tmp/lind/bin/lind $path/grep.nexe $args $2 > $out
+	lind ./grep.nexe $args $2 > $out
 
 	# run the real commnad
 	real=output.real.$$
-	$path/grep $args $2 | sort > $real
+    new_args=${2//\//.\/}
+    echo ">>>>>>>>>>> $new_args"
+	./grep $args $new_args > $real
 
-	# filter out extra Lind messages
-	# grep $out
-	awk -vRS="Calling Main." '{print $0>NR".out.txt"}' $out
-	# cat 1.out.txt > filtered.out.txt
-	# remove three top lines and bottom 4 which are normal output
-	tail -n+3 1.out.txt | head -n -4 | sort  > filtered.out.txt
-	# only need to do this if trace is on
-    # grep -vE "^\[info\]\[Trace\]\[1\] " 2.out.txt > filtered.out.txt
+    mydiff=~/lind/misc/is_in_file.py 
 
-
-	# Do they match?
-	if diff $real filtered.out.txt ; then
+	if $mydiff $real $out ; then
 		rc=0
 	else
-		# cat $out
+		cat $out
 		echo "Error: Grep test failed."
 		exit 1
 	fi
+
+	rm -rf *.out.txt
+	rm -rf output.*
 
 	return $rc
 }
 
 
 setup_filesystem
-run_grep "--text Hi" "10.txt.utf8"
-run_grep "He" "10.txt.utf8"
-run_grep "He" "10609.txt.utf8 10.txt.utf8 11.txt.utf8 1342.txt.utf8 1400.txt.utf8 1661.txt.utf8 2591.txt.utf8 30601.txt.utf8 38840.txt.utf8 4300.txt.utf8 5200.txt.utf8 76.txt.utf8 98.txt.utf8" 
+run_grep "--text Hi" "/10.txt.utf8"
+run_grep "He" "/10.txt.utf8"
+run_grep "He --no-filename" "/10609.txt.utf8 /10.txt.utf8 /11.txt.utf8 /1342.txt.utf8 /1400.txt.utf8 /1661.txt.utf8 /2591.txt.utf8 /30601.txt.utf8 /38840.txt.utf8 /4300.txt.utf8 /5200.txt.utf8 /76.txt.utf8 /98.txt.utf8" 
 
 # We need this include because local grep starts to read
 # the output files and gets in a nasty loop
-run_grep "-r --include=*.utf8 Lyon" "."
-
+# run_grep "-r --no-filename --include=*.utf8 Lyon" "/"
