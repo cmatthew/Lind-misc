@@ -4,7 +4,7 @@
 
 
 # Uncomment this to print each command as they are executed
-# set -o xtrace
+# ≈set -o xtrace
 
 # Uncomment this for debugging. Will stop B on any failed commands 
 # set -o errexit
@@ -13,7 +13,7 @@
 # PS4='+ $(date "+%s.%N")\011 '
 # exec 3>&2 2> bashstart.$$.log
 # set -x
-
+trap 'echo "All done."' EXIT
 mode=opt-linux
 
 
@@ -127,7 +127,10 @@ function test_repy {
     set +o errexit  # some of our unit tests fail
     for file in ut_lind_*; do 
 	    echo $file 
-	    python $file  
+        #trap 'python2.6 ${REPY_PATH}/repy/repy.py --safebinary ${REPY_PATH}/repy/restrictions.lind ${REPY_PATH}/repy/lind_server.py $@' INT TERM EXIT
+        trap ';' TERM
+        python $file
+	    #trap 'python $file' INT TERM EXIT  
     done
 
     # run the struct test
@@ -325,7 +328,7 @@ function build_glibc {
      python tools/modular-build/build.py glibc-src -s --allow-overwrite -b
      # python tools/modular-build/build.py
      #../sysdeps/nacl/nacl_stat.h:102: warning: its scope is only this definition or declaration, which is probably not what you want
-     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' -e '^../misc/' -e '^../inet/' -e '^ifreq.c' -e 'ifaddrs.c' | grep -e 'warning' -e 'error'
+     python tools/modular-build/build.py -s -b glibc_64 2>&1 | tee build.stderr.log | grep -vE "warning: ignoring old commands for target|warning: overriding commands for target| warning: \‘struct stat*\’ declared inside parameter list|../sysdeps/nacl/nacl_stat.h:102:" | grep -e '^../sysdeps/nacl/' -e '^../socket/' -e '^../misc/' -e '^../inet/' -e 'res_send.c' -e 'poll.c' | grep -e 'warning' -e 'error'
      rc=${PIPESTATUS[0]}
      sync
      if [ "$rc" -ne "0" ]; then
