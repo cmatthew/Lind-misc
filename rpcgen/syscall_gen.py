@@ -12,13 +12,12 @@ them to output files at the end.
 """
 
 import sys
-import string
 
 
 def uniqueify(seq):
     seen = set()
     seen_add = seen.add
-    return [ x for x in seq if x not in seen and not seen_add(x)]
+    return [x for x in seq if x not in seen and not seen_add(x)]
 
 
 # this is for things which go in the header file (lind_rpc_gen.h)
@@ -36,6 +35,7 @@ headers = ["#include <stddef.h>",
            "#include <sys/types.h>",
            "#include <sys/socket.h>",
            "#include <sys/select.h>",
+           "#include <sys/poll.h>",
            "#include \"lind_rpc.h\"",
            "#include \"lind_syscalls.h\"",
            "#include \"strace.h\"",
@@ -209,7 +209,7 @@ def build_format_string(in_args, ref_args):
                 # get rid of those!
                 full_name = name
                 name = str(filter(lambda x: x.isalnum(), name))
-                
+
                 pre.append("const char * " + name +
                            "_len_str = nacl_itoa(" + full_name + ");")
                 post.append("free((void*)" + name + "_len_str);")
@@ -236,7 +236,7 @@ def determine_reply_size(out_args):
     """Given an out arugments list,
     figure out the optimal size of the return buffer.
     """
-    # find the size of each type 
+    # find the size of each type
     type_sizes = []
     for types in out_args:
         if len(types) <= 2:
@@ -247,7 +247,7 @@ def determine_reply_size(out_args):
         type_sizes = ["0"]
 
     #make room for the reply header
-    type_sizes.append( "sizeof(lind_reply)")
+    type_sizes.append("sizeof(lind_reply)")
 
     # now make the total
     size_stmt = "size_t reply_size = " + " + ".join(type_sizes) + ";"
@@ -310,8 +310,10 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
     (setup, reply_size_expr) = determine_reply_size(out_args)
     output.extend(["lind_request request;",
                    "memset(&request, 0, sizeof(request));",
+                   "int return_code = -1;",
                    setup,
-#                   "nacl_strace(\"" + call_name + "\"); nacl_strace(nacl_itoa(reply_size));",
+#                   "nacl_strace(\"" + call_name + "\");
+#                   nacl_strace(nacl_itoa(reply_size));",
                    "lind_reply* reply_buffer = malloc(" + \
                    reply_size_expr + ");",
                    "assert(reply_buffer!=NULL);",
@@ -321,7 +323,8 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
 
                    "struct lind_" + name + "_rpc_s args;",
                    "memset(&args, 0, sizeof(struct lind_" + name + "_rpc_s));",
-                   "int return_code = -1;"])
+                   ])
+    output.append("nacl_strace(\"" + call_name + "\\n\");")
 
     # for each value argument, add to the message struct
     for args in in_args:
@@ -358,9 +361,9 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
     else:
         # if no reference args, then append 0
         vargs = "0"
-
     # make the actual RPC call
-    output.append("nacl_rpc_syscall_proxy(&request, reply_buffer, " + vargs + ");")
+    output.append("nacl_rpc_syscall_proxy(&request, reply_buffer,"
+                  + vargs + ");")
 
     # now deal with the returned informatoin
     check_ret_code = ["/* on error return negative so we can set ERRNO. */",
@@ -372,19 +375,58 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
 
     # if there is an out arg, check its size and copy it into the target
     if out_args:
-        # size check arguement is present
-        if len(out_args[0]) == 3:
+        complex = True if len(out_args) > 1 else False
+        # first check sizes multi argument check, size should be
+        # EXACTLY equal to the sum of the parts must be exactly equal
+        # becuase we could not know which one was too small otherwise
+        if complex:
+            pass
+        # for single arugment, it can be smaller than the buffer, just
+        # not larger.
+        else:
             output.append("assert( CONTENTS_SIZ(reply_buffer) <= " +
                           out_args[0][2] + ");")
-        # copy from the RPC payload to the target pointer
-        output.append("void * ptr = " + out_args[0][1] +
-                      ";\n" +
-                      "memcpy(ptr, &(reply_buffer->contents), \
-                      CONTENTS_SIZ(reply_buffer));")
+        # this will hold each output argument.
+        output.append("void * ptr = NULL;")
+        old_sizes = []
+        if not complex:
+            for arg in out_args:
+                # copy from the RPC payload to the target pointer
+                old_sizes_str = "+ " + \
+                (" + ".join(old_sizes) if old_sizes else "0")
+                output.append("ptr = " + arg[1] + ";\n" +
+                              "memcpy(ptr, ((&(reply_buffer->contents)) " + \
+                              old_sizes_str + "), " \
+                              + arg[2] + ");")
+                old_sizes.append(arg[2])
+        else: # complex args
+            # header has sizes
+            output.append("void * base = &(reply_buffer->contents);")
+
+            output.append("int * sizes = base;")
+            output.append("int offset=(sizeof(int) * " + str(len(out_args)) \
+                          + "), cur_size = 0;\n")
+
+            for arg in enumerate(out_args):
+                # copy from the RPC payload to the target pointer
+                old_sizes_str = "+ " + \
+                                (" + ".join(old_sizes) if old_sizes else "0")
+                output.append("ptr = (void *)" + arg[1][1] + ";")
+                output.append("cur_size = sizes[" + str(arg[0]) + "];")
+                #output.append("nacl_strace(nacl_itoa(cur_size));")
+                #output.append("nacl_strace(nacl_itoa(offset));")
+
+                #output.append("nacl_strace( base + offset);")
+                output.append("assert( cur_size <= " + str(arg[1][2]) + " );")
+
+
+                output.append("memcpy(ptr, base +  offset, cur_size);")
+                output.append("offset += cur_size;\n")
+
     # finally return and close function body
     output.extend(["}",
                    "free(reply_buffer);",
-                  "return return_code;",
+                   "return return_code;",
                    "}"])
 
 
@@ -465,7 +507,9 @@ syscall_table = {
     "getsockopt": (43,),
     "setsockopt": (44,),
     "select": (46,),
-    "shutdown": (45,)}
+    "getifaddrs": (47,),
+    "poll": (48,),
+   "shutdown": (45,)}
 
 
 #
@@ -502,6 +546,7 @@ syscall("write", [("int", "desc"),
 
 # note the strange order here, this is because our struct module does
 # not deal with byte alignment
+
 syscall("lseek", [("off_t", "offset"),
                   ("int", "fd"),
                   ("int", "whence")],
@@ -552,11 +597,6 @@ syscall("recv", [("int", "sockfd"),
                 [],
                 [("void *", "buf", "len")])
 
-# syscall("recvfrom", [("int","sockfd"),
-#("size_t","len"),("int","flags"),("socklen_t","addrlen")],
-# [], [("void *", "buf", "len"),("__
-# CONST_SOCKADDR_ARG","src_addr","addrlen")])
-
 syscall("connect", [("int", "sockfd"),
                     ("socklen_t", "addrlen")],
                    [("__CONST_SOCKADDR_ARG", "src_addr", "addrlen")])
@@ -572,8 +612,8 @@ emptysyscall("sendto", [("int", "sockfd"),
                         ("const void *", "buf", "len")])
 
 # # "accept":(40,),
-syscall("accept",[("int","sockfd"),("socklen_t","addrlen")],
- [],[])#[("__CONST_SOCKADDR_ARG","addr_out","addrlen")])
+syscall("accept", [("int", "sockfd"), ("socklen_t", "addrlen")],
+ [], [])#[("__CONST_SOCKADDR_ARG","addr_out","addrlen")])
 # # need to modify argument to be in and out!
 
 emptysyscall("getpeername",
@@ -596,21 +636,45 @@ syscall("setsockopt", [("int", "sockfd"),
 syscall("getsockopt", [("int", "sockfd"),
                             ("int", "level"),
                             ("int", "optname"),
-                            ("socklen_t", "optlen")],[],
+                            ("socklen_t", "optlen")], [],
                            [("void *", "optval", "optlen")])
 
 
 syscall("shutdown", [("int", "sockfd"), ("int", "how")])
 
 
-# Use have_* to deal with case when they are null.  When not null, make the have_* = to sizeof(fd_set)
-syscall("select", [("int", "nfds"),("int", "have_read"), ("int", "have_write"),("int", "have_except") ],
+# Use have_* to deal with case when they are null.  When not null,
+# make the have_* = to sizeof(fd_set)
+syscall("select", [("int", "nfds"),
+                   ("int", "have_read"),
+                   ("int", "have_write"),
+                   ("int", "have_except")],
                   [("fd_set *", "readfds", "have_read"),
                    ("fd_set *", "writefds", "have_write"),
                    ("fd_set *", "exceptfds", "have_except"),
-                   ("struct timeval *", "timeout", "sizeof(struct timeval)"), ],
-                  [("struct select_results *", "result", "sizeof(struct select_results)"),]
-        )
+                   ("struct timeval *", "timeout",
+                    "sizeof(struct timeval)"), ],
+                  [("struct select_results *", "result",
+                    "sizeof(struct select_results)")])
+
+syscall("getifaddrs", [("int", "ifaddrs_buf_siz"), ], [],
+                           [("void *", "ifaddrs", "ifaddrs_buf_siz")])
+
+
+syscall("recvfrom", [("int", "sockfd"),
+                     ("size_t", "len"),
+                     ("int", "flags"),
+                     ("socklen_t", "addrlen")],
+                    [],
+                    [("socklen_t*", "addrlen_out", "sizeof(socklen_t)"),
+                     ("void *", "buf", "len"),
+                     ("struct sockaddr *", "src_addr",
+                      "sizeof(struct sockaddr)")])
+
+
+syscall("poll", [("int", "nfds"),("int","timeout")],
+        [("struct pollfd *", "fds_in", "(sizeof(struct pollfd) * nfds)")],
+        [("struct pollfd *", "fds_out", "(sizeof(struct pollfd) * nfds)")])
 
 
 # Now write out the system calls to the screen the src files to be compiled.
