@@ -7,6 +7,10 @@ import os
 import stat
 
 
+# We need lind_test_server.py, lind_fs_calls.py and lind_fs_constants.py.
+# They should be in the REPY_PATH OR copy them in to this folder so python
+# can import the lind_test_server
+
 # add repy install path to script
 path = os.getenv("REPY_PATH")
 if path == None:
