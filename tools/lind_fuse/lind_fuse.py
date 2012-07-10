@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-#    Copyright (C) 2001  Jeff Epler  <jepler@unpythonic.dhs.org>
-#    Copyright (C) 2006  Csaba Henk  <csaba.henk@creo.hu>
-#
-#    This program can be distributed under the terms of the GNU LGPL.
-#    See the file COPYING.
-#
+#    Chris Matthews - University of Victoria - July 2012
 
 import sys
 import os
@@ -38,7 +33,14 @@ except ImportError:
 import fuse
 from fuse import Fuse
 
+LOGGING = False
 
+def log(*messages):
+    if LOGGING:
+       print ' '.join(map(str, messages))
+
+# Convert a string errno value to the numeric value
+# see the POSIX errno.h for the real thing
 errno = {
     'EPERM': 1,	# Operation not permitted
     'ENOENT': 2, # No such file or directory
@@ -174,16 +176,26 @@ errno = {
     'EOWNERDEAD':130,	# Owner died
     'ENOTRECOVERABLE':131} # State not recoverable
 
+
 if not hasattr(fuse, '__version__'):
     raise RuntimeError, \
         "your fuse-py doesn't know of fuse.__version__, probably it's too old."
 
+
 fuse.fuse_python_api = (0, 2)
+
 
 fuse.feature_assert('stateful_files', 'has_init')
 
 
-class MyStat(fuse.Stat):
+class LindFileStat(fuse.Stat):
+    """ File attributes.
+
+    See stat and fstat.
+
+    http://linux.die.net/man/2/stat
+
+    """
     def __init__(self):
         self.st_mode = 0
         self.st_ino = 0
@@ -197,22 +209,21 @@ class MyStat(fuse.Stat):
         self.st_ctime = 0
 
 
-class MyStatFS(fuse.Stat):
-    def __init__(self):
-            # - f_bsize - preferred size of file  blocks, in bytes
-            # - f_frsize - fundamental size of file blcoks, in bytes
-            #     [if you have no idea, use the same as blocksize]
-            # - f_blocks - total number of blocks in the filesystem
-            # - f_bfree - number of free blocks
-            # - f_files - total number of file inodes
-            # - f_ffree - nunber of free file inodes
+class LindFileStatFS(fuse.Stat):
+    """File system attributes.
 
-        self.f_bsize = 0
-        self.f_frsize = 0
-        self.f_blocks = 0
-        self.f_bfree = 0
-        self.f_files = 0
-        self.f_ffree = 0
+    See man statfs and fstatfs.
+    
+    http://linux.die.net/man/2/fstatfs
+
+    """
+    def __init__(self):
+        self.f_bsize = 0  # preferred size of file  blocks, in bytes
+        self.f_frsize = 0  # fundamental size of file blcoks, in bytes
+        self.f_blocks = 0  # total number of blocks in the filesystem
+        self.f_bfree = 0  # number of free blocks
+        self.f_files = 0  # total number of file inodes
+        self.f_ffree = 0  # number of free file inodes
 
 
 class LindFuseFS(Fuse):
@@ -221,31 +232,23 @@ class LindFuseFS(Fuse):
 
         Fuse.__init__(self, *args, **kw)
 
-        # do stuff to set up your filesystem here, if you want
+        # You can enable multithreading here
         #import thread
         #thread.start_new_thread(self.mythread, ())
         self.root = '/'
 
-#    def mythread(self):
-#
-#        """
-#        The beauty of the FUSE python implementation is that with the python interp
-#        running in foreground, you can have threads
-#        """
-#        print "mythread: started"
-#        while 1:
-#            time.sleep(120)
-#            print "mythread: ticking"
 
     def getattr(self, path):
-#        print "getattr", path
+        log("getattr", path)
         try:
             stats = lind.stat_syscall(path)
         except lind.SyscallError, e:
             return -errno[e[1]]
         devid, inode, mode, linkcount, uid, gid, rdev,size, blocksize, blocks, \
                atime, atimens, mtime, mtimens, ctime, ctimens = stats
-        st = MyStat()
+        st = LindFileStat()
+        
+        # treat root specially
         if path == '/':
             st.st_mode = stat.S_IFDIR | 0755
             st.st_nlink = 2
@@ -265,11 +268,12 @@ class LindFuseFS(Fuse):
 
 
     def readlink(self, path):
+        log("readlink (unimplemented)", path)
         return errno["ENOSYS"]
 
 
     def readdir(self, path, offset):
-
+        log("readdir", path, offset)
         lindfd = lind.open_syscall(path, lind.O_RDONLY, lind.S_IRWXU)
         dents = map(lambda x:x[1], lind.getdents_syscall(lindfd, 999))
 
@@ -279,10 +283,12 @@ class LindFuseFS(Fuse):
 
 
     def unlink(self, path):
+        log("unlink (unimplemented)", path)
         return errno["ENOSYS"]
 
 
     def rmdir(self, path):
+        log("rmdir", path)
         try:
             ret = lind.rmdir_syscall(path)
         except lind.SyscallError, e:
@@ -291,6 +297,7 @@ class LindFuseFS(Fuse):
 
 
     def symlink(self, path, path1):
+        log("symlink", path, path1)
         try:
             ret = lind.link_syscall(path, path1)
         except lind.SyscallError, e:
@@ -299,10 +306,12 @@ class LindFuseFS(Fuse):
 
 
     def rename(self, path, path1):
+        log("rename (unimplemented)", path, path1)
         return errno["ENOSYS"]
 
 
     def link(self, path, path1):
+        log("link", path, path1)
         try:
             ret = lind.link_syscall(path, path1)
         except lind.SyscallError, e:
@@ -311,23 +320,27 @@ class LindFuseFS(Fuse):
 
 
     def chmod(self, path, mode):
-        print "chmod", path
-        
+        log("chmod (unimplemented)", path, hex(mode))
+        return errno["ENOSYS"]
 
 
     def chown(self, path, user, group):
-        print "chown", path
+        log("chown (unimplemented)", path, user, group)
+        return errno["ENOSYS"]
 
 
     def truncate(self, path, len):
+        log("truncate (unimplemented)", path, len)
         return errno["ENOSYS"]
 
 
     def mknod(self, path, mode, dev):
+        log("mknod (unimplemented)", path, mode, dev)
         return errno["ENOSYS"]
 
 
     def mkdir(self, path, mode):
+        log("mkdir", path, mode)
         try:
             ret = lind.mkdir_syscall(path, mode)
         except lind.SyscallError, e:
@@ -336,10 +349,11 @@ class LindFuseFS(Fuse):
 
 
     def utime(self, path, times):
-        print "utime"
+        log("utime (unimplemented)", path, times)
 
 
     def access(self, path, mode):
+        log("access", path, hex(mode))
         try:
             ret = lind.access_syscall(path, mode)
         except lind.SyscallError, e:
@@ -348,14 +362,13 @@ class LindFuseFS(Fuse):
 
 
     def statfs(self):
-        """
-        """
+        log("statfs")
         try:
             stats = lind.statfs_syscall("/")
         except lind.SyscallError, e:
             return -errno[e[1]]
 
-        st = MyStatFS()
+        st = LindFileStatFS()
         st.f_bsize = stats['f_bsize']
         st.f_frsize = stats['f_frsize']
         st.f_blocks = stats['f_blocks']
@@ -371,10 +384,10 @@ class LindFuseFS(Fuse):
 
 
     class LindFuseFSFile(object):
-
+        """For each open file in the FS, there will be one of these."""
 
         def __init__(self, path, flags, *mode):
-
+            log("open", path, hex(flags))
             self.direct_io = False
             self.keep_cache = False
             lindfd = lind.open_syscall(path, flags, lind.S_IRWXA)
@@ -383,6 +396,7 @@ class LindFuseFS(Fuse):
 
 
         def read(self, length, offset):
+            log("read", self.fd, length, offset)
             try:
                 lind.lseek_syscall(self.fd, offset, 0)
                 ret = lind.read_syscall(self.fd, length)
@@ -393,6 +407,7 @@ class LindFuseFS(Fuse):
 
 
         def write(self, buf, offset):
+            log("write", self.fd, buf, offset)
             try:
                 lind.lseek_syscall(self.fd, offset, 0)
                 ret = lind.write_syscall(self.fd, buf)
@@ -402,15 +417,17 @@ class LindFuseFS(Fuse):
 
 
         def release(self, flags):
+            log("close", self.fd, flags)
             return lind.close_syscall(self.fd)
 
 
         def _fflush(self):
-            print "File: flush"
+            log("flush", self.fd)
             return 0
 
 
         def fsync(self, isfsyncfile):
+            log("fsync", self.fd, isfsyncfile)
             lind.persist_metadata("lind.metadata")
             return 0
 
@@ -420,13 +437,14 @@ class LindFuseFS(Fuse):
 
 
         def fgetattr(self):
+            log("fstat", self.fd)
             try:
                 stats = lind.fstat_syscall(self.fd)
             except lind.SyscallError, e:
                 return -errno[e[1]]
             devid, inode, mode, linkcount, uid, gid, rdev,size, blocksize, blocks, \
                 atime, atimens, mtime, mtimens, ctime, ctimens = stats
-            st = MyStat()
+            st = LindFileStat()
             if path == '/':
                 st.st_mode = stat.S_IFDIR | 0755
                 st.st_nlink = 2
@@ -463,7 +481,7 @@ class LindFuseFS(Fuse):
 def main():
 
     usage = """
-Userspace nullfs-alike: mirror the filesystem tree from some point on.
+Lind Fuse File System.
 
 """ + Fuse.fusage
 
@@ -474,18 +492,12 @@ Userspace nullfs-alike: mirror the filesystem tree from some point on.
                  usage=usage,
                  dash_s_do='setsingle')
 
-    # Disable multithreading: if you want to use it, protect all method of
-    # XmlFile class with locks, in order to prevent race conditions
-    server.multithreaded = False
+    server.multithreaded = False  # if this is true, better add some locks!
 
     server.parser.add_option(mountopt="root", metavar="PATH", default='/',
                              help="mirror filesystem from under PATH [default: %default]")
     server.parse(values=server, errex=1)
-
-
-
     server.main()
-    print "Persisting Metadata"
     lind.persist_metadata("lind.metadata")
 
 

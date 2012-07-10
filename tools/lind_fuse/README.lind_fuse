@@ -1,28 +1,37 @@
-The Lind-FUSE driver.
+The Lind-FUSE driver:
+July 2012 - Chris Matthews <cmatthew@cs.uvic.ca>
+
 
 INSTALLING:
 ===========
 
-You need to have python-fuse installed to use lind fuse.  Right now there is not a lind-fuse installer.
+You need to have python-fuse installed to use lind fuse.  Right now there is not a lind-fuse installer.  
+
+Python fuse is in the Ubuntu package manager as "python-fuse" or it can be downloaded here:
+
+http://pypi.python.org/pypi/fuse-python/
+
+The kernel you are using must also support fuse.  That is most kernels now-a-days.
+
+Finding the Lind file system.  Lind has many subsystems, and is install in a central location. For those subsystems to interact, they use an environment variable named REPY_PATH, which is set to the location of the Lind and its Repy subfolder.
 
 USE:
 ====
 
-To use lindfuse, you can simply mount a file system, and perform operations on it. Then unmount it.
+To use lind-fuse, you can simply mount a file system, and perform operations on it. Then unmount it.
 
 EXAMPLE:
 ========
 
-
 $ cd somepath
-$ mkdir mountpoint
-$ python <path_to_lindfuse>/lind_fuse.py mountpoint
-$ cd mountpoint
+$ mkdir mountpoint   # make an empty directory
+$ python <path_to_lindfuse>/lind_fuse.py mountpoint  # given the mountpoint you just made, mount a Lind-fuse filesystem into it.
+$ cd mountpoint   # now try it out
 $ ls
 $ cp -r /var/logs .
 $ ls
-$ cd ..
-$ fusermount -u mountpoint
+$ cd ..  # when you are done
+$ fusermount -u mountpoint  # un-mount the file system.
 
 This should work as any user (not just root).
 
