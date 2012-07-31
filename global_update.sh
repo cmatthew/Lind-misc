@@ -24,4 +24,5 @@ ln -s ./misc/b
 #link the loader sctipt to it's old location
 rm -f ./lind.sh
 ln -s ./misc/lind.sh
-./b rpc glibc sdk install repy
+
+echo "Dont forget to run the build now!"

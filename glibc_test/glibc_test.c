@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+#include <sys/select.h>
 #include <dirent.h> 
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -384,11 +385,16 @@ void check_socket(void) {
   memset(&ip4addr, 0, sizeof(ip4addr));
   ip4addr.sin_family = AF_INET;
   ip4addr.sin_port = htons(10001);
-  inet_pton(AF_INET, "127.0.0.1", &ip4addr.sin_addr);
+  inet_pton(AF_INET, "0.0.0.0", &ip4addr.sin_addr);
 
   int on = 1;
   int status = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const char *) &on, sizeof(on));
   assert(status == -1); // this is not implemented, it should fail
+
+  int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
+  assert(rc == 0);
+  ip4addr.sin_port = htons(10002);
+
 
   int rc = bind(fd, (struct sockaddr*)&ip4addr, sizeof ip4addr);
   assert(rc == 0);
@@ -529,6 +535,89 @@ void screaming_files_test(void) {
 
 /* } */
 
+/** check if the async select operation works. */
+void check_select(void) {
+    /* see: http://www.tenouk.com/Module41.html */
+    /* master file descriptor list */
+    fd_set master;
+    /* temp file descriptor list for select() */
+    fd_set read_fds;
+    /* server address */
+    struct sockaddr_in serveraddr;
+    /* client address */
+    struct sockaddr_in clientaddr;
+    /* maximum file descriptor number */
+    int fdmax;
+    /* listening socket descriptor */
+    int listener;
+    /* newly accept()ed socket descriptor */
+    int newfd;
+    /* buffer for client data */
+    char buf[1024];
+    int nbytes;
+    /* for setsockopt() SO_REUSEADDR, below */
+    int yes = 1;
+    int addrlen;
+    int i, j;
+    /* clear the master and temp sets */
+    FD_ZERO(&master);
+    FD_ZERO(&read_fds);
+    printf(">>>>%ld,%ld\n", sizeof(master),  sizeof (__fd_mask));
+    /* get the listener */
+    if((listener = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+        {
+            perror("Server-socket() error lol!");
+            /*just exit lol!*/
+            exit(1);
+        }
+    printf("Server-socket() is OK...\n");
+    /* "address already in use" error message */
+    /* if(setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) */
+    /*     { */
+    /*         perror("Server-setsockopt() error!"); */
+    /*         exit(1); */
+    /*     } */
+    /* printf("Server-setsockopt() is OK...\n"); */
+ 
+    /* bind */
+    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_addr.s_addr = INADDR_ANY;
+    serveraddr.sin_port = htons(PORT);
+    memset(&(serveraddr.sin_zero), '\0', 8);
+ 
+    if(bind(listener, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == -1) {
+            perror("Server-bind() error lol!");
+            exit(1);
+    }
+    printf("Server-bind() is OK...\n");
+ 
+    /* listen */
+    if(listen(listener, 10) == -1) {
+            perror("Server-listen() error lol!");
+            exit(1);
+    }
+    printf("Server-listen() is OK...\n");
+ 
+    /* add the listener to the master set */
+    FD_SET(listener, &master);
+    /* keep track of the biggest file descriptor */
+    fdmax = listener; /* so far, it's this one*/
+ 
+    /* copy it */
+   
+    struct timeval t;
+    t.tv_sec = 1;
+    t.tv_usec = 0;
+    printf("Calling select with: %d, %d", fdmax, FD_ISSET(10, &master));
+    if(select(fdmax+1, &master, NULL, NULL, &t) == -1) {
+            perror("Server-select() error lol!");
+            exit(1);
+    } else { 
+        printf("Select worked.\nNew t: %ld %ld", t.tv_sec, t.tv_usec);
+    }
+
+}
+
 
 #define BYTE_SIZE 8
 void print_sizes(void)
@@ -559,9 +648,9 @@ int main() {
   fprintf(stderr, "\n");
   fprintf(stdout, "\n");
   
+  check_socket();
   
-  /* print_sizes(); */
-  /* test_inet_ops(); */
+  print_sizes();
   check_two_open();
 
   check_double_open();
@@ -588,8 +677,10 @@ int main() {
   /* check_ioctl(); */
   check_readdir();
 
-  /* check_two_open(); */
+  /* /\* check_two_open(); *\/ */
   screaming_files_test();
+
+  /* check_select(); */
   printf("All tests ran sucessfully!\n");
   return EXIT_SUCCESS;
 

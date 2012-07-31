@@ -1,0 +1,420 @@
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f5023e7f450> Starting watchdog<naclimc.NaClDesc object at 0x7f5023e7f438>
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495631.775873, 1333495631.946531
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f17c459a450> <naclimc.NaClDesc object at 0x7f17c459a438>
+Starting watchdog
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495635.455398, 1333495635.623089
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7ff6b590b450> <naclimc.NaClDesc object at 0x7ff6b590b438>Starting watchdog
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495639.122085, 1333495639.295174
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f7293517450>Starting watchdog <naclimc.NaClDesc object at 0x7f7293517438>
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495642.916824, 1333495643.121782
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f29ec256450> <naclimc.NaClDesc object at 0x7f29ec256438>
+Starting watchdog
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495646.639556, 1333495646.820765
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+ Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fbc8403b450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7fbc8403b438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495650.340691, 1333495650.534254
+epic fail
+Persisting metadata...
+ NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f919e8eb450> Starting watchdog<naclimc.NaClDesc object at 0x7f919e8eb438>
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495654.029214, 1333495654.209467
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fc194b9a450> Starting watchdog
+<naclimc.NaClDesc object at 0x7fc194b9a438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495657.757894, 1333495657.947744
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f4747dee450> <naclimc.NaClDesc object at 0x7f4747dee438>Starting watchdog
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495661.435461, 1333495661.613642
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f54302d0450> Starting watchdog
+<naclimc.NaClDesc object at 0x7f54302d0438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495665.404658, 1333495665.581013
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fe63b588450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7fe63b588438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495669.162603, 1333495669.337920
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f7a8c265450> <naclimc.NaClDesc object at 0x7f7a8c265438>
+Starting watchdog
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495672.927234, 1333495673.097927
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f50f237e450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7f50f237e438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495676.935791, 1333495677.124820
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f08b1d0f450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7f08b1d0f438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495680.674911, 1333495680.867541
+epic fail
+Persisting metadata...
+ NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fb38546b450> <naclimc.NaClDesc object at 0x7fb38546b438>Starting watchdog
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495684.375759, 1333495684.552353
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fc281bbe450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7fc281bbe438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495688.226692, 1333495688.398515
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7fe79b006450> <naclimc.NaClDesc object at 0x7fe79b006438>
+Starting watchdog
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495692.061336, 1333495692.238591
+epic fail
+Persisting metadata...
+ NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f7fefd1f450> Starting watchdog<naclimc.NaClDesc object at 0x7f7fefd1f438>
+
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495695.746629, 1333495695.940759
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f5de34ee450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7f5de34ee438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495700.058900, 1333495700.258202
+epic fail
+Persisting metadata...
+NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7ffcfc34d450> Starting watchdog
+<naclimc.NaClDesc object at 0x7ffcfc34d438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495703.997254, 1333495704.202241
+epic fail
+Persisting metadata...
+ NaCl process return with: 0
+Done.
+passed
+Opening file system...  Note: No filesystem found, building a fresh one.
+done.
+<naclimc.NaClDesc object at 0x7f9dbef83450>Starting watchdog
+ <naclimc.NaClDesc object at 0x7f9dbef83438>
+Sending args: ['unused-argv0', '--library-path', '/home/lind/tmp/lind/lib/libs/', '/home/lind/lind/misc/wget/wget-1.13-lind/src/wget', 'http://127.0.0.1:8000/index2.html']
+RC= 170
+Booted
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=1
+Warning: only only datagram and stream sockets supported right now
+Warning: only internet domain supported right now d=16
+Warning: only only datagram and stream sockets supported right now
+Warning: Connect currently ignores family
+time: 1333495707.736467, 1333495707.906653
+epic fail
+Persisting metadata...
+ NaCl process return with: 0
+Done.
+passed
