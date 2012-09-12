@@ -33,29 +33,38 @@ process_cleanup
 # build C version of the webserver
 cwd=`pwd`
 cd $netcat_path
+cd ..
+# Compile for Lind
+./nacl-configure
 make clean all
-
+#cleanup then compile for native machine
 cp $netcat_path/netcat $cwd
-make clean
-#cp $netcat_path/../native-netcat $cwd
+make clean distclean
+
+#Compile for native platform
+./configure
+make all
+cp $netcat_path/netcat $cwd/native-netcat
+make distclean
 
 cd $cwd
 
 # start the server
-#./native-netcat -l -p 10001 localhost &
+./native-netcat -l -p 10001 127.0.0.1 &
 # netstat -tulpn
 # sleep 2
 # c_nweb=$!
 # echo $c_nweb
 
 set +o errexit
-cat test_netcat.sh | $execer ./netcat sebulba.cs.uvic.ca 10001
+#$execer ./netcat -l -p 10001 &
 
+#process_cleanup
+cat test_netcat.sh | $execer ./netcat -n 127.0.0.1 10001  #sebulba.cs.uvic.ca 10001
 
+#process_cleanup
 
-process_cleanup
-
-$execer ./netcat -l -p 10001
+#$execer ./netcat -l -p 10001
 
 # remove any old filesystems
 rm -rf lind.metadata linddata.*
