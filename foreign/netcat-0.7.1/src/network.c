@@ -356,21 +356,21 @@ int netcat_socket_new(int domain, int type)
     return -1;
 
   /* don't leave the socket in a TIME_WAIT state if we close the connection */
-  /* fix_ling.l_onoff = 1; */
-  /* fix_ling.l_linger = 0; */
-  /* ret = setsockopt(sock, SOL_SOCKET, SO_LINGER, &fix_ling, sizeof(fix_ling)); */
-  /* if (ret < 0) { */
-  /*   close(sock);		/\* anyway the socket was created *\/ */
-  /*   return -2; */
-  /* } */
+  fix_ling.l_onoff = 1;
+  fix_ling.l_linger = 0;
+  ret = setsockopt(sock, SOL_SOCKET, SO_LINGER, &fix_ling, sizeof(fix_ling));
+  if (ret < 0) {
+    close(sock);		/* anyway the socket was created */
+    return -2;
+  }
 
   /* fix the socket options */
-  /* sockopt = 1; */
-  /* ret = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof(sockopt)); */
-  /* if (ret < 0) { */
-  /*   close(sock);		/\* anyway the socket was created *\/ */
-  /*   return -2; */
-  /* } */
+  sockopt = 1;
+  ret = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &sockopt, sizeof(sockopt));
+  if (ret < 0) {
+    close(sock);		/* anyway the socket was created */
+    return -2;
+  }
 
   return sock;
 }
@@ -433,12 +433,12 @@ int netcat_socket_new_connect(int domain, int type, const struct in_addr *addr,
   }
 
   /* add the non-blocking flag to this socket */
-  /* if ((ret = fcntl(sock, F_GETFL, 0)) >= 0) */
-  /*   ret = fcntl(sock, F_SETFL, ret | O_NONBLOCK); */
-  /* if (ret < 0) { */
-  /*   ret = -4; */
-  /*   goto err; */
-  /* } */
+  if ((ret = fcntl(sock, F_GETFL, 0)) >= 0)
+    ret = fcntl(sock, F_SETFL, ret | O_NONBLOCK);
+  if (ret < 0) {
+    ret = -4;
+    goto err;
+  }
 
   /* now launch the real connection.  Since we are in non-blocking mode, this
      call will return -1 in MOST cases (on some systems, a connect() to a local
@@ -495,6 +495,7 @@ int netcat_socket_new_listen(int domain, const struct in_addr *addr,
   memset(&my_addr, 0, sizeof(my_addr));
   my_addr.sin_family = my_family;
   my_addr.sin_port = port;
+
   /* this parameter is not mandatory.  if it's not present, it's assumed as
      INADDR_ANY, and the behaviour is the same */
   if (addr)
@@ -569,16 +570,15 @@ int netcat_socket_accept(int s, int timeout)
 
   /* now call select(2).  use timest only if we won't wait forever */
  call_select:
- 
-  /* ret = select(s + 1, &in, NULL, NULL, (timeout ? &timest : NULL)); */
-  /* if (ret < 0) { */
-  /*   /\* if the call was interrupted by a signal nothing happens. signal at this */
-  /*      stage ought to be handled externally. *\/ */
-  /*   if (errno == EINTR) */
-  /*     goto call_select; */
-  /*   perror("select(sock_accept)"); */
-  /*   exit(EXIT_FAILURE); */
-  /* } */
+  ret = select(s + 1, &in, NULL, NULL, (timeout ? &timest : NULL));
+  if (ret < 0) {
+    /* if the call was interrupted by a signal nothing happens. signal at this
+       stage ought to be handled externally. */
+    if (errno == EINTR)
+      goto call_select;
+    perror("select(sock_accept)");
+    exit(EXIT_FAILURE);
+  }
 
   /* have we got this connection? */
   if (FD_ISSET(s, &in)) {

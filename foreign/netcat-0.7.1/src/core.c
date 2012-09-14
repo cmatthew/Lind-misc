@@ -33,6 +33,9 @@
 unsigned long bytes_sent = 0;		/* total bytes received */
 unsigned long bytes_recv = 0;		/* total bytes sent */
 
+struct timeval start,stop;
+
+
 /* Creates a UDP socket with a default destination address.  It also calls
    bind(2) if it is needed in order to specify the source address.
    Returns the new socket number. */
@@ -323,7 +326,6 @@ static int core_tcp_connect(nc_sock_t *ncsock)
   int ret, sock, timeout = ncsock->timeout;
   struct timeval timest;
   fd_set outs;
-
   debug_v(("core_tcp_connect(ncsock=%p)", (void *)ncsock));
 
   /* since we are nonblocking now, we could start as many connections as we
@@ -352,14 +354,11 @@ static int core_tcp_connect(nc_sock_t *ncsock)
 
     /* ok, select([single]), so sock must have triggered this */
     assert(FD_ISSET(sock, &outs));
-    get_ret = -1;
-    ret = -1;
 
     /* fetch the errors of the socket and handle system request errors */
     ret = getsockopt(sock, SOL_SOCKET, SO_ERROR, &get_ret, &get_len);
-
     if (ret < 0)
-      ncprint(NCPRINT_ERROR | NCPRINT_EXIT, "Critical system request failed1: %s",
+      ncprint(NCPRINT_ERROR | NCPRINT_EXIT, "Critical system request failed: %s",
 	      strerror(errno));
 
     /* POSIX says that SO_ERROR expects an int, so my_len must be untouched */
@@ -386,7 +385,6 @@ static int core_tcp_connect(nc_sock_t *ncsock)
     /* everything went fine, we have the socket */
     ncprint(NCPRINT_VERB1, _("%s open"), netcat_strid(&ncsock->host,
 						      &ncsock->port));
-
     return sock;
   }
   else if (ret) {
@@ -394,7 +392,7 @@ static int core_tcp_connect(nc_sock_t *ncsock)
     if (errno == EINTR)
       exit(EXIT_FAILURE);
     /* The error seems to be a little worse */
-    ncprint(NCPRINT_ERROR | NCPRINT_EXIT, "Critical system request failed2: %s",
+    ncprint(NCPRINT_ERROR | NCPRINT_EXIT, "Critical system request failed: %s",
 	    strerror(errno));
   }
 
@@ -416,9 +414,7 @@ static int core_tcp_connect(nc_sock_t *ncsock)
 
 static int core_tcp_listen(nc_sock_t *ncsock)
 {
-
   int sock_listen, sock_accept, timeout = ncsock->timeout;
-
   debug_v(("core_tcp_listen(ncsock=%p)", (void *)ncsock));
 
   sock_listen = netcat_socket_new_listen(PF_INET, &ncsock->local_host.iaddrs[0],
@@ -624,8 +620,8 @@ int core_readwrite(nc_sock_t *nc_main, nc_sock_t *nc_slave)
 #endif
 
       debug(("[select] entering with timeout=%d:%d ...", delayer.tv_sec, delayer.tv_usec));
-      ret = select(fd_max, &ins, &outs, NULL, 
-	        (delayer.tv_sec || delayer.tv_usec ? &delayer : NULL)); 
+      ret = select(fd_max, &ins, &outs, NULL,
+		   (delayer.tv_sec || delayer.tv_usec ? &delayer : NULL));
 
 #ifndef USE_LINUX_SELECT
       delayer.tv_sec = dd_saved.tv_sec;
@@ -656,9 +652,11 @@ int core_readwrite(nc_sock_t *nc_main, nc_sock_t *nc_slave)
     if (call_select && FD_ISSET(fd_stdin, &ins)) {
       read_ret = read(fd_stdin, buf, sizeof(buf));
       debug_dv(("read(stdin) = %d", read_ret));
+      struct timeval start,stop;
 
       if (read_ret < 0) {
-	perror("read(stdin)");
+          
+ 	perror("read(stdin)");
 	exit(EXIT_FAILURE);
       }
       else if (read_ret == 0) {
@@ -806,6 +804,11 @@ int core_readwrite(nc_sock_t *nc_main, nc_sock_t *nc_slave)
 
       if (read_ret < 0) {
 	perror("read(net)");
+    gettimeofday(&stop,NULL);
+    printf(">> %ld.%06ld, %ld.%06ld\n",(long int)start.tv_sec, (long int)start.tv_usec, (long int)stop.tv_sec, (long int)stop.tv_usec);
+          fflush(stdout);
+
+
 	exit(EXIT_FAILURE);
       }
       else if (read_ret == 0) {

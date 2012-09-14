@@ -135,6 +135,9 @@ static void ncexec(nc_sock_t *ncsock)
 
 /* main: handle command line arguments and listening status */
 
+extern struct timeval start,stop;
+
+
 int main(int argc, char *argv[])
 {
   int c, glob_ret = EXIT_FAILURE;
@@ -146,6 +149,8 @@ int main(int argc, char *argv[])
   nc_sock_t listen_sock;
   nc_sock_t connect_sock;
   nc_sock_t stdio_sock;
+  gettimeofday(&start,NULL);
+
 
   memset(&local_port, 0, sizeof(local_port));
   memset(&local_host, 0, sizeof(local_host));
