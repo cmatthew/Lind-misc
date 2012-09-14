@@ -4,7 +4,7 @@ SEL_LDR=lind
 ./configure EMULATOR_FOR_BUILD=$SEL_LDR \
   --enable-static --disable-shared --host=nacl64 \
   CFLAGS="-O3" --prefix=/home/lind/tmp/lind/sdk/linux_x86/ \
-   --disable-silent-rules      
+   --disable-silent-rules 
  
  
  
