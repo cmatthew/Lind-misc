@@ -12,7 +12,7 @@ them to output files at the end.
 """
 
 import sys
-
+from string import Template
 
 def uniqueify(seq):
     seen = set()
@@ -113,7 +113,6 @@ def struct_def(name, types):
     """
     body = ["struct ", name, "_s {\n"]
     for i in xrange(0, len(types)):
-        body.append("\t")
         body.append(types[i][0])
         body.append(" ")
         body.append(types[i][1])
@@ -167,61 +166,100 @@ def build_format_string(in_args, ref_args):
     post = []
     send_args = []
 
+    first_ref_arg = True
     # make simple pass by value args
     # these just have to be a sting like "<i"
     for arg in in_args:
         fmt.append("\"" + fmt_map[arg[0]] + "\" ")
-
     # Now do reference args, find the size and make a string
     if ref_args:
         for args in ref_args:
-            # strings do have size, so build them with strlen
-            if is_string(args[0]):
-                name = args[1]
-                #build format string number from strlen result
-                pre.append("size_t " + name + "_len = strlen(" + name + ");")
-                pre.append("size_t " + name + "_size = " + name + "_len;")
-                pre.append("const char * " + name + "_len_str = nacl_itoa("
-                           + name + "_size);")
+            name = args[1]
 
-                # add to the reference args list along with the send size
-                send_args.append(name)
-                send_args.append(name + "_size")
+            # Null support, pass P if name is null
+            null_check = "// check if ${name} is NULL\n" \
+                         "int ${name}_is_null = 0;\n" \
+                         "if (${name} == NULL) {\n" \
+                         "${name}_is_null = 1;\n" \
+                         "} else {\n" \
+                         "${name}_is_null = 0;\n" \
+                         "}"
+            pre.append(Template(null_check).substitute(name=name))
 
-                # clean up the strings after
-                post.append("free((void*)" + name + "_len_str);")
+            
+            # strings do have size, so build them with strlen          
+            # since we are not a string, take the third parameter which is
+            # a size and use that.
+            if first_ref_arg:
+                pre.append("unsigned long int nowhere = 0;")
+                first_ref_arg = False
 
-                # finally, make the actual format string
-                fmt.append(name + "_len_str")
-                fmt.append("\"s\"")
-            else:
-                # since we are not a string, take the third parameter which is
-                # a size and use that.
-                try:
-                    name = args[2]
-                except IndexError:
+            var_name = args[1]
+            try:
+                size_expr = args[2]
+            except IndexError:
+                if is_string(args[0]):
+                    size_expr = "strlen(" + var_name + ")"
+                else:
                     msg = ("Could not find size of argument while building " +
                            "parameter " +
                            str(args[1]))
                     print msg
                     sys.exit(1)
-                # sometimes our names have non-alpha characters in them
-                # get rid of those!
-                full_name = name
-                name = str(filter(lambda x: x.isalnum(), name))
 
-                pre.append("const char * " + name +
-                           "_len_str = nacl_itoa(" + full_name + ");")
-                post.append("free((void*)" + name + "_len_str);")
 
-                send_args.append(args[1])
-                send_args.append(full_name)
 
-                fmt.append(name + "_len_str")
-                fmt.append("\"s\"")
+
+            size_expr_ssize = var_name + "_ssize"
+            format_specifier = var_name + "_fmt_str"
+            data_pointer = var_name + "_ptr"
+            final_size = var_name + "_data_size"
+            # sometimes our size_vars have non-alpha characters in them
+            # get rid of those!
+            format_size_var = str(filter(lambda x: x.isalnum(), size_expr)) + "_"  + var_name + "_len_str"
+
+
+
+            pre.append("ssize_t " + size_expr_ssize + " = " + size_expr +  ";")
+            pre.append("const char * " + format_size_var + ' = "YYY";')
+
+            pre.append('const char * ' + format_specifier + ' = "ZZZ";')
+
+            pre.append("void * " + var_name + "_ptr = NULL;")
+            pre.append("ssize_t " + final_size + " = -1;")
+
+
+            pre.append("if (" + var_name + "_is_null) {")
+            pre.append(data_pointer + " = &nowhere;")
+            pre.append(format_specifier + ' =  "P";')
+            pre.append(format_size_var + ' = "";')
+            pre.append(final_size + " = sizeof (void *);")
+            pre.append("} else {")
+            pre.append(data_pointer + " = (void*)"+ var_name  +";")
+            pre.append(format_specifier + ' =  "s"; // if it is not null, treat as a string')
+            pre.append(format_size_var + " =  nacl_itoa("+size_expr_ssize+");")
+            pre.append(final_size + " = " + size_expr_ssize + ";"   )           
+            pre.append("}")
+
+            pre.append("assert( "+data_pointer+" != NULL );")
+            pre.append("assert( " + final_size + " != -1 );")
+
+            pre.append("assert( strcmp(" + format_size_var + ', "YYY") != 0 );')
+            pre.append("assert( strcmp(" + format_specifier + ', "ZZZ") != 0 );')
+
+            post.append("if (! " + var_name  + "_is_null) {")
+            post.append("free((void*)" + format_size_var + ");")
+            post.append("}")
+            send_args.append(data_pointer)
+            send_args.append(final_size)
+
+            fmt.append(format_size_var)
+            fmt.append(format_specifier)
+
+        
         # dynamically combine reference args using string join
         fmt = ["combine(", str(len(fmt)), ", ", ', '.join(fmt), ")"]
-    return uniqueify(pre), ''.join(fmt), uniqueify(post), send_args
+    return pre, ''.join(fmt), post, send_args
 
 
 def is_string(type_arg):
@@ -229,6 +267,7 @@ def is_string(type_arg):
     Really should check for all combinations of char *
     but for now, lets just check the simple ones.
     """
+    tpye_arg = type_arg.strip()
     return type_arg == "char *" or type_arg == "const char *"
 
 
@@ -341,8 +380,9 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
     output.append("request.format = " + fmt + ";")
 
     # enable these for protocol debugging:
+    # output.append('nacl_strace("Request.Format:");')
     # output.append("nacl_strace(request.format);")
-    # output.append("nacl_strace(nacl_itoa(sizeof(struct "+call_name+"_s)));")
+    # output.append("nacl_strace(\""+call_name+"\");")
 
     # assign the syscall number from the table
     output.append("request.call_number = " + str(syscall_table[name][0]) + ";")
@@ -362,6 +402,7 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
         # if no reference args, then append 0
         vargs = "0"
     # make the actual RPC call
+    # output.append("nacl_strace(request.format);")
     output.append("nacl_rpc_syscall_proxy(&request, reply_buffer,"
                   + vargs + ");")
 
@@ -394,10 +435,10 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
                 # copy from the RPC payload to the target pointer
                 old_sizes_str = "+ " + \
                 (" + ".join(old_sizes) if old_sizes else "0")
-                output.append("ptr = " + arg[1] + ";\n" +
-                              "memcpy(ptr, ((&(reply_buffer->contents)) " + \
+                output.append("ptr = " + arg[1] + ";")
+                output.append("if (ptr != NULL) { memcpy(ptr, ((&(reply_buffer->contents)) " + \
                               old_sizes_str + "), " \
-                              + arg[2] + ");")
+                              + arg[2] + "); }")
                 old_sizes.append(arg[2])
         else: # complex args
             # header has sizes
@@ -417,10 +458,10 @@ def syscall(name, in_args, ref_args=[], out_args=[]):
                 #output.append("nacl_strace(nacl_itoa(offset));")
 
                 #output.append("nacl_strace( base + offset);")
+                output.append("if (ptr != NULL) {")
                 output.append("assert( cur_size <= " + str(arg[1][2]) + " );")
-
-
                 output.append("memcpy(ptr, base +  offset, cur_size);")
+                output.append("} // end of ptr != NULL")
                 output.append("offset += cur_size;\n")
 
     # finally return and close function body
@@ -509,7 +550,13 @@ syscall_table = {
     "select": (46,),
     "getifaddrs": (47,),
     "poll": (48,),
-   "shutdown": (45,)}
+    "socketpair": (49,),
+    "getuid": (50,),
+    "geteuid": (51,),
+    "getgid": (52,),
+    "getegid": (53,),
+    "flock":(54,),
+   "shutdown": (45,),}
 
 
 #
@@ -585,7 +632,7 @@ syscall("fcntl_set", [("int", "fd"), ("int", "cmd"), ("long", "set_op")])
 syscall("socket", [("int", "domain"), ("int", "type"), ("int", "protocol")])
 
 syscall("bind", [("int", "sockfd"), ("socklen_t", "addrlen")],
-                [("__CONST_SOCKADDR_ARG", "addr", "addrlen")])
+                [("const struct sockaddr *", "addr", "addrlen")])
 
 syscall("send", [("int", "sockfd"), ("size_t", "len"), ("int", "flags")],
                 [("const void *", "buf", "len")])
@@ -599,7 +646,7 @@ syscall("recv", [("int", "sockfd"),
 
 syscall("connect", [("int", "sockfd"),
                     ("socklen_t", "addrlen")],
-                   [("__CONST_SOCKADDR_ARG", "src_addr", "addrlen")])
+                   [("const struct sockaddr *", "src_addr", "addrlen")])
 
 syscall("listen", [("int", "sockfd"), ("int", "backlog")])
 
@@ -608,13 +655,12 @@ emptysyscall("sendto", [("int", "sockfd"),
                         ("size_t", "len"),
                         ("int", "flags"),
                         ("socklen_t", "addrlen")],
-                       [("__CONST_SOCKADDR_ARG", "dest_addr", "addrlen"),
+                       [("const struct sockaddr_in *", "dest_addr", "addrlen"),
                         ("const void *", "buf", "len")])
 
-# # "accept":(40,),
+
 syscall("accept", [("int", "sockfd"), ("socklen_t", "addrlen")],
- [], [])#[("__CONST_SOCKADDR_ARG","addr_out","addrlen")])
-# # need to modify argument to be in and out!
+ [],[]) #[("__SOCKADDR_ARG","addr_out","addrlen"), ("socklen_t*", "addrlen_out", "sizeof(socklen_t)")])
 
 emptysyscall("getpeername",
              [("int", "sockfd"),
@@ -645,13 +691,10 @@ syscall("shutdown", [("int", "sockfd"), ("int", "how")])
 
 # Use have_* to deal with case when they are null.  When not null,
 # make the have_* = to sizeof(fd_set)
-syscall("select", [("int", "nfds"),
-                   ("int", "have_read"),
-                   ("int", "have_write"),
-                   ("int", "have_except")],
-                  [("fd_set *", "readfds", "have_read"),
-                   ("fd_set *", "writefds", "have_write"),
-                   ("fd_set *", "exceptfds", "have_except"),
+syscall("select", [("int", "nfds")],
+                  [("fd_set *", "readfds", "sizeof(fd_set)"),
+                   ("fd_set *", "writefds", "sizeof(fd_set)"),
+                   ("fd_set *", "exceptfds", "sizeof(fd_set)"),
                    ("struct timeval *", "timeout",
                     "sizeof(struct timeval)"), ],
                   [("struct select_results *", "result",
@@ -675,6 +718,16 @@ syscall("recvfrom", [("int", "sockfd"),
 syscall("poll", [("int", "nfds"),("int","timeout")],
         [("struct pollfd *", "fds_in", "(sizeof(struct pollfd) * nfds)")],
         [("struct pollfd *", "fds_out", "(sizeof(struct pollfd) * nfds)")])
+
+
+syscall("socketpair", [("int", "domain"), ("int", "type"), ("int", "protocol")], [], [("int *", "fds", "sizeof(int) * 2")])
+
+syscall("getuid", [],[],[("uid_t *", "buf", "sizeof(uid_t)")])
+syscall("geteuid", [],[],[("uid_t *", "buf", "sizeof(uid_t)")])
+syscall("getgid", [],[],[("gid_t *", "buf", "sizeof(gid_t)")])
+syscall("getegid", [],[],[("gid_t *", "buf", "sizeof(gid_t)")])
+
+syscall("flock", [("int", "fd"), ("int", "operation")],[],[])
 
 
 # Now write out the system calls to the screen the src files to be compiled.
@@ -704,17 +757,33 @@ c_file.close()
 
 # also print to the screen for debugging
 
+
+indent_level = 0
+
+def pretty_print(blocks):
+    """prefix tabs on code based on { and }
+    Does not handle comments etc, just 
+    """
+    global indent_level
+    for lines in blocks:
+        for line in lines.split('\n'):
+            if '}' in line:
+                indent_level -= 1
+            yield '\t'*indent_level + line
+            if '{' in line:
+                indent_level += 1
+                    
+
 print "/*Header:*/"
 print '\n'.join(headers)
 
 print '\n'.join(_header_file)
 
-
 print "\n/*Code*/\n"
-print '\n'.join(top)
+print '\n'.join(pretty_print(top))
 print
-print '\n'.join(headers)
+print '\n'.join(pretty_print(headers))
 print
-print '\n'.join(structs)
+print '\n'.join(pretty_print(structs))
 print
-print '\n'.join(output)
+print '\n'.join(pretty_print(output))
