@@ -1,0 +1,329 @@
+execve("./python", ["./python", "-S", "lind_install/bin/hw.py"], [/* 24 vars */]) = 0
+brk(0)                                  = 0x2725000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519edf7000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY)      = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=80196, ...}) = 0
+mmap(NULL, 80196, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f519ede3000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libpthread.so.0", O_RDONLY)  = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\360Y\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=135745, ...}) = 0
+mmap(NULL, 2212736, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f519e9bd000
+mprotect(0x7f519e9d5000, 2093056, PROT_NONE) = 0
+mmap(0x7f519ebd4000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x17000) = 0x7f519ebd4000
+mmap(0x7f519ebd6000, 13184, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f519ebd6000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libdl.so.2", O_RDONLY)       = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\340\r\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0644, st_size=14696, ...}) = 0
+mmap(NULL, 2109696, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f519e7b9000
+mprotect(0x7f519e7bb000, 2097152, PROT_NONE) = 0
+mmap(0x7f519e9bb000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x2000) = 0x7f519e9bb000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libutil.so.1", O_RDONLY)     = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\20\16\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0644, st_size=10648, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ede2000
+mmap(NULL, 2105608, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f519e5b6000
+mprotect(0x7f519e5b8000, 2093056, PROT_NONE) = 0
+mmap(0x7f519e7b7000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1000) = 0x7f519e7b7000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libm.so.6", O_RDONLY)        = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\360>\0\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0644, st_size=534832, ...}) = 0
+mmap(NULL, 2629864, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f519e333000
+mprotect(0x7f519e3b5000, 2093056, PROT_NONE) = 0
+mmap(0x7f519e5b4000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x81000) = 0x7f519e5b4000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/libc.so.6", O_RDONLY)        = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0`\355\1\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=1572232, ...}) = 0
+mmap(NULL, 3680296, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f519dfb0000
+mprotect(0x7f519e12a000, 2093056, PROT_NONE) = 0
+mmap(0x7f519e329000, 20480, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x179000) = 0x7f519e329000
+mmap(0x7f519e32e000, 18472, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f519e32e000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ede1000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ede0000
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519eddf000
+arch_prctl(ARCH_SET_FS, 0x7f519ede0700) = 0
+mprotect(0x7f519e329000, 16384, PROT_READ) = 0
+mprotect(0x7f519e5b4000, 4096, PROT_READ) = 0
+mprotect(0x7f519e7b7000, 4096, PROT_READ) = 0
+mprotect(0x7f519e9bb000, 4096, PROT_READ) = 0
+mprotect(0x7f519ebd4000, 4096, PROT_READ) = 0
+mprotect(0x76e000, 4096, PROT_READ)     = 0
+mprotect(0x7f519edf9000, 4096, PROT_READ) = 0
+munmap(0x7f519ede3000, 80196)           = 0
+set_tid_address(0x7f519ede09d0)         = 21932
+set_robust_list(0x7f519ede09e0, 0x18)   = 0
+futex(0x7fffc1d898fc, FUTEX_WAKE_PRIVATE, 1) = 0
+futex(0x7fffc1d898fc, FUTEX_WAIT_BITSET_PRIVATE|FUTEX_CLOCK_REALTIME, 1, NULL, 7f519ede0700) = -1 EAGAIN (Resource temporarily unavailable)
+rt_sigaction(SIGRTMIN, {0x7f519e9c2870, [], SA_RESTORER|SA_SIGINFO, 0x7f519e9cc8f0}, NULL, 8) = 0
+rt_sigaction(SIGRT_1, {0x7f519e9c2900, [], SA_RESTORER|SA_RESTART|SA_SIGINFO, 0x7f519e9cc8f0}, NULL, 8) = 0
+rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
+getrlimit(RLIMIT_STACK, {rlim_cur=8192*1024, rlim_max=RLIM_INFINITY}) = 0
+ioctl(0, SNDCTL_TMR_TIMEBASE or TCGETS, {B38400 opost isig icanon echo ...}) = 0
+brk(0)                                  = 0x2725000
+brk(0x2746000)                          = 0x2746000
+mmap(NULL, 266240, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed9e000
+open("/proc/meminfo", O_RDONLY)         = 3
+fstat(3, {st_mode=S_IFREG|0444, st_size=0, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519edf6000
+read(3, "MemTotal:        1943076 kB\nMemF"..., 1024) = 1024
+close(3)                                = 0
+munmap(0x7f519edf6000, 4096)            = 0
+brk(0x2772000)                          = 0x2772000
+fstat(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+fstat(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+fstat(2, {st_mode=S_IFREG|0644, st_size=5931, ...}) = 0
+getcwd("/home/lind/lind/misc/foreign/Python-2.7.3", 4096) = 42
+readlink("/home/lind/lind/misc/foreign/Python-2.7.3/python", 0x7fffc1d86600, 4096) = -1 EINVAL (Invalid argument)
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Modules/Setup", {st_mode=S_IFREG|0644, st_size=18279, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/os.py", {st_mode=S_IFREG|0644, st_size=25769, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Modules/Setup", {st_mode=S_IFREG|0644, st_size=18279, ...}) = 0
+mmap(NULL, 266240, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed5d000
+rt_sigaction(SIGPIPE, {SIG_IGN, [], SA_RESTORER, 0x7f519e9cc8f0}, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGXFSZ, {SIG_IGN, [], SA_RESTORER, 0x7f519e9cc8f0}, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGHUP, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGINT, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGQUIT, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGILL, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGTRAP, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGABRT, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGBUS, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGFPE, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGKILL, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGUSR1, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGSEGV, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGUSR2, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGPIPE, NULL, {SIG_IGN, [], SA_RESTORER, 0x7f519e9cc8f0}, 8) = 0
+rt_sigaction(SIGALRM, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGTERM, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGSTKFLT, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGCHLD, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGCONT, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGSTOP, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGTSTP, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGTTIN, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGTTOU, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGURG, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGXCPU, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGXFSZ, NULL, {SIG_IGN, [], SA_RESTORER, 0x7f519e9cc8f0}, 8) = 0
+rt_sigaction(SIGVTALRM, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGPROF, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGWINCH, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGIO, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGPWR, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGSYS, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_2, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_3, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_4, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_5, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_6, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_7, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_8, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_9, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_10, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_11, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_12, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_13, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_14, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_15, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_16, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_17, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_18, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_19, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_20, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_21, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_22, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_23, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_24, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_25, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_26, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_27, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_28, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_29, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_30, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_31, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGRT_32, NULL, {SIG_DFL, [], 0}, 8) = 0
+rt_sigaction(SIGINT, {0x4e61f0, [], SA_RESTORER, 0x7f519e9cc8f0}, {SIG_DFL, [], 0}, 8) = 0
+open("/usr/lib/locale/locale-archive", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/share/locale/locale.alias", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=2570, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed5c000
+read(3, "# Locale name alias data base.\n#"..., 4096) = 2570
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0x7f519ed5c000, 4096)            = 0
+open("/usr/lib/locale/en_CA.UTF-8/LC_CTYPE", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/usr/lib/locale/en_CA.utf8/LC_CTYPE", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=256324, ...}) = 0
+mmap(NULL, 256324, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f519ed1e000
+close(3)                                = 0
+open("/usr/lib/gconv/gconv-modules.cache", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=26048, ...}) = 0
+mmap(NULL, 26048, PROT_READ, MAP_SHARED, 3, 0) = 0x7f519ed17000
+close(3)                                = 0
+futex(0x7f519e32df60, FUTEX_WAKE_PRIVATE, 2147483647) = 0
+stat("/usr/local/lib/python27.zip", 0x7fffc1d82010) = -1 ENOENT (No such file or directory)
+stat("/usr/local/lib", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/usr/local/lib/python27.zip", 0x7fffc1d85090) = -1 ENOENT (No such file or directory)
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/", {st_mode=S_IFDIR|0750, st_size=12288, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/", {st_mode=S_IFDIR|0750, st_size=12288, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings", {st_mode=S_IFDIR|0750, st_size=4096, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__.py", {st_mode=S_IFREG|0644, st_size=5698, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__", 0x7fffc1d84380) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__module.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__.py", O_RDONLY) = 3
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed16000
+write(1, "Loading source module encodings!"..., 33) = 33
+fstat(3, {st_mode=S_IFREG|0644, st_size=5698, ...}) = 0
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__.pyc", O_RDONLY) = 4
+fstat(4, {st_mode=S_IFREG|0644, st_size=4478, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+read(4, "\3\363\r\n\262k\203Oc\0\0\0\0\0\0\0\0\3\0\0\0@\0\0\0s\216\0\0\0d\0"..., 4096) = 4096
+write(2, ">>>>>>>> trying to import encodi"..., 124>>>>>>>> trying to import encodings # precompiled from /home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__init__.pyc
+) = 124
+fstat(4, {st_mode=S_IFREG|0644, st_size=4478, ...}) = 0
+read(4, "nG\0\0\0sl\0\0\0\0\3\22\1\f\1\4\t\f\1\17\1\33\1\f\1\3\1\f\2\t\1"..., 4096) = 382
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+write(2, ">>>>>>>> trying to exec module e"..., 42>>>>>>>> trying to exec module encodings!
+) = 42
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings", {st_mode=S_IFDIR|0750, st_size=4096, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings", {st_mode=S_IFDIR|0750, st_size=4096, ...}) = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/codecs", 0x7fffc1d80dd0) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/codecs.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/codecsmodule.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/codecs.py", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/codecs.pyc", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecs", 0x7fffc1d80dd0) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecs.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecsmodule.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecs.py", O_RDONLY) = 4
+write(1, "Loading source module codecs!\n", 30) = 30
+fstat(4, {st_mode=S_IFREG|0644, st_size=35266, ...}) = 0
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecs.pyc", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=38952, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+read(5, "\3\363\r\n\261k\203Oc\0\0\0\0\0\0\0\0\30\0\0\0@\0\0\0s7\3\0\0d\0"..., 4096) = 4096
+write(2, ">>>>>>>> trying to import codecs"..., 109>>>>>>>> trying to import codecs # precompiled from /home/lind/lind/misc/foreign/Python-2.7.3/Lib/codecs.pyc
+) = 109
+fstat(5, {st_mode=S_IFREG|0644, st_size=38952, ...}) = 0
+read(5, "\0\0\0\0s7\0\0\0/home/lind/lind/misc/fo"..., 32768) = 32768
+read(5, "e input strings from the iterato"..., 4096) = 2088
+read(5, "", 4096)                       = 0
+brk(0x2793000)                          = 0x2793000
+close(5)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+write(2, ">>>>>>>> trying to exec module c"..., 39>>>>>>>> trying to exec module codecs!
+) = 39
+write(2, ">>>>>>>> exec'd module codecs!\n", 31>>>>>>>> exec'd module codecs!
+) = 31
+close(4)                                = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/encodings", 0x7fffc1d80dd0) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/encodings.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/encodingsmodule.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/encodings.py", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/encodings.pyc", O_RDONLY) = -1 ENOENT (No such file or directory)
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliases", 0x7fffc1d80dc0) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliases.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliasesmodule.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliases.py", O_RDONLY) = 4
+write(1, "Loading source module encodings."..., 41) = 41
+fstat(4, {st_mode=S_IFREG|0644, st_size=14848, ...}) = 0
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliases.pyc", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=8795, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+read(5, "\3\363\r\n\262k\203Oc\0\0\0\0\0\0\0\0\3\0\0\0@\0\0\0su\10\0\0d\0"..., 4096) = 4096
+write(2, ">>>>>>>> trying to import encodi"..., 131>>>>>>>> trying to import encodings.aliases # precompiled from /home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/aliases.pyc
+) = 131
+fstat(5, {st_mode=S_IFREG|0644, st_size=8795, ...}) = 0
+read(5, "ibm860t\6\0\0\0ibm860t\5\0\0\0cp861t\3\0\0\0"..., 4096) = 4096
+read(5, "\1\7\1\7\1\7\1\7\1\7\1\7\1\7\3\7\1\7\3\7\1\7\3\7\1\7\3\7\3\7\1\7"..., 4096) = 603
+read(5, "", 4096)                       = 0
+close(5)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+write(2, ">>>>>>>> trying to exec module e"..., 50>>>>>>>> trying to exec module encodings.aliases!
+) = 50
+write(2, ">>>>>>>> exec'd module encodings"..., 42>>>>>>>> exec'd module encodings.aliases!
+) = 42
+close(4)                                = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__builtin__", 0x7fffc1d80dd0) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__builtin__.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__builtin__module.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__builtin__.py", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/__builtin__.pyc", O_RDONLY) = -1 ENOENT (No such file or directory)
+write(2, ">>>>>>>> exec'd module encodings"..., 34>>>>>>>> exec'd module encodings!
+) = 34
+close(3)                                = 0
+stat("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8", 0x7fffc1d85100) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8module.so", O_RDONLY) = -1 ENOENT (No such file or directory)
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8.py", O_RDONLY) = 3
+write(1, "Loading source module encodings."..., 39) = 39
+fstat(3, {st_mode=S_IFREG|0644, st_size=1005, ...}) = 0
+open("/home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8.pyc", O_RDONLY) = 4
+fstat(4, {st_mode=S_IFREG|0644, st_size=2166, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+read(4, "\3\363\r\n\262k\203Oc\0\0\0\0\0\0\0\0\3\0\0\0@\0\0\0s\230\0\0\0d\0"..., 4096) = 2166
+write(2, ">>>>>>>> trying to import encodi"..., 127>>>>>>>> trying to import encodings.utf_8 # precompiled from /home/lind/lind/misc/foreign/Python-2.7.3/Lib/encodings/utf_8.pyc
+) = 127
+fstat(4, {st_mode=S_IFREG|0644, st_size=2166, ...}) = 0
+read(4, "", 4096)                       = 0
+close(4)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+write(2, ">>>>>>>> trying to exec module e"..., 48>>>>>>>> trying to exec module encodings.utf_8!
+) = 48
+write(2, ">>>>>>>> exec'd module encodings"..., 40>>>>>>>> exec'd module encodings.utf_8!
+) = 40
+close(3)                                = 0
+ioctl(0, SNDCTL_TMR_TIMEBASE or TCGETS, {B38400 opost isig icanon echo ...}) = 0
+ioctl(1, SNDCTL_TMR_TIMEBASE or TCGETS, {B38400 opost isig icanon echo ...}) = 0
+ioctl(2, SNDCTL_TMR_TIMEBASE or TCGETS, 0x7fffc1d89570) = -1 ENOTTY (Inappropriate ioctl for device)
+readlink("lind_install/bin/hw.py", 0x7fffc1d87740, 4096) = -1 EINVAL (Invalid argument)
+getcwd("/home/lind/lind/misc/foreign/Python-2.7.3", 4096) = 42
+lstat("/home/lind/lind/misc/foreign/Python-2.7.3/lind_install", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+lstat("/home/lind/lind/misc/foreign/Python-2.7.3/lind_install/bin", {st_mode=S_IFDIR|0755, st_size=110592, ...}) = 0
+lstat("/home/lind/lind/misc/foreign/Python-2.7.3/lind_install/bin/hw.py", {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+stat("lind_install/bin/hw.py", {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+open("lind_install/bin/hw.py", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+lseek(3, 18446744073709547520, SEEK_SET) = -1 EINVAL (Invalid argument)
+lseek(3, 0, SEEK_CUR)                   = 0
+read(3, "print \"hello world\"\n", 4096) = 20
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+stat("lind_install/bin/hw.py", {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+open("lind_install/bin/hw.py", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+ioctl(3, SNDCTL_TMR_TIMEBASE or TCGETS, 0x7fffc1d896e0) = -1 ENOTTY (Inappropriate ioctl for device)
+fstat(3, {st_mode=S_IFREG|0644, st_size=20, ...}) = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f519ed15000
+lseek(3, 0, SEEK_CUR)                   = 0
+read(3, "print \"hello world\"\n", 4096) = 20
+lseek(3, 20, SEEK_SET)                  = 20
+brk(0x27b9000)                          = 0x27b9000
+read(3, "", 4096)                       = 0
+brk(0x27b0000)                          = 0x27b0000
+close(3)                                = 0
+munmap(0x7f519ed15000, 4096)            = 0
+write(1, "hello world\n", 12)           = 12
+rt_sigaction(SIGINT, {SIG_DFL, [], SA_RESTORER, 0x7f519e9cc8f0}, {0x4e61f0, [], SA_RESTORER, 0x7f519e9cc8f0}, 8) = 0
+brk(0x2799000)                          = 0x2799000
+exit_group(0)                           = ?
